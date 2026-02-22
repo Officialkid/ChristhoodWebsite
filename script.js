@@ -1014,6 +1014,10 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 (function initAppSplash() {
+    const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    const isIosStandalone = window.navigator.standalone === true;
+    if (!isStandalone && !isIosStandalone) return;
+
     function showSplash() {
         if (!document.body) return;
         const splash = document.createElement('div');
@@ -1111,4 +1115,103 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.reload();
         }, { once: true });
     };
+})();
+
+(function initGlobalFooterAndIcons() {
+    function ensureFavicon() {
+        const iconHref = '/image/logo.png';
+        let icon = document.querySelector('link[rel="icon"]');
+        if (!icon) {
+            icon = document.createElement('link');
+            icon.rel = 'icon';
+            document.head.appendChild(icon);
+        }
+        icon.type = 'image/png';
+        icon.href = iconHref;
+
+        let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+        if (!appleIcon) {
+            appleIcon = document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            document.head.appendChild(appleIcon);
+        }
+        appleIcon.href = iconHref;
+    }
+
+    function ensureFooter() {
+        const footer = document.querySelector('footer.home-footer');
+        if (!footer) return;
+        footer.innerHTML = `
+            <div class="footer-container">
+                <div class="scripture-section">
+                    <div class="scripture-box">
+                        <p class="scripture-text">"Therefore go and make disciples of all nations..."</p>
+                        <p class="scripture-reference">Matthew 28:19</p>
+                    </div>
+                </div>
+
+                <div class="pillars-social-icons">
+                    <a href="https://www.instagram.com/christhoodministries?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="pillars-social-icon pillars-instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/christhoodministries" target="_blank" class="pillars-social-icon pillars-facebook"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://www.tiktok.com/@christhoodministries_int?_t=8qla8Z1SWNZ&_r=1" class="pillars-social-icon pillars-tiktok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://x.com/christhood_ciom?s=11" target="_blank" class="pillars-social-icon pillars-x-twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://youtube.com/@christhoodministries?si=NHa000S6Hx58IMen" class="pillars-social-icon pillars-youtube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div class="copyright-section">
+                <div class="footer-logo">
+                    <a href="#">Christhood<span>Ministries</span></a>
+                </div>
+                <p class="copyright-text">&copy; <span id="currentYear"></span> Christhood Ministries. All Rights Reserved.</p>
+            </div>
+        `;
+
+        const yearEl = footer.querySelector('#currentYear');
+        if (yearEl) {
+            yearEl.textContent = new Date().getFullYear();
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            ensureFavicon();
+            ensureFooter();
+        });
+    } else {
+        ensureFavicon();
+        ensureFooter();
+    }
+})();
+
+(function initScrollToTop() {
+    const button = document.createElement('button');
+    button.className = 'scroll-top-button';
+    button.type = 'button';
+    button.setAttribute('aria-label', 'Back to top');
+    button.innerHTML = '<span class="scroll-top-icon">↑</span>';
+    document.body.appendChild(button);
+
+    function getThreshold() {
+        const hero = document.querySelector(
+            '.hero-slider, .bm-main-banner, .apostle-hero, .christhood-hero, .christhood-mission-hero, .protocolministry-intro, .mediaministry-cont-page-intro, .jm-hero-banner, .tlm-hero-v2, .christhood-iact-hero, .christhood-apologetics-hero, .christhood-impact-hero, .hero, .men-ministry-intro, .ladiesministry-intro, .worship-hero, .missions-hero, .pillars-hero'
+        );
+        return hero ? hero.offsetHeight : 400;
+    }
+
+    function onScroll() {
+        const threshold = getThreshold();
+        if (window.scrollY > threshold) {
+            button.classList.add('show');
+        } else {
+            button.classList.remove('show');
+        }
+    }
+
+    button.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener('load', onScroll);
 })();

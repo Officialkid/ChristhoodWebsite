@@ -1591,7 +1591,7 @@ body {
     position: relative;
     height: 80vh;
     overflow: hidden;
-    margin-top: 80px;
+    margin-top: 0;
 }
 
 .bm-slider-container {
@@ -1642,12 +1642,14 @@ body {
 .bm-banner-content h1 {
     font-size: 3.5rem;
     margin-bottom: 1rem;
+    color: var(--Gold-color) !important;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .bm-banner-content p {
     font-size: 1.5rem;
     margin-bottom: 2rem;
+    color: var(--text-color) !important;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
@@ -1811,6 +1813,10 @@ body {
     border-radius: 10px;
     margin: 2rem 0;
     position: relative;
+}
+
+.bm-feature-box p {
+    color: var(--Gold-color);
 }
 
 .bm-feature-box::before {
@@ -2079,6 +2085,13 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.bp-highlights-section,
+.bp-category-card,
+.bp-carousel-slide {
+    content-visibility: auto;
+    contain-intrinsic-size: 360px;
+}
+
 .branch-testimonial-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -2137,6 +2150,11 @@ body {
     align-items: center;
     justify-content: center;
     gap: 0.8rem;
+}
+
+.bm-cta-section p,
+.bm-contact-detail span {
+    color: var(--text-color);
 }
 
 .bm-contact-detail i {
