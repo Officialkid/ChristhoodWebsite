@@ -1,0 +1,349 @@
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+p {
+    margin-bottom: 1.5rem;
+}
+
+a {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    color: var(--text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+/* Intro Section */
+.ladiesministry-intro {
+    background: linear-gradient(rgba(75, 36, 140, 0.8), rgba(75, 36, 140, 0.8)),
+        url('https://source.unsplash.com/random/1200x800/?women,ministry');
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+    padding: 0 20px;
+}
+
+.ladiesministry-intro h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--Gold-color);
+}
+
+.ladiesministry-intro h4 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+}
+
+/* Main Content */
+.ladiesministry-page {
+    padding: 60px 0;
+    background-color: var(--Background-color);
+}
+
+.ladiesministry-main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.ladiesministry-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 40px;
+}
+
+.ladiesministry-main-content-col {
+    flex: 1;
+    min-width: 300px;
+}
+
+.ladiesministry-main-content-col img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ladiesministry-main-content-col p {
+    margin-bottom: 20px;
+    line-height: 1.8;
+    color: var(--Black-color);
+}
+
+.ladiesministry-main-content-col h4 {
+    color: var(--Royal-purple);
+    margin: 25px 0 15px;
+    font-size: 1.5rem;
+}
+
+.ladiesministry-button-btn {
+    margin-top: 30px;
+}
+
+.ladiesministry-button-btn a {
+    display: inline-block;
+    background-color: var(--Royal-purple);
+    color: var(--text-color);
+    padding: 12px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.ladiesministry-button-btn a:hover {
+    background-color: var(--Primary-Blue);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Desktop Purpose Areas */
+.ladiesministry-purpose {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    display: block;
+    background-color: var(--Background-color);
+}
+
+.ladiesministry-main-banner {
+    background-color: var(--Royal-purple);
+    color: var(--text-color);
+    padding: 15px 25px;
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.ladiesministry-purpose h3 {
+    color: var(--Primary-Blue);
+    margin: 25px 0 10px;
+    font-size: 1.4rem;
+}
+
+.ladiesministry-purpose p {
+    color: var(--Black-color);
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+/* Mobile Accordion */
+.ladies-accord {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.ladies-accord-item {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.ladies-accord-header {
+    background-color: var(--Royal-purple);
+    color: var(--text-color);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.ladies-accord-header h3 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.ladies-accord-icon {
+    font-size: 1.3rem;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+    color: var(--Gold-color);
+}
+
+.ladies-accord-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: var(--Background-color);
+}
+
+.ladies-accord-content p {
+    padding: 20px;
+    margin: 0;
+    color: var(--Black-color);
+    line-height: 1.8;
+}
+
+.ladies-accord-item.active .ladies-accord-content {
+    max-height: 300px;
+}
+
+.ladies-accord-item.active .ladies-accord-icon {
+    transform: rotate(45deg);
+}
+ /* Continue Page Styles */
+ .ladies-cont-page-intro {
+     background: linear-gradient(rgba(75, 36, 140, 0.85), rgba(75, 36, 140, 0.85)),
+         url('https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+     background-size: cover;
+     background-position: center;
+     height: 50vh;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+     color: var(--ladiesministry-white);
+     padding: 0 20px;
+ }
+
+ .ladies-cont-page-intro h1 {
+     font-size: 2.8rem;
+     margin-bottom: 15px;
+     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--Gold-color);
+ }
+
+ .ladies-cont-page-intro h4 {
+     font-size: 1.5rem;
+     font-weight: 300;
+     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+ }
+
+ .ladies-cont-grid-container {
+     display: grid;
+     grid-template-columns: 2fr 1fr;
+     gap: 40px;
+     max-width: 1200px;
+     margin: 40px auto;
+     padding: 0 20px;
+ }
+
+ .ladies-cont-main-content {
+     background-color: var(--ladiesministry-white);
+     padding: 30px;
+     border-radius: 8px;
+     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .ladies-cont-main-banner {
+     background-color: var(--ladiesministry-purple);
+     color: var(--ladiesministry-white);
+     padding: 15px 25px;
+     font-size: 1.3rem;
+     margin: 40px 0 30px;
+     display: inline-block;
+     border-radius: 5px;
+ }
+
+ .ladies-cont-focus {
+     margin-bottom: 40px;
+     padding-bottom: 20px;
+     border-bottom: 1px solid #f0e6f6;
+ }
+
+ .ladies-cont-focus h3 {
+     color: var(--ladiesministry-purple);
+     margin-bottom: 15px;
+ }
+
+ .ladies-cont-activities {
+     margin-left: 20px;
+ }
+
+ .ladies-cont-activities h4 {
+     color: var(--ladiesministry-purple);
+     margin: 20px 0 10px;
+     font-size: 1.2rem;
+ }
+
+ .ladies-cont-program h4 {
+     color: var(--ladiesministry-purple);
+     font-size: 1.2rem;
+     margin: 25px 0 10px;
+ }
+
+ .ladies-cont-social-sidebar {
+     background-color: var(--ladiesministry-light-gray);
+     padding: 30px;
+     border-radius: 8px;
+     height: fit-content;
+     position: sticky;
+     top: 20px;
+ }
+
+ .ladies-cont-social-title {
+     color: var(--ladiesministry-purple);
+     margin-bottom: 20px;
+     font-size: 1.5rem;
+     text-align: center;
+     border-bottom: 2px solid var(--Gold-color);
+     padding-bottom: 10px;
+ }
+
+ .ladies-cont-social-icons {
+     display: flex;
+     flex-direction: column;
+     gap: 15px;
+     margin-top: 30px;
+ }
+
+ .ladies-cont-social-icons a {
+     color: var(--ladiesministry-purple);
+     font-size: 1.1rem;
+     transition: all 0.3s ease;
+     padding: 12px;
+     border: 1px solid var(--ladiesministry-purple);
+     border-radius: 5px;
+     text-align: center;
+     text-decoration: none;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .ladies-cont-social-icons a:hover {
+     background-color: var(--ladiesministry-purple);
+     color: var(--ladiesministry-white);
+ }
+
+ .ladies-cont-social-icons i {
+     margin-right: 10px;
+ }

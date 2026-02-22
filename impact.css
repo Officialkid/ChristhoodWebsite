@@ -1,0 +1,257 @@
+/*CHRISTHOOD IMPACT  */
+
+/* Hero Section */
+.christhood-impact-hero {
+    background: linear-gradient(rgba(75, 36, 140, 0.8), rgba(75, 36, 140, 0.9)), url('/image/Christhood-intro-section.jpg') center/cover no-repeat;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-color);
+    padding: 2rem;
+}
+
+.christhood-impact-hero div {
+    max-width: 800px;
+}
+
+.christhood-impact-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.christhood-impact-hero h2 {
+    font-size: 4rem;
+    color: var(--Gold-color);
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Mission & Vision Section */
+.christhood-impact-mission {
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.christhood-impact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.christhood-impact-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.christhood-impact-content h2 {
+    color: var(--Royal-purple);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.christhood-impact-content h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background-color: var(--Gold-color);
+}
+
+.christhood-impact-content p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.christhood-impact-content strong {
+    color: var(--Royal-purple);
+}
+
+/* Core Pillars Section */
+.christhood-impact-pillars {
+    background-color: var(--Royal-purple);
+    padding: 5rem 2rem;
+    color: var(--text-color);
+}
+
+.christhood-impact-section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--text-color);
+    position: relative;
+}
+
+.christhood-impact-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background-color: var(--Gold-color);
+}
+
+.christhood-impact-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.christhood-impact-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.christhood-impact-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.christhood-impact-card-icon {
+    font-size: 2.5rem;
+    color: var(--Gold-color);
+    margin-bottom: 1rem;
+}
+
+.christhood-impact-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--Gold-color);
+}
+
+.christhood-impact-card p {
+    font-size: 1rem;
+}
+
+/* Objectives Section */
+.christhood-impact-objectives {
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.christhood-impact-objectives .christhood-impact-section-title {
+    color: var(--Royal-purple);
+}
+
+.christhood-impact-objectives .christhood-impact-section-title::after {
+    background-color: var(--Primary-Blue);
+}
+
+.christhood-impact-objectives-list {
+    list-style: none;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.christhood-impact-objectives-list li {
+    padding: 1rem 0;
+    padding-left: 2.5rem;
+    position: relative;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.christhood-impact-objectives-list li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    background-color: var(--Primary-Blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+/* Conclusion Section */
+.christhood-impact-conclusion {
+    background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue));
+    padding: 5rem 2rem;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.christhood-impact-conclusion h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+}
+
+.christhood-impact-scripture {
+    font-style: italic;
+    font-size: 1.3rem;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: var(--text-color);
+    border-left: 4px solid var(--Gold-color);
+}
+
+.christhood-impact-conclusion p {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+}
+.christhood-impact-pillars .christhood-impact-section-title {
+    color: var(--Gold-color);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .christhood-impact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .christhood-impact-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    color: var(--Gold-color);
+    .christhood-impact-hero h2 {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .christhood-impact-hero h1 {
+        font-size: 2rem;
+    }
+
+    .christhood-impact-hero h2 {
+        font-size: 2.5rem;
+    }
+
+    .christhood-impact-content h2,
+    .christhood-impact-section-title {
+        font-size: 2rem;
+    }
+
+    .christhood-impact-scripture {
+        font-size: 1.1rem;
+    }
+}

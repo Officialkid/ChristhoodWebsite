@@ -1,0 +1,3229 @@
+:root {
+    --text-color: #ffffff;
+    --Black-color: #000000;
+    --Royal-purple: #4b248c;
+    --Primary-Blue: #0047AB;
+    --Gold-color: #F3CC3C;
+    --Background-color: #f9f9f9;
+    --nav-bg: rgba(255, 255, 255, 0.98);
+    --Light-purple: #7b5bbe;
+    --Light-blue: #4a7bcc;
+    --Light-gold: #f8de84;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: var(--Background-color);
+}
+
+/* Hero Section */
+.jm-hero-banner {
+    position: relative;
+    height: 80vh;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.jm-slideshow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.jm-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center 30%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.jm-slide.current-slide {
+    opacity: 1;
+}
+
+.jm-overlay-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(75, 36, 140, 0.7), rgba(0, 71, 171, 0.7));
+}
+
+.jm-hero-main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-color);
+    z-index: 2;
+    width: 80%;
+    max-width: 800px;
+}
+
+.jm-hero-main h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+}
+
+.jm-hero-main p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+}
+
+.jm-main-btn {
+    background-color: var(--Gold-color);
+    color: var(--Black-color);
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.jm-main-btn:hover {
+    background-color: var(--Light-gold);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Section Spacing */
+.section-spacing {
+    padding: 5rem 2rem;
+}
+
+.jm-content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.centered-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.jm-section-title {
+    font-size: 2.5rem;
+    color: var(--Royal-purple);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.jm-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue), var(--Gold-color));
+    border-radius: 2px;
+}
+
+.centered-content .jm-section-title::after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+}
+
+/* Two Column Layout */
+.jm-two-column {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: center;
+}
+
+.jm-image-wrapper {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.jm-raised-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.jm-image-wrapper:hover .jm-raised-img {
+    transform: scale(1.05);
+}
+
+.jm-text-content {
+    flex: 1;
+    min-width: 300px;
+}
+
+.jm-description p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.jm-featured-box {
+    background-color: var(--Primary-Blue);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.jm-featured-box p {
+    color: var(--text-color);
+}
+
+.jm-featured-box::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--Primary-Blue);
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+/* Highlights Carousel */
+.highlights-section {
+    padding: 5rem 1rem;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: white;
+}
+
+.categories-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.category-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.category-header {
+    background: var(--Gold-color);
+    color: var(--Black-color);
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.category-carousel {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+    height: 100%;
+}
+
+.carousel-item {
+    flex: 0 0 100%;
+    position: relative;
+    height: 100%;
+}
+
+.carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.protect-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+}
+
+.carousel-item:hover .protect-overlay {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.carousel-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: var(--Gold-color);
+    transform: scale(1.2);
+}
+
+.view-more-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 2px solid var(--Gold-color);
+    color: var(--Gold-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-more-btn:hover {
+    background: var(--Gold-color);
+    color: var(--Black-color);
+}
+
+/* Feature Cards */
+.jm-points-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.jm-feature-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.jm-feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.jm-feature-card i {
+    font-size: 3rem;
+    color: var(--Primary-Blue);
+    margin-bottom: 1rem;
+}
+
+.jm-feature-card h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.jm-feature-card p {
+    color: #555;
+}
+
+/* Core Question Section */
+.jm-core-question {
+    background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+}
+
+.jm-large-quote {
+    font-size: 2rem;
+    text-align: center;
+    font-style: italic;
+    color: var(--Royal-purple);
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+    font-weight: 600;
+}
+
+/* Method Section */
+.jm-approach-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin: 3rem 0;
+}
+
+.jm-method-card {
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.jm-method-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--Primary-Blue);
+}
+
+.negative-icon {
+    color: #e74c3c;
+}
+
+.jm-method-card h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+}
+
+.jm-method-card ul {
+    list-style-type: none;
+}
+
+.jm-method-card li {
+    padding: 0.5rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.jm-method-card li::before {
+    content: '•';
+    color: var(--Primary-Blue);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.negative-icon+h3+ul li::before {
+    color: #e74c3c;
+}
+
+.jm-method-summary {
+    text-align: center;
+    font-size: 1.2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Activities Section */
+.jm-activities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.jm-session-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.jm-session-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.jm-session-icon {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    font-size: 2.5rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.jm-session-card h3 {
+    color: var(--Royal-purple);
+    padding: 1rem 1.5rem 0.5rem;
+    font-size: 1.5rem;
+}
+
+.jm-skills-list {
+    padding: 0 1.5rem;
+}
+
+.jm-skills-list h4 {
+    color: var(--Primary-Blue);
+    margin: 1rem 0 0.5rem;
+}
+
+.jm-skills-list ul {
+    list-style-type: none;
+    margin-bottom: 1rem;
+}
+
+.jm-skills-list li {
+    padding: 0.3rem 0;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.jm-skills-list li::before {
+    content: '✓';
+    color: var(--Primary-Blue);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.jm-session-card>p {
+    padding: 0 1.5rem 1.5rem;
+    color: #555;
+}
+
+/* Benefits Section */
+.jm-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.jm-benefit-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.jm-benefit-item i {
+    font-size: 2rem;
+    color: var(--Primary-Blue);
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.jm-benefit-item p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Social Media Section */
+.programs-socials-v2 {
+    position: relative;
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    overflow: hidden;
+}
+
+.cosmic-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23ffffff' opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 100px 100px;
+    opacity: 0.3;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.title-glitch {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 0 var(--Primary-Blue), -2px -2px 0 var(--Gold-color);
+}
+
+.subtitle-shine {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.social-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.social-tile {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tile-content {
+    position: relative;
+    z-index: 3;
+}
+
+.platform-logo {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.social-tile h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.social-tile p {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.social-cta {
+    display: inline-flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.social-cta:hover {
+    transform: translateX(5px);
+}
+
+.cta-arrow {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.social-cta:hover .cta-arrow {
+    transform: translateX(5px);
+}
+
+.tile-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    transform: rotate(30deg);
+    transition: transform 0.5s ease;
+    z-index: 2;
+}
+
+.social-tile:hover .tile-glow {
+    transform: rotate(30deg) translate(20px, 20px);
+}
+
+.insta-tile {
+    background: linear-gradient(135deg, rgba(131, 58, 180, 0.7) 0%, rgba(253, 29, 29, 0.7) 50%, rgba(252, 176, 69, 0.7) 100%);
+}
+
+.fb-tile {
+    background: linear-gradient(135deg, rgba(66, 103, 178, 0.7) 0%, rgba(66, 103, 178, 0.9) 100%);
+}
+
+.tiktok-tile {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(37, 244, 238, 0.7) 50%, rgba(255, 0, 128, 0.7) 100%);
+}
+
+/* Closing Section */
+.jm-closing-section {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    text-align: center;
+}
+
+.jm-closing-section .jm-section-title {
+    color: var(--Gold-color);
+}
+
+.jm-final-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.jm-final-content blockquote {
+    font-size: 1.5rem;
+    font-style: italic;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    position: relative;
+    color: var(--text-color);
+}
+
+.jm-final-content blockquote::before,
+.jm-final-content blockquote::after {
+    content: '"';
+    font-size: 4rem;
+    position: absolute;
+    opacity: 0.3;
+}
+
+.jm-final-content blockquote::before {
+    top: 0;
+    left: 1rem;
+}
+
+.jm-final-content blockquote::after {
+    bottom: -2rem;
+    right: 1rem;
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .jm-hero-main h1 {
+        font-size: 2.8rem;
+    }
+
+    .jm-hero-main p {
+        font-size: 1.2rem;
+    }
+
+    .jm-section-title {
+        font-size: 2rem;
+    }
+
+    .jm-large-quote {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .jm-hero-banner {
+        height: 60vh;
+    }
+
+    .jm-hero-main h1 {
+        font-size: 2.2rem;
+    }
+
+    .section-spacing {
+        padding: 3rem 1rem;
+    }
+
+    .jm-points-grid,
+    .jm-activities-grid,
+    .jm-benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .social-matrix {
+        grid-template-columns: 1fr;
+    }
+
+    .jm-approach-cards {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .jm-hero-main h1 {
+        font-size: 1.8rem;
+    }
+
+    .jm-hero-main p {
+        font-size: 1rem;
+    }
+
+    .jm-section-title {
+        font-size: 1.8rem;
+    }
+
+    .jm-large-quote {
+        font-size: 1.3rem;
+    }
+
+    .categories-container {
+        flex-direction: column;
+    }
+
+    .category-card {
+        max-width: 100%;
+    }
+}
+
+/* teenlife css */
+/* Hero Section */
+.tlm-hero-v2 {
+    position: relative;
+    height: 80vh;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.background-carousel-v2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.background-slide-v2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center 30%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.background-slide-v2.active {
+    opacity: 1;
+}
+
+.overlay-v2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65));
+}
+
+.tlm-hero-content-v2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-color);
+    z-index: 2;
+    width: 80%;
+    max-width: 800px;
+}
+
+.tlm-hero-content-v2 h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: var(--Gold-color);
+}
+
+.tlm-hero-content-v2 p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+}
+
+.cta-btn-primary-v2 {
+    background-color: var(--Gold-color);
+    color: var(--Black-color);
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.cta-btn-primary-v2:hover {
+    background-color: var(--Light-gold);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-nav-v2 {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    z-index: 3;
+}
+
+.carousel-dot-v2 {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot-v2.active {
+    background-color: var(--Gold-color);
+    transform: scale(1.2);
+}
+
+/* Section Spacing */
+.section-padding-v2 {
+    padding: 5rem 2rem;
+}
+
+.container-v2 {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.text-center-v2 {
+    text-align: center;
+}
+
+.section-heading-v2 {
+    font-size: 2.5rem;
+    color: var(--Royal-purple);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.section-heading-v2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue), var(--Gold-color));
+    border-radius: 2px;
+}
+
+.text-center-v2 .section-heading-v2::after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+}
+
+.section-subtitle-v2 {
+    font-size: 1.2rem;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+/* Intro Section */
+.intro-grid-v2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: center;
+}
+
+.intro-image-v2 {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.img-elevated-v2 {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.intro-image-v2:hover .img-elevated-v2 {
+    transform: scale(1.05);
+}
+
+.intro-content-v2 {
+    flex: 1;
+    min-width: 300px;
+}
+
+.intro-text-v2 p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* Background variations */
+.bg-light-v2 {
+    background-color: var(--Light-gray);
+}
+
+.bg-royal-purple-v2 {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Light-purple) 100%);
+    color: white;
+}
+
+.bg-royal-purple-v2 .section-heading-v2 {
+    color: var(--Gold-color);
+}
+
+.bg-royal-purple-v2 .section-subtitle-v2,
+.bg-royal-purple-v2 p,
+.bg-royal-purple-v2 li {
+    color: var(--text-color);
+}
+
+.light-text-v2 {
+    color: white;
+}
+
+/* Challenges Section */
+.challenges-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.challenge-card-v2 {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.challenge-card-v2:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.challenge-icon-v2 {
+    font-size: 3rem;
+    color: var(--Primary-Blue);
+    margin-bottom: 1rem;
+}
+
+.challenge-card-v2 h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1rem;
+}
+
+/* Mission Section */
+.mission-content-v2 {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.mission-statement-v2 {
+    font-size: 1.3rem;
+    margin-bottom: 3rem;
+    font-style: italic;
+}
+
+.mission-points-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.mission-point-v2 {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.mission-point-v2 h3 {
+    margin-bottom: 1rem;
+    color: var(--Gold-color);
+}
+
+/* Programs Section */
+.programs-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.program-card-v2 {
+    height: 300px;
+    perspective: 1000px;
+}
+
+.program-card-inner-v2 {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.program-card-v2:hover .program-card-inner-v2 {
+    transform: rotateY(180deg);
+}
+
+.program-card-front-v2,
+.program-card-back-v2 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.program-card-front-v2 {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+}
+
+.program-card-back-v2 {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: var(--text-color);
+    transform: rotateY(180deg);
+    text-align: left;
+}
+
+.program-icon-v2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.program-card-back-v2 h3 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.program-card-back-v2 ul {
+    list-style-type: none;
+}
+
+.program-card-back-v2 li {
+    padding: 0.3rem 0;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.program-card-back-v2 li::before {
+    content: '✓';
+    color: var(--Gold-color);
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+/* Camp Experience Section */
+.camp-features-container-v2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+}
+
+.camp-features-grid-v2 {
+    flex: 1;
+    min-width: 300px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.camp-feature-v2 {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.feature-icon-v2 {
+    font-size: 2.5rem;
+    color: var(--Primary-Blue);
+    margin-bottom: 1rem;
+}
+
+.camp-feature-v2 h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 0.5rem;
+}
+
+.camp-activities-box-v2 {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.camp-activities-box-v2 h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.activities-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.activity-item-v2 {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.activity-item-v2 i {
+    color: var(--Primary-Blue);
+    font-size: 1.2rem;
+    width: 24px;
+}
+
+/* Testimonials Section */
+.testimonials-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.testimonial-card-v2 {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.quote-icon-v2 {
+    font-size: 2rem;
+    color: var(--Primary-Blue);
+    margin-bottom: 1rem;
+}
+
+.testimonial-content-v2 p {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+}
+
+.testimonial-author-v2 {
+    font-weight: bold;
+    color: var(--Royal-purple);
+}
+
+/* CTA Section */
+.tlm-cta-v2 {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+}
+
+.tlm-cta-v2 .section-heading-v2,
+.tlm-cta-v2 .section-subtitle-v2 {
+    color: white;
+}
+
+.tlm-cta-v2 .section-heading-v2::after {
+    background: var(--Gold-color);
+}
+
+/* Highlights Carousel */
+.highlights-section {
+    padding: 5rem 1rem;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: white;
+}
+
+.categories-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.category-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.category-header {
+    background: var(--Gold-color);
+    color: var(--Black-color);
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.category-carousel {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+    height: 100%;
+}
+
+.carousel-item {
+    flex: 0 0 100%;
+    position: relative;
+    height: 100%;
+}
+
+.carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.protect-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+}
+
+.carousel-item:hover .protect-overlay {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.carousel-controls {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+}
+
+.carousel-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: var(--Gold-color);
+    transform: scale(1.2);
+}
+
+.view-more-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 2px solid var(--Gold-color);
+    color: var(--Gold-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-more-btn:hover {
+    background: var(--Gold-color);
+    color: var(--Black-color);
+}
+
+/* Social Media Section */
+.programs-socials-v2 {
+    position: relative;
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    overflow: hidden;
+}
+
+.cosmic-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23ffffff' opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 100px 100px;
+    opacity: 0.3;
+}
+
+.social-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.social-tile {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tile-content {
+    position: relative;
+    z-index: 3;
+}
+
+.platform-logo {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.social-tile h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.social-tile p {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.social-cta {
+    display: inline-flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.social-cta:hover {
+    transform: translateX(5px);
+}
+
+.cta-arrow {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.social-cta:hover .cta-arrow {
+    transform: translateX(5px);
+}
+
+.tile-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    transform: rotate(30deg);
+    transition: transform 0.5s ease;
+    z-index: 2;
+}
+
+.social-tile:hover .tile-glow {
+    transform: rotate(30deg) translate(20px, 20px);
+}
+
+.insta-tile {
+    background: linear-gradient(135deg, rgba(131, 58, 180, 0.7) 0%, rgba(253, 29, 29, 0.7) 50%, rgba(252, 176, 69, 0.7) 100%);
+}
+
+.fb-tile {
+    background: linear-gradient(135deg, rgba(66, 103, 178, 0.7) 0%, rgba(66, 103, 178, 0.9) 100%);
+}
+
+.tiktok-tile {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(37, 244, 238, 0.7) 50%, rgba(255, 0, 128, 0.7) 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .tlm-hero-content-v2 h1 {
+        font-size: 2.8rem;
+    }
+
+    .tlm-hero-content-v2 p {
+        font-size: 1.2rem;
+    }
+
+    .section-heading-v2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .tlm-hero-v2 {
+        height: 60vh;
+    }
+
+    .tlm-hero-content-v2 h1 {
+        font-size: 2.2rem;
+    }
+
+    .section-padding-v2 {
+        padding: 3rem 1rem;
+    }
+
+    .challenges-grid-v2,
+    .programs-grid-v2,
+    .testimonials-grid-v2 {
+        grid-template-columns: 1fr;
+    }
+
+    .camp-features-container-v2 {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 576px) {
+    .tlm-hero-content-v2 h1 {
+        font-size: 1.8rem;
+    }
+
+    .tlm-hero-content-v2 p {
+        font-size: 1rem;
+    }
+
+    .section-heading-v2 {
+        font-size: 1.8rem;
+    }
+
+    .categories-container {
+        flex-direction: column;
+    }
+
+    .category-card {
+        max-width: 100%;
+    }
+}
+
+/* BRANCH CSS CODE */
+
+/* Hero Section */
+.bm-main-banner {
+    position: relative;
+    height: 80vh;
+    overflow: hidden;
+    margin-top: 80px;
+}
+
+.bm-slider-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.bm-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center 30%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.bm-slide.active-slide {
+    opacity: 1;
+}
+
+.bm-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(75, 36, 140, 0.7), rgba(0, 71, 171, 0.7));
+}
+
+.bm-banner-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--text-color);
+    z-index: 2;
+    width: 80%;
+    max-width: 800px;
+}
+
+.bm-banner-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.bm-banner-content p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.bm-primary-button {
+    background-color: var(--Gold-color);
+    color: var(--Black-color);
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.bm-primary-button:hover {
+    background-color: var(--Light-gold);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bm-slide-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    z-index: 3;
+}
+
+.bm-control-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bm-control-dot.active-dot {
+    background-color: var(--Gold-color);
+    transform: scale(1.2);
+}
+
+/* Section Spacing */
+.section-spacing {
+    padding: 5rem 2rem;
+}
+
+.bm-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.bm-heading {
+    font-size: 2.5rem;
+    color: var(--Royal-purple);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.bm-heading::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue), var(--Gold-color));
+    border-radius: 2px;
+}
+
+.text-center .bm-heading::after {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+}
+
+.bm-subheading {
+    font-size: 1.2rem;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    text-align: center;
+}
+
+/* Background variations */
+.bm-light-background {
+    background-color: var(--Light-gray);
+}
+
+.bm-primary-background {
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+}
+
+.bm-primary-background .bm-heading {
+    color: var(--Gold-color);
+}
+
+.bm-primary-background .bm-subheading,
+.bm-primary-background p,
+.bm-primary-background li {
+    color: var(--text-color);
+}
+
+.light-text {
+    color: white;
+}
+
+/* Intro Section */
+.bm-intro-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: center;
+}
+
+.bm-image-container {
+    flex: 1;
+    min-width: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.bm-shadow-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.bm-image-container:hover .bm-shadow-image {
+    transform: scale(1.05);
+}
+
+.bm-text-block {
+    flex: 1;
+    min-width: 300px;
+}
+
+.bm-description p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.bm-feature-box {
+    background-color: var(--Primary-Blue);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.bm-feature-box::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--Primary-Blue);
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+/* Vision & Mission Section */
+.bm-vision-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+}
+
+.bm-vision-card,
+.bm-mission-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* About Section */
+.bm-about-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    align-items: flex-start;
+}
+
+.bm-logo-column {
+    flex: 1;
+    min-width: 300px;
+}
+
+.bm-logo-wrapper {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.bm-logo-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.bm-content-column {
+    flex: 2;
+    min-width: 300px;
+}
+
+.bm-about-content p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* Audience Section */
+.bm-reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.bm-reason-item {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bm-reason-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.bm-reason-icon {
+    font-size: 3rem;
+    color: var(--Primary-Blue);
+    margin-bottom: 1rem;
+}
+
+.bm-reason-item h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1rem;
+}
+
+/* Overview Section */
+.bm-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.bm-overview-item {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bm-overview-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.bm-number-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 1.5rem;
+}
+
+.bm-overview-item h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1rem;
+}
+
+/* Objectives Section */
+.bm-objectives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.bm-objective-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.bm-objective-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.bm-obj-icon {
+    font-size: 3rem;
+    color: var(--Primary-Blue);
+    margin-bottom: 1rem;
+}
+
+.bm-objective-card h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 1rem;
+}
+
+/* Structure Section */
+.bm-timeline {
+    max-width: 800px;
+    margin: 3rem auto 0;
+    position: relative;
+}
+
+.bm-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 30px;
+    width: 4px;
+    background: linear-gradient(to bottom, var(--Royal-purple), var(--Primary-Blue));
+    border-radius: 2px;
+}
+
+.bm-timeline-step {
+    display: flex;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.bm-step-number {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 2rem;
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.bm-step-content {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    flex: 1;
+}
+
+.bm-step-content h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 0.5rem;
+}
+
+/* Testimonials Section */
+.branch-testimonials {
+    padding: 5rem 2rem;
+    background-color: var(--Light-gray);
+}
+
+.branch-section-title {
+    font-size: 2.5rem;
+    color: var(--Royal-purple);
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    text-align: center;
+}
+
+.branch-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue), var(--Gold-color));
+    border-radius: 2px;
+}
+
+.branch-testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.branch-testimonial-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.branch-testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.branch-testimonial-content {
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.branch-testimonial-author {
+    display: flex;
+    align-items: center;
+}
+
+.branch-testimonial-author-info h4 {
+    color: var(--Royal-purple);
+    margin-bottom: 0.3rem;
+}
+
+.branch-testimonial-author-info p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* CTA Section */
+.bm-cta-content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.bm-contact-box {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 2rem 0;
+    backdrop-filter: blur(10px);
+}
+
+.bm-contact-box h3 {
+    margin-bottom: 1rem;
+    color: var(--Gold-color);
+}
+
+.bm-contact-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.bm-contact-detail {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+}
+
+.bm-contact-detail i {
+    color: var(--Gold-color);
+}
+
+/* Highlights Section */
+.bp-highlights-section {
+    padding: 5rem 1rem;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+}
+
+.bp-section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: white;
+    text-align: center;
+}
+
+.bp-categories-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.bp-category-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.bp-category-header {
+    background: var(--Gold-color);
+    color: var(--Black-color);
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.bp-carousel-container {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+}
+
+.bp-carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+    height: 100%;
+}
+
+.bp-carousel-slide {
+    flex: 0 0 100%;
+    position: relative;
+    height: 100%;
+}
+
+.bp-carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.bp-protect-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+}
+
+.bp-carousel-slide:hover .bp-protect-overlay {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.bp-carousel-nav {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+}
+
+.bp-carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bp-carousel-dot.active {
+    background: var(--Gold-color);
+    transform: scale(1.2);
+}
+
+.bp-view-more-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 2px solid var(--Gold-color);
+    color: var(--Gold-color);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.bp-view-more-btn:hover {
+    background: var(--Gold-color);
+    color: var(--Black-color);
+}
+
+@media (max-width: 900px) {
+    .bm-main-banner {
+        height: 60vh;
+    }
+
+    .bm-banner-content h1 {
+        font-size: 2.4rem;
+    }
+
+    .bm-banner-content p {
+        font-size: 1.1rem;
+    }
+
+    .bm-intro-layout,
+    .bm-about-layout {
+        flex-direction: column;
+    }
+
+    .bm-vision-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .bm-heading {
+        font-size: 2rem;
+    }
+
+    .bm-banner-content h1 {
+        font-size: 1.9rem;
+    }
+
+    .bm-banner-content p {
+        font-size: 1rem;
+    }
+}
+
+/* Social Media Section */
+.programs-socials-v2 {
+    position: relative;
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, var(--Royal-purple) 0%, var(--Primary-Blue) 100%);
+    color: white;
+    overflow: hidden;
+}
+
+.cosmic-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='1' fill='%23ffffff' opacity='0.1'/%3E%3C/svg%3E");
+    background-size: 100px 100px;
+    opacity: 0.3;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.title-glitch {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 0 var(--Primary-Blue), -2px -2px 0 var(--Gold-color);
+}
+
+.subtitle-shine {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.social-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+}
+
+.social-tile {
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.social-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tile-content {
+    position: relative;
+    z-index: 3;
+}
+
+.platform-logo {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.social-tile h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.social-tile p {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.social-cta {
+    display: inline-flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+}
+
+.social-cta:hover {
+    transform: translateX(5px);
+}
+
+.cta-arrow {
+    margin-left: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.social-cta:hover .cta-arrow {
+    transform: translateX(5px);
+}
+
+.tile-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    transform: rotate(30deg);
+    transition: transform 0.5s ease;
+    z-index: 2;
+}
+
+.social-tile:hover .tile-glow {
+    transform: rotate(30deg) translate(20px, 20px);
+}
+
+.insta-tile {
+    background: linear-gradient(135deg, rgba(131, 58, 180, 0.7) 0%, rgba(253, 29, 29, 0.7) 50%, rgba(252, 176, 69, 0.7) 100%);
+}
+
+.fb-tile {
+    background: linear-gradient(135deg, rgba(66, 103, 178, 0.7) 0%, rgba(66, 103, 178, 0.9) 100%);
+}
+
+.tiktok-tile {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(37, 244, 238, 0.7) 50%, rgba(255, 0, 128, 0.7) 100%);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .bm-banner-content h1 {
+        font-size: 2.8rem;
+    }
+
+    .bm-banner-content p {
+        font-size: 1.2rem;
+    }
+
+    .bm-heading {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .bm-main-banner {
+        height: 60vh;
+    }
+
+    .bm-banner-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .section-spacing {
+        padding: 3rem 1rem;
+    }
+
+    .bm-vision-grid,
+    .bm-reasons-grid,
+    .bm-overview-grid,
+    .bm-objectives-grid,
+    .branch-testimonial-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bp-categories-container {
+        flex-direction: column;
+    }
+
+    .bp-category-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .bm-banner-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .bm-banner-content p {
+        font-size: 1rem;
+    }
+
+    .bm-heading {
+        font-size: 1.8rem;
+    }
+
+    .bm-timeline::before {
+        left: 25px;
+    }
+
+    .bm-step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+        margin-right: 1.5rem;
+    }
+}
+
+/* IACT CSS */
+ /* Hero Section */
+ .christhood-iact-hero {
+     background: linear-gradient(rgba(0, 71, 171, 0.85), rgba(75, 36, 140, 0.9)), url('/image/Gemm-Photo-Section.jpg') center/cover no-repeat;
+     min-height: 70vh;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     text-align: center;
+     color: var(--text-color);
+     padding: 2rem;
+     position: relative;
+ }
+
+ .christhood-iact-hero::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%234b248c' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+     opacity: 0.3;
+ }
+
+ .christhood-iact-hero div {
+     max-width: 800px;
+     z-index: 1;
+ }
+
+ .christhood-iact-hero h1 {
+     font-size: 2.8rem;
+     margin-bottom: 1.5rem;
+     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+ }
+
+ .christhood-iact-hero h2 {
+     font-size: 3.5rem;
+     color: var(--Gold-color);
+     text-transform: uppercase;
+     letter-spacing: 3px;
+     font-weight: 800;
+     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+ }
+
+ /* Mission & Vision Section */
+ .christhood-iact-mission {
+     padding: 5rem 2rem;
+     max-width: 1200px;
+     margin: 0 auto;
+ }
+
+ .christhood-iact-grid {
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     gap: 3rem;
+     align-items: center;
+ }
+
+ .christhood-iact-image img {
+     width: 100%;
+     border-radius: 10px;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+     border: 3px solid var(--Primary-Blue);
+ }
+
+ .christhood-iact-content h2 {
+     color: var(--Primary-Blue);
+     font-size: 2.5rem;
+     margin-bottom: 1.5rem;
+     position: relative;
+ }
+
+ .christhood-iact-content h2::after {
+     content: '';
+     position: absolute;
+     bottom: -10px;
+     left: 0;
+     width: 60px;
+     height: 4px;
+     background-color: var(--Gold-color);
+ }
+
+ .christhood-iact-content p {
+     margin-bottom: 1.5rem;
+     font-size: 1.1rem;
+ }
+
+ .christhood-iact-content strong {
+     color: var(--Primary-Blue);
+ }
+
+ /* Core Components Section */
+ .christhood-iact-pillars {
+     background: linear-gradient(to right, var(--Primary-Blue), var(--Royal-purple));
+     padding: 5rem 2rem;
+     color: var(--text-color);
+ }
+
+ .christhood-iact-section-title {
+     text-align: center;
+     font-size: 2.5rem;
+     margin-bottom: 3rem;
+     color: var(--text-color);
+     position: relative;
+ }
+
+ .christhood-iact-section-title::after {
+     content: '';
+     position: absolute;
+     bottom: -10px;
+     left: 50%;
+     transform: translateX(-50%);
+     width: 80px;
+     height: 4px;
+     background-color: var(--Gold-color);
+ }
+
+ .christhood-iact-cards {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+     gap: 2rem;
+     max-width: 1200px;
+     margin: 0 auto;
+ }
+
+ .christhood-iact-card {
+     background: rgba(255, 255, 255, 0.1);
+     border-radius: 10px;
+     padding: 2rem;
+     text-align: center;
+     transition: transform 0.3s ease, box-shadow 0.3s ease;
+     backdrop-filter: blur(10px);
+     border: 1px solid rgba(255, 255, 255, 0.2);
+ }
+
+ .christhood-iact-card:hover {
+     transform: translateY(-10px);
+     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+     background: rgba(255, 255, 255, 0.15);
+ }
+
+ .christhood-iact-card-icon {
+     font-size: 2.5rem;
+     color: var(--Gold-color);
+     margin-bottom: 1rem;
+     background: rgba(0, 0, 0, 0.2);
+     width: 70px;
+     height: 70px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     border-radius: 50%;
+     margin: 0 auto 1rem;
+ }
+
+ .christhood-iact-card h3 {
+     font-size: 1.5rem;
+     margin-bottom: 1rem;
+     color: var(--Gold-color);
+ }
+
+ .christhood-iact-card p {
+     font-size: 1rem;
+ }
+
+ /* Program Benefits Section */
+ .christhood-iact-objectives {
+     padding: 5rem 2rem;
+     max-width: 1200px;
+     margin: 0 auto;
+ }
+
+ .christhood-iact-objectives .christhood-iact-section-title {
+     color: var(--Primary-Blue);
+ }
+
+ .christhood-iact-objectives .christhood-iact-section-title::after {
+     background-color: var(--Royal-purple);
+ }
+
+ .christhood-iact-objectives-list {
+     list-style: none;
+     max-width: 800px;
+     margin: 0 auto;
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+     gap: 1.5rem;
+ }
+
+ .christhood-iact-objectives-list li {
+     padding: 1.5rem;
+     padding-left: 3.5rem;
+     position: relative;
+     font-size: 1.1rem;
+     background-color: white;
+     border-radius: 8px;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+     transition: transform 0.3s ease;
+ }
+
+ .christhood-iact-objectives-list li:hover {
+     transform: translateY(-5px);
+     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+ }
+
+ .christhood-iact-objectives-list li:before {
+     content: '✦';
+     position: absolute;
+     left: 1rem;
+     top: 50%;
+     transform: translateY(-50%);
+     width: 30px;
+     height: 30px;
+     background-color: var(--Primary-Blue);
+     color: white;
+     border-radius: 50%;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 1rem;
+ }
+
+ /* Conclusion Section */
+ .christhood-iact-conclusion {
+     background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue));
+     padding: 5rem 2rem;
+     color: var(--text-color);
+     text-align: center;
+ }
+
+ .christhood-iact-conclusion h2 {
+     font-size: 2.5rem;
+     margin-bottom: 2rem;
+ }
+
+ .christhood-iact-scripture {
+     font-style: italic;
+     font-size: 1.3rem;
+     max-width: 800px;
+     margin: 0 auto 2rem;
+     padding: 2rem;
+     background: rgba(255, 255, 255, 0.1);
+     border-radius: 10px;
+     backdrop-filter: blur(10px);
+     border-left: 4px solid var(--Gold-color);
+     position: relative;
+ }
+
+ .christhood-iact-scripture::before,
+ .christhood-iact-scripture::after {
+     content: '"';
+     font-size: 3rem;
+     color: var(--Gold-color);
+     position: absolute;
+     opacity: 0.3;
+ }
+
+ .christhood-iact-scripture::before {
+     top: 0;
+     left: 1rem;
+ }
+
+ .christhood-iact-scripture::after {
+     bottom: -1rem;
+     right: 1rem;
+ }
+
+ .christhood-iact-conclusion p {
+     max-width: 800px;
+     margin: 0 auto;
+     font-size: 1.1rem;
+ }
+
+ /* Responsive Design */
+ @media (max-width: 900px) {
+     .christhood-iact-grid {
+         grid-template-columns: 1fr;
+     }
+
+     .christhood-iact-hero h1 {
+         font-size: 2.2rem;
+     }
+
+     .christhood-iact-hero h2 {
+         font-size: 2.8rem;
+     }
+
+     .christhood-iact-objectives-list {
+         grid-template-columns: 1fr;
+     }
+ }
+
+ @media (max-width: 600px) {
+     .christhood-iact-hero h1 {
+         font-size: 1.8rem;
+     }
+
+     .christhood-iact-hero h2 {
+         font-size: 2.2rem;
+     }
+
+     .christhood-iact-content h2,
+     .christhood-iact-section-title {
+         font-size: 2rem;
+     }
+
+     .christhood-iact-scripture {
+         font-size: 1.1rem;
+     }
+ }
+
+ /*APOLOGETICS CSS  */
+   /* Hero Section */
+   .christhood-apologetics-hero {
+       background: linear-gradient(rgba(75, 36, 140, 0.85), rgba(0, 71, 171, 0.9)), url('https://placehold.co/1200x800/4b248c/FFFFFF/png?text=Christhood+Apologetics') center/cover no-repeat;
+       min-height: 80vh;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       text-align: center;
+       color: var(--text-color);
+       padding: 2rem;
+       position: relative;
+       overflow: hidden;
+   }
+
+   .christhood-apologetics-hero::before {
+       content: '';
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23F3CC3C' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+       opacity: 0.3;
+   }
+
+   .christhood-apologetics-hero div {
+       max-width: 900px;
+       z-index: 1;
+   }
+
+   .christhood-apologetics-hero h1 {
+       font-size: 4rem;
+       margin-bottom: 1rem;
+       text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+       font-weight: 800;
+   }
+
+   .christhood-apologetics-hero h2 {
+       font-size: 2.2rem;
+       color: var(--Gold-color);
+       font-weight: 400;
+       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+   }
+
+   /* Container */
+   .christhood-apologetics-container {
+       max-width: 1200px;
+       margin: 0 auto;
+       padding: 0 2rem;
+   }
+
+   /* Introduction Section */
+   .christhood-apologetics-intro {
+       padding: 5rem 0;
+       background-color: white;
+   }
+
+   .christhood-apologetics-intro h2 {
+       color: var(--Royal-purple);
+       font-size: 2.5rem;
+       margin-bottom: 2rem;
+       text-align: center;
+       position: relative;
+   }
+
+   .christhood-apologetics-intro h2::after {
+       content: '';
+       position: absolute;
+       bottom: -10px;
+       left: 50%;
+       transform: translateX(-50%);
+       width: 80px;
+       height: 4px;
+       background-color: var(--Gold-color);
+   }
+
+   .christhood-apologetics-intro p {
+       font-size: 1.2rem;
+       text-align: center;
+       max-width: 900px;
+       margin: 0 auto;
+       line-height: 1.8;
+   }
+
+   /* Challenges Section */
+   .christhood-apologetics-challenges {
+       padding: 5rem 0;
+       background: linear-gradient(to bottom, var(--Primary-Blue), var(--Royal-purple));
+       color: var(--text-color);
+   }
+
+   .christhood-apologetics-challenges h2 {
+       font-size: 2.5rem;
+       margin-bottom: 3rem;
+       text-align: center;
+       color: var(--text-color);
+   }
+
+   .christhood-apologetics-cards {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+       gap: 2rem;
+   }
+
+   .christhood-apologetics-card {
+       background: rgba(255, 255, 255, 0.1);
+       border-radius: 10px;
+       padding: 2rem;
+       text-align: center;
+       transition: transform 0.3s ease;
+       backdrop-filter: blur(10px);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       position: relative;
+       overflow: hidden;
+   }
+
+   .christhood-apologetics-card:hover {
+       transform: translateY(-10px);
+       background: rgba(255, 255, 255, 0.15);
+   }
+
+   .christhood-apologetics-card-icon {
+       font-size: 3rem;
+       color: var(--Gold-color);
+       margin-bottom: 1.5rem;
+   }
+
+   .christhood-apologetics-card h3 {
+       font-size: 1.5rem;
+       margin-bottom: 1rem;
+       color: var(--Gold-color);
+   }
+
+   .christhood-apologetics-card p {
+       margin-bottom: 1.5rem;
+       font-size: 1.1rem;
+   }
+
+   .christhood-apologetics-more-content {
+       max-height: 0;
+       overflow: hidden;
+       transition: max-height 0.5s ease;
+       text-align: left;
+       font-size: 1rem;
+       margin-top: 1rem;
+   }
+
+   .christhood-apologetics-more-content.active {
+       max-height: 500px;
+   }
+
+   .christhood-apologetics-read-more {
+       background-color: var(--Gold-color);
+       color: var(--Royal-purple);
+       border: none;
+       padding: 0.8rem 1.5rem;
+       border-radius: 30px;
+       font-weight: 600;
+       cursor: pointer;
+       transition: all 0.3s ease;
+   }
+
+   .christhood-apologetics-read-more:hover {
+       background-color: var(--text-color);
+       transform: scale(1.05);
+   }
+
+   /* Importance Section */
+   .christhood-apologetics-importance {
+       padding: 5rem 0;
+       background-color: white;
+   }
+
+   .christhood-apologetics-importance h2 {
+       color: var(--Primary-Blue);
+       font-size: 2.5rem;
+       margin-bottom: 3rem;
+       text-align: center;
+   }
+
+   .christhood-apologetics-accordion {
+       max-width: 800px;
+       margin: 0 auto;
+   }
+
+   .christhood-apologetics-accordion-item {
+       margin-bottom: 1rem;
+       border-radius: 8px;
+       overflow: hidden;
+       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+   }
+
+   .christhood-apologetics-accordion-header {
+       width: 100%;
+       padding: 1.5rem;
+       background: linear-gradient(to right, var(--Primary-Blue), var(--Royal-purple));
+       color: var(--text-color);
+       border: none;
+       text-align: left;
+       font-size: 1.2rem;
+       font-weight: 600;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       cursor: pointer;
+       transition: background 0.3s ease;
+   }
+
+   .christhood-apologetics-accordion-header:hover {
+       background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue));
+   }
+
+   .christhood-apologetics-accordion-header i {
+       transition: transform 0.3s ease;
+   }
+
+   .christhood-apologetics-accordion-header.active i {
+       transform: rotate(180deg);
+   }
+
+   .christhood-apologetics-accordion-content {
+       max-height: 0;
+       overflow: hidden;
+       transition: max-height 0.5s ease;
+       background-color: #f5f5f5;
+   }
+
+   .christhood-apologetics-accordion-content.active {
+       max-height: 300px;
+   }
+
+   .christhood-apologetics-accordion-content p {
+       padding: 1.5rem;
+       font-size: 1.1rem;
+       line-height: 1.6;
+   }
+
+   /* Truths Section */
+   .christhood-apologetics-truths {
+       padding: 5rem 0;
+       background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue));
+       color: var(--text-color);
+   }
+
+   .christhood-apologetics-truths h2 {
+       font-size: 2.5rem;
+       margin-bottom: 3rem;
+       text-align: center;
+   }
+
+   .christhood-apologetics-truths-grid {
+       display: grid;
+       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+       gap: 2rem;
+   }
+
+   .christhood-apologetics-truth-item {
+       background: rgba(255, 255, 255, 0.1);
+       border-radius: 10px;
+       padding: 2rem;
+       text-align: center;
+       backdrop-filter: blur(10px);
+       border: 1px solid rgba(255, 255, 255, 0.2);
+       transition: transform 0.3s ease;
+   }
+
+   .christhood-apologetics-truth-item:hover {
+       transform: translateY(-5px);
+       background: rgba(255, 255, 255, 0.15);
+   }
+
+   .christhood-apologetics-truth-item h3 {
+       font-size: 1.5rem;
+       margin-bottom: 1rem;
+       color: var(--Gold-color);
+   }
+
+   .christhood-apologetics-truth-item p {
+       font-size: 1.1rem;
+   }
+
+   /* Conclusion Section */
+   .christhood-apologetics-conclusion {
+       padding: 5rem 0;
+       background-color: white;
+   }
+
+   .christhood-apologetics-conclusion h2 {
+       color: var(--Royal-purple);
+       font-size: 2.5rem;
+       margin-bottom: 2rem;
+       text-align: center;
+   }
+
+   .christhood-apologetics-scripture {
+       font-style: italic;
+       font-size: 1.3rem;
+       text-align: center;
+       max-width: 800px;
+       margin: 0 auto 3rem;
+       padding: 2rem;
+       background-color: #f5f5f5;
+       border-radius: 10px;
+       border-left: 4px solid var(--Gold-color);
+       position: relative;
+   }
+
+   .christhood-apologetics-scripture::before,
+   .christhood-apologetics-scripture::after {
+       content: '"';
+       font-size: 3rem;
+       color: var(--Gold-color);
+       position: absolute;
+       opacity: 0.3;
+   }
+
+   .christhood-apologetics-scripture::before {
+       top: 0;
+       left: 1rem;
+   }
+
+   .christhood-apologetics-scripture::after {
+       bottom: -1rem;
+       right: 1rem;
+   }
+
+   .christhood-apologetics-conclusion p {
+       font-size: 1.2rem;
+       text-align: center;
+       max-width: 800px;
+       margin: 0 auto 2rem;
+       line-height: 1.8;
+   }
+
+   .christhood-apologetics-read-more-btn {
+       display: block;
+       margin: 0 auto;
+       background-color: var(--Primary-Blue);
+       color: var(--text-color);
+       border: none;
+       padding: 1rem 2rem;
+       border-radius: 30px;
+       font-size: 1.1rem;
+       font-weight: 600;
+       cursor: pointer;
+       transition: all 0.3s ease;
+   }
+
+   .christhood-apologetics-read-more-btn:hover {
+       background-color: var(--Royal-purple);
+       transform: scale(1.05);
+   }
+
+   #christhood-apologetics-full-conclusion {
+       max-height: 0;
+       overflow: hidden;
+       transition: max-height 0.8s ease;
+       text-align: left;
+       max-width: 800px;
+       margin: 2rem auto 0;
+       font-size: 1.1rem;
+       line-height: 1.7;
+   }
+
+   #christhood-apologetics-full-conclusion.active {
+       max-height: 2000px;
+   }
+
+   #christhood-apologetics-full-conclusion p {
+       text-align: left;
+       margin-bottom: 1.5rem;
+   }
+
+   /* Responsive Design */
+   @media (max-width: 900px) {
+       .christhood-apologetics-hero h1 {
+           font-size: 3rem;
+       }
+
+       .christhood-apologetics-hero h2 {
+           font-size: 1.8rem;
+       }
+   }
+
+   @media (max-width: 600px) {
+       .christhood-apologetics-hero h1 {
+           font-size: 2.5rem;
+       }
+
+       .christhood-apologetics-hero h2 {
+           font-size: 1.5rem;
+       }
+
+       .christhood-apologetics-intro h2,
+       .christhood-apologetics-challenges h2,
+       .christhood-apologetics-importance h2,
+       .christhood-apologetics-truths h2,
+       .christhood-apologetics-conclusion h2 {
+           font-size: 2rem;
+       }
+
+       .christhood-apologetics-scripture {
+           font-size: 1.1rem;
+       }
+   }

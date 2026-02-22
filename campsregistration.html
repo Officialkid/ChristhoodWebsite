@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camps Registration | Christhood International Outfield Ministry</title>
+    <style>
+        :root {
+            --Royal-purple: #6A0DAD;
+            --Deep-purple: #4B0082;
+            --Light-purple: #8A2BE2;
+            --Gold-color: #D4AF37;
+            --Light-gold: #F0E68C;
+            --Primary-Blue: #1E3A8A;
+            --Dark-gray: #333333;
+            --Light-gray: #F5F5F5;
+            --White: #FFFFFF;
+            --Error-red: #E74C3C;
+            --Success-green: #2ECC71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--Dark-gray);
+            background: linear-gradient(135deg, var(--Deep-purple), var(--Primary-Blue));
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            color: var(--White);
+        }
+
+        .page-header h1 {
+            font-size: 2.3rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--Gold-color), var(--Light-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .registration-section {
+            background: linear-gradient(135deg, var(--White), #f8f9fa);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 1.5rem;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .registration-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, var(--Gold-color), var(--Light-gold));
+            border-radius: 15px 15px 0 0;
+        }
+
+        .registration-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .registration-header h2 {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+        }
+
+        .help-banner {
+            background: linear-gradient(135deg, #fffbe6, #fffaf0);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-left: 4px solid var(--Gold-color);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin: 0 0 1rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #5a4d00;
+        }
+
+        .help-banner strong {
+            color: var(--Royal-purple);
+        }
+
+        .progress-container {
+            margin: 1.5rem 0 2rem;
+            background: var(--Light-gray);
+            border-radius: 30px;
+            position: relative;
+            height: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(106, 13, 173, 0.25);
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--Royal-purple), var(--Light-purple));
+            transition: width 0.4s ease;
+        }
+
+        .progress-percent {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: right;
+            color: var(--Royal-purple);
+        }
+
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .step-nav {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .step-nav .btn {
+            flex: 0 0 auto;
+            min-width: 120px;
+        }
+
+        .review-message-box {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            border: 1px solid rgba(106, 13, 173, 0.15);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .role-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .role-option {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--Light-gray), #e9ecef);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .role-option.active {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            color: var(--White);
+            border-color: var(--Gold-color);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--Dark-gray);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--White);
+        }
+
+        select[multiple] {
+            height: 150px;
+        }
+
+        input.error,
+        select.error,
+        textarea.error {
+            border-color: var(--Error-red);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--Royal-purple);
+            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+        }
+
+        .error-message {
+            color: var(--Error-red);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .relationship-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .relationship-option {
+            flex: 1;
+            text-align: center;
+        }
+
+        .relationship-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--White);
+        }
+
+        .relationship-card.selected {
+            border-color: var(--Royal-purple);
+            background: linear-gradient(135deg, rgba(106, 13, 173, 0.05), rgba(138, 43, 226, 0.05));
+        }
+
+        .relationship-card input {
+            display: none;
+        }
+
+        .camp-selection {
+            margin-bottom: 1.5rem;
+        }
+
+        .hint-card {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            border-left: 4px solid var(--Gold-color);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin: 1rem 0 0;
+            font-size: 0.95rem;
+        }
+
+        .hint-card h4 {
+            margin-bottom: 0.35rem;
+            font-size: 1rem;
+            color: var(--Royal-purple);
+        }
+
+        .hint-card ul {
+            margin-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .hint-card li {
+            margin: 0.25rem 0;
+        }
+
+        .camp-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .camp-option {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .camp-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--White);
+        }
+
+        .camp-card.selected {
+            border-color: var(--Royal-purple);
+            background: linear-gradient(135deg, rgba(106, 13, 173, 0.05), rgba(138, 43, 226, 0.05));
+        }
+
+        .camp-card input {
+            display: none;
+        }
+
+        .children-section {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .children-section.active {
+            display: block;
+        }
+
+        .child-details {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+        }
+
+        .child-age {
+            width: 80px;
+        }
+
+        .cost-summary {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-top: 2px solid var(--Royal-purple);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .deposit-info {
+            background: linear-gradient(135deg, var(--Light-gold), #f8f9fa);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--Gold-color);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            color: var(--White);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 13, 173, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--Light-gray), #e9ecef);
+            color: var(--Dark-gray);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #e0e0e0, #dee2e6);
+            transform: translateY(-2px);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, var(--Success-green), #27ae60);
+            color: var(--White);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+        }
+
+        .whatsapp-float svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .whatsapp-float-tooltip {
+            position: absolute;
+            right: 80px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--Dark-gray);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .whatsapp-float:hover .whatsapp-float-tooltip {
+            opacity: 1;
+        }
+
+        .whatsapp-float-tooltip::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 8px solid transparent;
+            border-left-color: white;
+        }
+
+        .whatsapp-info-box {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8f4);
+            border: 1px solid #81c784;
+            border-left: 4px solid #25D366;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .whatsapp-info-box strong {
+            color: #128C7E;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .whatsapp-info-box p {
+            margin: 0.25rem 0;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 1rem 0;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .registration-section {
+                padding: 1.25rem;
+                border-radius: 12px;
+            }
+
+            .registration-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .role-selection {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .role-option {
+                width: 100%;
+                text-align: center;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .camp-options {
+                flex-direction: column;
+            }
+
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+            }
+
+            .whatsapp-float svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            .whatsapp-float-tooltip {
+                display: none;
+            }
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        body {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .registration-header h2 {
+                font-size: 1.5rem;
+            }
+
+            input,
+            select,
+            textarea {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .page-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .registration-header h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Camps Registration</h1>
+            <p>Register your child for the upcoming camps edition.</p>
+        </header>
+
+        <section class="registration-section" id="register">
+            <div class="registration-header">
+                <h2>Register for Camps</h2>
+                <p>Complete the steps below to register</p>
+            </div>
+            <div class="help-banner">
+                <strong>Need help?</strong> Call or WhatsApp <span style="font-weight:600;" id="helpPhoneNumber">+254725968973 (Lydiah Opwaka)</span> or
+                email <span style="font-weight:600;">info@christhoodministries.org</span>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-percent" id="progressPercent">0% complete</div>
+
+            <form id="registration-form">
+                <input type="hidden" id="selectedEventId" name="selectedEventId" value="camps">
+
+                <div class="wizard-step active" data-step="0">
+                    <h3 style="margin-bottom:1rem;">Step 1: Choose Your Role</h3>
+                    <p style="margin-bottom:1rem;font-size:.9rem;">Select who you are registering as. This helps us
+                        tailor the next questions for you.</p>
+                    <div class="role-selection">
+                        <div class="role-option active" data-role="camper">Camper / Parent</div>
+                        <div class="role-option" data-role="facilitator">Facilitator / Volunteer</div>
+                        <div class="role-option" data-role="sponsor">Sponsor / Donor</div>
+                    </div>
+                    <div id="roleHints"></div>
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-primary" id="roleNextBtn">Next</button>
+                    </div>
+                </div>
+
+                <div class="wizard-step" data-step="1">
+                    <h3 style="margin-bottom:1rem;">Step 2: Contact Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name *</label>
+                            <input type="text" id="fullName" name="fullName" required
+                                placeholder="Enter your full name">
+                            <div class="error-message" id="fullNameError">Please enter your full name</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number *</label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required
+                                placeholder="+254 XXX XXX XXX">
+                            <div class="error-message" id="phoneNumberError">Please enter a valid Kenyan phone number
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-secondary" id="contactBackBtn">Back</button>
+                        <button type="button" class="btn btn-primary" id="contactNextBtn">Next</button>
+                    </div>
+                </div>
+
+                <div class="wizard-step" data-step="2">
+                    <h3 style="margin-bottom:1rem;">Step 3: Details</h3>
+
+                    <div class="form-section camper-form active">
+                        <div class="form-group">
+                            <label>Are you registering as: *</label>
+                            <div class="relationship-options">
+                                <div class="relationship-option">
+                                    <div class="relationship-card selected" data-relationship="parent">
+                                        <h4>Parent</h4>
+                                        <p>Registering my child(ren)</p>
+                                        <input type="radio" name="relationship" value="parent" checked>
+                                    </div>
+                                </div>
+                                <div class="relationship-option">
+                                    <div class="relationship-card" data-relationship="camper">
+                                        <h4>Camper</h4>
+                                        <p>Registering myself</p>
+                                        <input type="radio" name="relationship" value="camper">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="parentEmailGroup">
+                            <label for="parentEmail">Your Email</label>
+                            <input type="email" id="parentEmail" name="parentEmail"
+                                placeholder="your.email@example.com">
+                        </div>
+
+                        <div class="form-group children-section active" id="parentChildrenSection">
+                            <label for="numberOfChildren">How many children are you registering? *</label>
+                            <select id="numberOfChildren" name="numberOfChildren">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6+</option>
+                            </select>
+                        </div>
+
+                        <div class="children-section active" id="childDetailsSection">
+                        </div>
+
+                        <div class="form-group children-section" id="camperInfoSection">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="camperAge">Your Age *</label>
+                                    <input type="number" id="camperAge" name="camperAge" min="7" max="19"
+                                        placeholder="Enter your age">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group camp-selection">
+                            <label>Select Camp Program(s) *</label>
+                            <div class="camp-options">
+                                <div class="camp-option">
+                                    <div class="camp-card" data-camp="jewels">
+                                        <h4>Jewels Kids Camp</h4>
+                                        <p>Ages 7-12</p>
+                                        <p class="camp-fee">9,960 Ksh per child</p>
+                                        <input type="checkbox" id="camp-jewels" name="camps" value="jewels">
+                                    </div>
+                                </div>
+                                <div class="camp-option">
+                                    <div class="camp-card" data-camp="teenlife">
+                                        <h4>Teen-Life Camp</h4>
+                                        <p>Ages 13-19</p>
+                                        <p class="camp-fee">9,500 Ksh per child</p>
+                                        <input type="checkbox" id="camp-teenlife" name="camps" value="teenlife">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error-message" id="campsError">Please select at least one camp</div>
+                        </div>
+
+                        <div class="cost-summary">
+                            <h3>Cost Summary</h3>
+                            <div class="cost-item">
+                                <span>Jewels Kids Camp:</span>
+                                <span id="jewelsCost">0 Ksh</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Teen-Life Camp:</span>
+                                <span id="teenlifeCost">0 Ksh</span>
+                            </div>
+                            <div class="cost-item cost-total">
+                                <span>Total Amount:</span>
+                                <span id="totalCost">0 Ksh</span>
+                            </div>
+                        </div>
+
+                        <div class="deposit-info">
+                            <p><strong>Deposit Information:</strong> A minimum non-refundable deposit of Ksh 2,000 is
+                                required within fourteen days to hold your reservation.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Additional Notes</label>
+                            <textarea id="notes" name="notes" rows="3"
+                                placeholder="Any special requirements or questions..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section facilitator-form">
+                        <div class="form-group">
+                            <label>Which camp(s) will you support? *</label>
+                            <div class="camp-options">
+                                <div class="camp-option">
+                                    <div class="camp-card" data-camp="facilitator-jewels">
+                                        <h4>Jewels Kids Camp</h4>
+                                        <p class="camp-fee">Facilitator Fee: 5,000 Ksh</p>
+                                        <input type="checkbox" id="facilitator-jewels" name="facilitatorCamps"
+                                            value="jewels">
+                                    </div>
+                                </div>
+                                <div class="camp-option">
+                                    <div class="camp-card" data-camp="facilitator-teenlife">
+                                        <h4>Teen-Life Camp</h4>
+                                        <p class="camp-fee">Facilitator Fee: 4,000 Ksh</p>
+                                        <input type="checkbox" id="facilitator-teenlife" name="facilitatorCamps"
+                                            value="teenlife">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error-message" id="facilitatorCampsError">Please select at least one camp</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="facilitatorRoles">Facilitator Roles *</label>
+                            <select id="facilitatorRoles" name="facilitatorRoles" multiple required>
+                                <option value="Matron">Matron</option>
+                                <option value="Serving">Serving</option>
+                                <option value="Teaching">Teaching</option>
+                                <option value="Games">Games</option>
+                                <option value="Morning Devotion">Morning Devotion</option>
+                                <option value="Nurse">Nurse</option>
+                                <option value="Counselling">Counselling</option>
+                                <option value="Board Games Master">Board Games Master</option>
+                                <option value="Creative Night Support">Creative Night Support</option>
+                                <option value="Media Team">Media Team</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Meal Preparation">Meal Preparation</option>
+                                <option value="Dorms In Charge">Dorms In Charge</option>
+                            </select>
+                            <div class="error-message" id="rolesError">Please select at least one role</div>
+                            <small>Hold Ctrl (or Cmd on Mac) to select multiple roles</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="facilitatorNotes">Additional Information</label>
+                            <textarea id="facilitatorNotes" name="facilitatorNotes" rows="3"
+                                placeholder="Your experience, availability, or special skills..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section sponsor-form">
+                        <div class="form-group">
+                            <label for="sponsorCamp">Which camp to support? *</label>
+                            <select id="sponsorCamp" name="sponsorCamp">
+                                <option value="">Select a camp</option>
+                                <option value="jewels">Jewels Kids Camp</option>
+                                <option value="teenlife">Teen-Life Camp</option>
+                                <option value="any">Any Camp</option>
+                            </select>
+                            <div class="error-message" id="sponsorCampError">Please select a camp to support</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contributionAmount">Contribution Amount (Ksh) *</label>
+                            <input type="number" id="contributionAmount" name="contributionAmount" min="500"
+                                placeholder="Minimum 500 Ksh">
+                            <div class="error-message" id="contributionError">Please enter a contribution amount of at
+                                least 500 Ksh</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sponsorNotes">Additional Notes</label>
+                            <textarea id="sponsorNotes" name="sponsorNotes" rows="3"
+                                placeholder="Any specific purpose for your contribution..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-secondary" id="detailsBackBtn">Back</button>
+                        <button type="button" class="btn btn-primary" id="detailsNextBtn">Next</button>
+                    </div>
+                </div>
+
+                <div class="wizard-step" data-step="3">
+                    <h3 style="margin-bottom:1rem;">Step 4: Review and Send</h3>
+                    <p style="font-size:.9rem; margin-bottom:1rem;">Check the summary below. If everything looks good,
+                        send it via WhatsApp. You can go back to adjust details.</p>
+
+                    <div class="whatsapp-info-box">
+                        <strong>Alternative Method:</strong>
+                        <p>If the "Send via WhatsApp" button does not work:</p>
+                        <p>1. Click "Copy Message" below</p>
+                        <p>2. Click the floating WhatsApp icon on the right</p>
+                        <p>3. Paste and send the message manually</p>
+                    </div>
+
+                    <div class="review-message-box" id="reviewMessageBox">Message will appear here after you complete
+                        previous steps.</div>
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-secondary" id="reviewBackBtn">Back</button>
+                        <button type="button" class="btn btn-secondary" id="copyMessageBtn">Copy Message</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Send via WhatsApp</button>
+                    </div>
+                </div>
+            </form>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <button type="button" class="btn btn-secondary" id="resetBtn">Reset Form</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="toast" id="toast">
+        You will be redirected to WhatsApp to complete registration
+    </div>
+
+    <a href="https://wa.me/254725968973" target="_blank" class="whatsapp-float" id="whatsappFloat">
+        <span class="whatsapp-float-tooltip" id="whatsappTooltip">Chat with Lydiah Opwaka</span>
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 0C7.164 0 0 7.164 0 16c0 2.824.739 5.488 2.032 7.808L.048 31.344l7.776-2.048C10.048 30.608 12.96 31.36 16 31.36c8.836 0 16-7.164 16-16S24.836 0 16 0zm0 29.36c-2.592 0-5.088-.688-7.232-1.936l-.512-.304-5.312 1.392 1.408-5.152-.336-.544C2.688 21.088 2 18.608 2 16 2 8.268 8.268 2 16 2s14 6.268 14 14-6.268 13.36-14 13.36zm7.68-10.016c-.416-.208-2.464-1.216-2.848-1.36-.384-.128-.672-.192-.944.208-.272.416-1.056 1.36-1.296 1.632-.24.288-.48.32-.896.112-.416-.192-1.76-.656-3.344-2.064-1.232-1.104-2.064-2.464-2.304-2.88-.24-.416-.016-.64.192-.848.192-.192.416-.496.624-.752.208-.24.288-.416.416-.688.144-.288.08-.528-.032-.752-.112-.208-.944-2.272-1.296-3.12-.336-.816-.688-.704-.944-.704h-.8c-.272 0-.72.112-1.104.528-.384.416-1.472 1.44-1.472 3.504s1.504 4.064 1.712 4.336c.208.288 2.944 4.496 7.136 6.304.992.432 1.776.688 2.384.88 1.008.32 1.92.272 2.64.16.8-.128 2.464-1.008 2.816-1.984.352-.976.352-1.808.24-1.984-.096-.192-.368-.304-.784-.496z"/>
+        </svg>
+    </a>
+
+    <script>
+        const EVENTS_DATA = [
+            {
+                id: 'camps',
+                title: 'Camps Mentorship Program'
+            }
+        ];
+
+        const CONTACT_NUMBERS = {
+            camper: '+254725968973',
+            facilitator: '+254732364434',
+            sponsor: '+254714545791'
+        };
+
+        let currentRole = 'camper';
+        let selectedEventId = 'camps';
+        let currentStep = 0;
+        const TOTAL_STEPS = 4;
+
+        const registrationForm = document.getElementById('registration-form');
+        const roleOptions = document.querySelectorAll('.role-option');
+        const formSections = document.querySelectorAll('.form-section');
+        const toast = document.getElementById('toast');
+        const steps = document.querySelectorAll('.wizard-step');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercent = document.getElementById('progressPercent');
+        const reviewMessageBox = document.getElementById('reviewMessageBox');
+        const roleHints = document.getElementById('roleHints');
+        const whatsappFloat = document.getElementById('whatsappFloat');
+        const whatsappTooltip = document.getElementById('whatsappTooltip');
+        const helpPhoneNumber = document.getElementById('helpPhoneNumber');
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('selectedEventId').value = selectedEventId;
+            setupEventListeners();
+            initializeCamperForm();
+            showStep(0);
+            updateProgressBar();
+            updateRoleHints();
+            updateWhatsAppFloat();
+            restoreProgress();
+        });
+
+        function setupEventListeners() {
+            roleOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    switchRole(this.dataset.role);
+                });
+            });
+
+            document.getElementById('roleNextBtn').addEventListener('click', () => {
+                if (validateStep(0)) {
+                    currentStep = 1;
+                    showStep(currentStep);
+                    updateProgressBar();
+                    saveProgress();
+                }
+            });
+
+            document.getElementById('contactBackBtn').addEventListener('click', () => {
+                currentStep = 0;
+                showStep(currentStep);
+                updateProgressBar();
+                saveProgress();
+            });
+
+            document.getElementById('contactNextBtn').addEventListener('click', () => {
+                if (validateStep(1)) {
+                    currentStep = 2;
+                    showStep(currentStep);
+                    updateProgressBar();
+                    saveProgress();
+                }
+            });
+
+            document.getElementById('detailsBackBtn').addEventListener('click', () => {
+                currentStep = 1;
+                showStep(currentStep);
+                updateProgressBar();
+                saveProgress();
+            });
+
+            document.getElementById('detailsNextBtn').addEventListener('click', () => {
+                if (validateStep(2)) {
+                    currentStep = 3;
+                    buildReview();
+                    showStep(currentStep);
+                    updateProgressBar();
+                    saveProgress();
+                }
+            });
+
+            document.getElementById('reviewBackBtn').addEventListener('click', () => {
+                currentStep = 2;
+                showStep(currentStep);
+                updateProgressBar();
+                saveProgress();
+            });
+
+            document.querySelectorAll('.relationship-card').forEach(card => {
+                card.addEventListener('click', function () {
+                    const relationship = this.dataset.relationship;
+                    document.querySelectorAll('.relationship-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    document.querySelector(`input[value="${relationship}"]`).checked = true;
+                    toggleRelationshipSections(relationship);
+                    saveProgress();
+                });
+            });
+
+            document.querySelectorAll('.camp-card').forEach(card => {
+                card.addEventListener('click', function () {
+                    const checkbox = this.querySelector('input');
+                    checkbox.checked = !checkbox.checked;
+                    this.classList.toggle('selected', checkbox.checked);
+                    if (currentRole === 'camper') {
+                        calculateCost();
+                    }
+                    saveProgress();
+                });
+            });
+
+            document.getElementById('numberOfChildren').addEventListener('change', function () {
+                const count = parseInt(this.value);
+                generateChildDetails(count);
+                calculateCost();
+                saveProgress();
+            });
+
+            registrationForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                if (currentStep !== TOTAL_STEPS - 1) return;
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn.disabled) return;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Opening WhatsApp...';
+                submitForm();
+            });
+
+            document.getElementById('copyMessageBtn').addEventListener('click', copyMessageToClipboard);
+            document.getElementById('resetBtn').addEventListener('click', resetForm);
+
+            ['input', 'change'].forEach(evt => {
+                registrationForm.addEventListener(evt, saveProgress);
+            });
+        }
+
+        function initializeCamperForm() {
+            toggleRelationshipSections('parent');
+            calculateCost();
+        }
+
+        function switchRole(role) {
+            currentRole = role;
+
+            roleOptions.forEach(option => {
+                option.classList.toggle('active', option.dataset.role === role);
+            });
+
+            formSections.forEach(section => {
+                section.classList.toggle('active', section.classList.contains(`${role}-form`));
+            });
+
+            clearValidationErrors();
+            updateRoleHints();
+            updateWhatsAppFloat();
+            saveProgress();
+        }
+
+        function updateWhatsAppFloat() {
+            const contactInfo = {
+                camper: {
+                    phone: '+254725968973',
+                    name: 'Lydiah Opwaka'
+                },
+                facilitator: {
+                    phone: '+254732364434',
+                    name: 'Job Wambugu'
+                },
+                sponsor: {
+                    phone: '+254714545791',
+                    name: 'Maureen Kosen'
+                }
+            };
+
+            const contact = contactInfo[currentRole];
+            const cleanPhone = contact.phone.replace(/\+/g, '');
+
+            whatsappFloat.href = `https://wa.me/${cleanPhone}`;
+            whatsappTooltip.textContent = `Chat with ${contact.name}`;
+            helpPhoneNumber.textContent = `${contact.phone} (${contact.name})`;
+        }
+
+        function toggleRelationshipSections(relationship) {
+            const parentChildrenSection = document.getElementById('parentChildrenSection');
+            const childDetailsSection = document.getElementById('childDetailsSection');
+            const camperInfoSection = document.getElementById('camperInfoSection');
+            const parentEmailGroup = document.getElementById('parentEmailGroup');
+
+            if (relationship === 'parent') {
+                parentChildrenSection.classList.add('active');
+                childDetailsSection.classList.add('active');
+                camperInfoSection.classList.remove('active');
+                parentEmailGroup.style.display = 'block';
+                generateChildDetails(parseInt(document.getElementById('numberOfChildren').value));
+            } else {
+                parentChildrenSection.classList.remove('active');
+                childDetailsSection.classList.remove('active');
+                camperInfoSection.classList.add('active');
+                parentEmailGroup.style.display = 'none';
+                document.getElementById('childDetailsSection').innerHTML = '';
+            }
+
+            calculateCost();
+        }
+
+        function updateRoleHints() {
+            if (!roleHints) return;
+            if (currentRole === 'camper') {
+                roleHints.innerHTML = `
+                    <div class="hint-card">
+                        <h4>Tips for Parents and Campers</h4>
+                        <ul>
+                            <li>Parents: choose number of children, then fill each child's name and age.</li>
+                            <li>Campers: select your camp(s) and enter your age (7-19).</li>
+                            <li>Minimum deposit is Ksh 2,000 within 14 days to reserve a slot.</li>
+                        </ul>
+                    </div>`;
+            } else if (currentRole === 'facilitator') {
+                roleHints.innerHTML = `
+                    <div class="hint-card">
+                        <h4>Notes for Facilitators/Volunteers</h4>
+                        <ul>
+                            <li>Select camp(s) you can support and choose at least one role.</li>
+                            <li>Fees: Jewels Ksh 5,000; Teen-Life Ksh 4,000.</li>
+                            <li>Share any relevant experience in the notes section.</li>
+                        </ul>
+                    </div>`;
+            } else if (currentRole === 'sponsor') {
+                roleHints.innerHTML = `
+                    <div class="hint-card">
+                        <h4>Notes for Sponsors/Donors</h4>
+                        <ul>
+                            <li>Pick the camp you want to support, or choose "Any Camp".</li>
+                            <li>Minimum contribution is Ksh 500.</li>
+                            <li>You can add a note if you have a specific purpose in mind.</li>
+                        </ul>
+                    </div>`;
+            }
+        }
+
+        function generateChildDetails(count) {
+            const container = document.getElementById('childDetailsSection');
+
+            const existingValues = [];
+            for (let i = 1; i <= 10; i++) {
+                const nameInput = document.getElementById(`childName${i}`);
+                const ageInput = document.getElementById(`childAge${i}`);
+                if (nameInput || ageInput) {
+                    existingValues.push({
+                        name: nameInput?.value || '',
+                        age: ageInput?.value || ''
+                    });
+                }
+            }
+
+            container.innerHTML = '';
+
+            if (count === 0) return;
+
+            container.innerHTML = `<h4>Children's Information</h4>`;
+
+            for (let i = 1; i <= count; i++) {
+                const childDiv = document.createElement('div');
+                childDiv.className = 'child-details';
+                childDiv.innerHTML = `
+                    <h5>Child ${i}</h5>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="childName${i}">Full Name</label>
+                            <input type="text" id="childName${i}" name="childName${i}" placeholder="Child ${i} full name" value="${existingValues[i - 1]?.name || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label for="childAge${i}">Age</label>
+                            <input type="number" id="childAge${i}" name="childAge${i}" min="7" max="19" class="child-age" placeholder="Age" value="${existingValues[i - 1]?.age || ''}">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(childDiv);
+            }
+        }
+
+        function calculateCost() {
+            if (currentRole !== 'camper') return;
+
+            const jewelsChecked = document.getElementById('camp-jewels').checked;
+            const teenlifeChecked = document.getElementById('camp-teenlife').checked;
+            const relationship = document.querySelector('input[name="relationship"]:checked').value;
+
+            let jewelsCount = 0;
+            let teenlifeCount = 0;
+
+            if (relationship === 'parent') {
+                const totalChildren = parseInt(document.getElementById('numberOfChildren').value) || 0;
+                if (jewelsChecked) jewelsCount = totalChildren;
+                if (teenlifeChecked) teenlifeCount = totalChildren;
+            } else {
+                if (jewelsChecked) jewelsCount = 1;
+                if (teenlifeChecked) teenlifeCount = 1;
+            }
+
+            const jewelsCost = jewelsCount * 9960;
+            const teenlifeCost = teenlifeCount * 9500;
+            const totalCost = jewelsCost + teenlifeCost;
+
+            document.getElementById('jewelsCost').textContent = `${jewelsCost.toLocaleString()} Ksh`;
+            document.getElementById('teenlifeCost').textContent = `${teenlifeCost.toLocaleString()} Ksh`;
+            document.getElementById('totalCost').textContent = `${totalCost.toLocaleString()} Ksh`;
+        }
+
+        function validateStep(stepIndex) {
+            if (stepIndex === 0) {
+                return true;
+            }
+            if (stepIndex === 1) {
+                let ok = true;
+                clearValidationErrors();
+
+                const fullNameInput = document.getElementById('fullName');
+                const phoneInput = document.getElementById('phoneNumber');
+
+                if (!fullNameInput.value.trim()) {
+                    showError('fullNameError', 'Please enter your full name');
+                    fullNameInput.classList.add('error');
+                    ok = false;
+                } else {
+                    fullNameInput.classList.remove('error');
+                }
+
+                const phoneValue = phoneInput.value;
+                if (!isValidPhone(phoneValue)) {
+                    showError('phoneNumberError', 'Please enter a valid Kenyan phone number');
+                    phoneInput.classList.add('error');
+                    ok = false;
+                } else {
+                    phoneInput.classList.remove('error');
+                }
+                return ok;
+            }
+            if (stepIndex === 2) {
+                return validateRoleSpecific();
+            }
+            return true;
+        }
+
+        function validateRoleSpecific() {
+            let isValid = true;
+            clearValidationErrors();
+
+            if (currentRole === 'camper') {
+                const jewelsChecked = document.getElementById('camp-jewels').checked;
+                const teenlifeChecked = document.getElementById('camp-teenlife').checked;
+
+                if (!jewelsChecked && !teenlifeChecked) {
+                    showError('campsError', 'Please select at least one camp');
+                    isValid = false;
+                }
+
+                const relationship = document.querySelector('input[name="relationship"]:checked').value;
+                if (relationship === 'parent') {
+                    const childCount = parseInt(document.getElementById('numberOfChildren').value);
+                    if (childCount === 0) {
+                        showError('campsError', 'Please specify number of children');
+                        isValid = false;
+                    }
+                } else {
+                    const age = document.getElementById('camperAge').value;
+                    if (!age || age < 7 || age > 19) {
+                        showError('campsError', 'Please enter a valid age between 7 and 19');
+                        isValid = false;
+                    }
+                }
+            } else if (currentRole === 'facilitator') {
+                const jewelsChecked = document.getElementById('facilitator-jewels').checked;
+                const teenlifeChecked = document.getElementById('facilitator-teenlife').checked;
+
+                if (!jewelsChecked && !teenlifeChecked) {
+                    showError('facilitatorCampsError', 'Please select at least one camp');
+                    isValid = false;
+                }
+
+                const rolesSelect = document.getElementById('facilitatorRoles');
+                const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
+                if (selectedRoles.length === 0) {
+                    showError('rolesError', 'Please select at least one role');
+                    isValid = false;
+                }
+            } else if (currentRole === 'sponsor') {
+                if (!document.getElementById('sponsorCamp').value) {
+                    showError('sponsorCampError', 'Please select a camp to support');
+                    isValid = false;
+                }
+
+                const amount = parseInt(document.getElementById('contributionAmount').value);
+                if (!amount || amount < 500) {
+                    showError('contributionError', 'Please enter a contribution of at least 500 Ksh');
+                    isValid = false;
+                }
+            }
+
+            return isValid;
+        }
+
+        function showStep(index) {
+            steps.forEach((step, i) => {
+                step.classList.toggle('active', i === index);
+            });
+            document.getElementById('register').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updateProgressBar() {
+            const percent = Math.round(((currentStep) / (TOTAL_STEPS - 1)) * 100);
+            progressFill.style.width = percent + '%';
+            progressPercent.textContent = percent + '% complete';
+        }
+
+        function buildReview() {
+            const msg = generateWhatsAppMessage();
+            reviewMessageBox.textContent = msg;
+        }
+
+        function saveProgress() {
+            try {
+                const childrenData = [];
+                const childCount = parseInt(document.getElementById('numberOfChildren')?.value || '0');
+                for (let i = 1; i <= childCount; i++) {
+                    const nameInput = document.getElementById(`childName${i}`);
+                    const ageInput = document.getElementById(`childAge${i}`);
+                    if (nameInput || ageInput) {
+                        childrenData.push({
+                            name: nameInput?.value || '',
+                            age: ageInput?.value || ''
+                        });
+                    }
+                }
+
+                const data = {
+                    step: currentStep,
+                    role: currentRole,
+                    selectedEventId: document.getElementById('selectedEventId').value,
+                    fullName: document.getElementById('fullName').value,
+                    phoneNumber: document.getElementById('phoneNumber').value,
+                    relationship: document.querySelector('input[name="relationship"]:checked')?.value || 'parent',
+                    numberOfChildren: childCount.toString(),
+                    camperAge: document.getElementById('camperAge')?.value || '',
+                    camps: Array.from(document.querySelectorAll('#camp-jewels:checked, #camp-teenlife:checked')).map(c => c.value),
+                    facilitatorCamps: Array.from(document.querySelectorAll('#facilitator-jewels:checked, #facilitator-teenlife:checked')).map(c => c.value),
+                    facilitatorRoles: Array.from(document.getElementById('facilitatorRoles')?.selectedOptions || []).map(o => o.value),
+                    facilitatorNotes: document.getElementById('facilitatorNotes')?.value || '',
+                    sponsorCamp: document.getElementById('sponsorCamp')?.value || '',
+                    contributionAmount: document.getElementById('contributionAmount')?.value || '',
+                    sponsorNotes: document.getElementById('sponsorNotes')?.value || '',
+                    notes: document.getElementById('notes')?.value || '',
+                    childrenData: childrenData
+                };
+                sessionStorage.setItem('registrationProgress', JSON.stringify(data));
+            } catch (e) {
+                console.error('Error saving progress:', e);
+            }
+        }
+
+        function restoreProgress() {
+            const raw = sessionStorage.getItem('registrationProgress');
+            if (!raw) return;
+            try {
+                const data = JSON.parse(raw);
+                document.getElementById('selectedEventId').value = selectedEventId;
+                switchRole(data.role || 'camper');
+                document.getElementById('fullName').value = data.fullName || '';
+                document.getElementById('phoneNumber').value = data.phoneNumber || '';
+
+                if (data.relationship === 'camper') {
+                    document.querySelector('.relationship-card[data-relationship="camper"]')?.click();
+                } else {
+                    document.querySelector('.relationship-card[data-relationship="parent"]')?.click();
+                }
+
+                if (data.numberOfChildren) {
+                    document.getElementById('numberOfChildren').value = data.numberOfChildren;
+                    generateChildDetails(parseInt(data.numberOfChildren));
+
+                    if (data.childrenData?.length) {
+                        setTimeout(() => {
+                            data.childrenData.forEach((child, index) => {
+                                const i = index + 1;
+                                const nameInput = document.getElementById(`childName${i}`);
+                                const ageInput = document.getElementById(`childAge${i}`);
+                                if (nameInput) nameInput.value = child.name || '';
+                                if (ageInput) ageInput.value = child.age || '';
+                            });
+                        }, 100);
+                    }
+                }
+                if (data.camperAge) document.getElementById('camperAge').value = data.camperAge;
+
+                data.camps?.forEach(id => {
+                    const checkbox = document.querySelector(`#camp-${id}`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        checkbox.closest('.camp-card')?.classList.add('selected');
+                    }
+                });
+
+                data.facilitatorCamps?.forEach(id => {
+                    const box = document.querySelector(`#facilitator-${id}`);
+                    if (box) {
+                        box.checked = true;
+                        box.closest('.camp-card')?.classList.add('selected');
+                    }
+                });
+
+                if (data.facilitatorRoles?.length) {
+                    const select = document.getElementById('facilitatorRoles');
+                    Array.from(select.options).forEach(opt => {
+                        opt.selected = data.facilitatorRoles.includes(opt.value);
+                    });
+                }
+
+                document.getElementById('facilitatorNotes').value = data.facilitatorNotes || '';
+                document.getElementById('sponsorCamp').value = data.sponsorCamp || '';
+                document.getElementById('contributionAmount').value = data.contributionAmount || '';
+                document.getElementById('sponsorNotes').value = data.sponsorNotes || '';
+                document.getElementById('notes').value = data.notes || '';
+
+                if (typeof data.step === 'number' && data.step >= 0 && data.step < TOTAL_STEPS) {
+                    currentStep = data.step;
+                    showStep(currentStep);
+                    updateProgressBar();
+                    if (currentStep === TOTAL_STEPS - 1) buildReview();
+                }
+
+                calculateCost();
+                updateRoleHints();
+            } catch (e) {
+                console.error('Error restoring progress:', e);
+            }
+        }
+
+        function isValidPhone(phone) {
+            const cleaned = phone.replace(/[\s-]/g, '');
+            if (/^\+254(7|1)\d{8}$/.test(cleaned)) return true;
+            if (/^(07|01)\d{8}$/.test(cleaned)) return true;
+            return false;
+        }
+
+        function normalizePhone(phone) {
+            let cleaned = phone.trim().replace(/[\s-]/g, '');
+            if (cleaned.startsWith('+254')) return cleaned;
+            if (cleaned.startsWith('0')) return '+254' + cleaned.slice(1);
+            if (/^(7|1)\d{8}$/.test(cleaned)) return '+254' + cleaned;
+            return cleaned;
+        }
+
+        function generateWhatsAppMessage() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = normalizePhone(document.getElementById('phoneNumber').value);
+            let message = '';
+            const eventMeta = EVENTS_DATA.find(e => e.id === selectedEventId);
+
+            if (currentRole === 'camper') {
+                const relationship = document.querySelector('input[name="relationship"]:checked').value;
+                const jewelsChecked = document.getElementById('camp-jewels').checked;
+                const teenlifeChecked = document.getElementById('camp-teenlife').checked;
+
+                message = `*NEW CAMP REGISTRATION - ${relationship.toUpperCase()}*\n\n`;
+                if (eventMeta) {
+                    message += `Event: ${eventMeta.title}\n\n`;
+                }
+                message += `Name: ${fullName}\n`;
+                message += `Phone: ${phone}\n`;
+                message += `Relationship: ${relationship === 'parent' ? 'Parent' : 'Camper'}\n\n`;
+
+                if (relationship === 'parent') {
+                    const childCount = parseInt(document.getElementById('numberOfChildren').value);
+                    message += `Number of Children: ${childCount}\n\n`;
+
+                    for (let i = 1; i <= childCount; i++) {
+                        const name = document.getElementById(`childName${i}`)?.value || 'Not provided';
+                        const age = document.getElementById(`childAge${i}`)?.value || 'Not provided';
+                        message += `Child ${i}: ${name} (Age: ${age})\n`;
+                    }
+                    message += '\n';
+                } else {
+                    const age = document.getElementById('camperAge').value;
+                    message += `Camper Age: ${age}\n\n`;
+                }
+
+                message += 'Selected Camps:\n';
+                if (jewelsChecked) message += '• Jewels Kids Camp\n';
+                if (teenlifeChecked) message += '• Teen-Life Camp\n\n';
+
+                const totalCost = document.getElementById('totalCost').textContent;
+                message += `Total Cost: ${totalCost}\n\n`;
+                message += 'Deposit: Ksh 2,000 required within 14 days\n\n';
+
+                const notes = document.getElementById('notes').value.trim();
+                if (notes) message += `Notes: ${notes}\n\n`;
+
+                message += 'Contact: Lydiah Opwaka';
+            } else if (currentRole === 'facilitator') {
+                const jewelsChecked = document.getElementById('facilitator-jewels').checked;
+                const teenlifeChecked = document.getElementById('facilitator-teenlife').checked;
+                const rolesSelect = document.getElementById('facilitatorRoles');
+                const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
+
+                message = '*FACILITATOR APPLICATION*\n\n';
+                if (eventMeta) {
+                    message += `Event: ${eventMeta.title}\n\n`;
+                }
+                message += `Name: ${fullName}\n`;
+                message += `Phone: ${phone}\n`;
+                message += `Camps: ${jewelsChecked ? 'Jewels ' : ''}${teenlifeChecked ? 'Teen-Life' : ''}\n`;
+                message += `Roles: ${selectedRoles.join(', ')}\n`;
+                message += `Fees: ${jewelsChecked ? '5,000' : ''}${jewelsChecked && teenlifeChecked ? ' + ' : ''}${teenlifeChecked ? '4,000' : ''} Ksh\n\n`;
+
+                const notes = document.getElementById('facilitatorNotes').value.trim();
+                if (notes) message += `Notes: ${notes}\n\n`;
+
+                message += 'Contact: Job Wambugu';
+            } else if (currentRole === 'sponsor') {
+                const camp = document.getElementById('sponsorCamp').value;
+                const amount = document.getElementById('contributionAmount').value;
+
+                message = '*SPONSORSHIP INQUIRY*\n\n';
+                if (eventMeta) {
+                    message += `Event: ${eventMeta.title}\n\n`;
+                }
+                message += `Name: ${fullName}\n`;
+                message += `Phone: ${phone}\n`;
+                message += `Camp: ${camp}\n`;
+                message += `Contribution: ${parseInt(amount).toLocaleString()} Ksh\n\n`;
+
+                const notes = document.getElementById('sponsorNotes').value.trim();
+                if (notes) message += `Notes: ${notes}\n\n`;
+
+                message += 'Contact: Maureen Kosen';
+            }
+
+            return message;
+        }
+
+        function submitForm() {
+            const message = generateWhatsAppMessage();
+            const phoneNumber = CONTACT_NUMBERS[currentRole];
+            const submitBtn = document.getElementById('submitBtn');
+
+            showToast();
+
+            setTimeout(() => {
+                const cleanNumber = phoneNumber.replace(/\D/g, '');
+                const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+                const newWindow = window.open(url, '_blank');
+
+                if (!newWindow) {
+                    alert('Please allow popups for this site to open WhatsApp. Check your browser settings.');
+                }
+
+                setTimeout(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Send via WhatsApp';
+                }, 3000);
+            }, 800);
+        }
+
+        function copyMessageToClipboard() {
+            const message = reviewMessageBox.textContent;
+            if (message === 'Message will appear here after you complete previous steps.') {
+                alert('Please complete the form first to generate a message.');
+                return;
+            }
+            navigator.clipboard.writeText(message).then(() => {
+                const copyBtn = document.getElementById('copyMessageBtn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied';
+                copyBtn.style.background = 'linear-gradient(45deg, var(--Success-green), #27ae60)';
+                copyBtn.style.color = 'white';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    copyBtn.style.background = '';
+                    copyBtn.style.color = '';
+                }, 2000);
+            }).catch(() => {
+                alert('Failed to copy. Please try again.');
+            });
+        }
+
+        function resetForm() {
+            registrationForm.reset();
+            clearValidationErrors();
+
+            currentRole = 'camper';
+            switchRole('camper');
+
+            document.querySelector('.relationship-card[data-relationship="parent"]').click();
+
+            document.querySelectorAll('.camp-card').forEach(card => {
+                card.classList.remove('selected');
+                const checkbox = card.querySelector('input');
+                if (checkbox) checkbox.checked = false;
+            });
+
+            document.getElementById('numberOfChildren').value = '0';
+            document.getElementById('childDetailsSection').innerHTML = '';
+
+            initializeCamperForm();
+            document.getElementById('selectedEventId').value = selectedEventId;
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send via WhatsApp';
+
+            currentStep = 0;
+            showStep(currentStep);
+            updateProgressBar();
+            reviewMessageBox.textContent = 'Message will appear here after you complete previous steps.';
+
+            sessionStorage.removeItem('registrationProgress');
+
+            document.getElementById('register').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        function clearValidationErrors() {
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+            document.querySelectorAll('input, select, textarea').forEach(input => {
+                input.classList.remove('error');
+            });
+        }
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+</body>
+
+</html>

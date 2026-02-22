@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events | Christhood International Outfield Ministry</title>
+    <style>
+        :root {
+            --Royal-purple: #6A0DAD;
+            --Deep-purple: #4B0082;
+            --Light-purple: #8A2BE2;
+            --Gold-color: #D4AF37;
+            --Light-gold: #F0E68C;
+            --Primary-Blue: #1E3A8A;
+            --Dark-gray: #333333;
+            --Light-gray: #F5F5F5;
+            --White: #FFFFFF;
+            --Error-red: #E74C3C;
+            --Success-green: #2ECC71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--Dark-gray);
+            background: linear-gradient(135deg, var(--Deep-purple), var(--Primary-Blue));
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--White);
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--Gold-color), var(--Light-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .events-grid.single {
+            grid-template-columns: minmax(320px, 520px);
+            justify-content: center;
+        }
+
+        .events-grid.loading {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .event-card.skeleton {
+            position: relative;
+            overflow: hidden;
+            background: #f0e8ff;
+            border: 2px solid transparent;
+        }
+
+        .skeleton-block {
+            background: #f0e8ff;
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skeleton-shimmer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150px;
+            height: 100%;
+            width: 150px;
+            background: linear-gradient(90deg, transparent, #d4b8ff, transparent);
+            animation: shimmer 1.2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(450px);
+            }
+        }
+
+        .event-card {
+            background: var(--White);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+            background: linear-gradient(135deg, var(--White), #f8f9fa);
+        }
+
+        .events-message {
+            text-align: center;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .event-card.ended {
+            border-bottom: 2px solid #b0b0b0;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--Gold-color);
+        }
+
+        .event-card.ended:hover {
+            transform: none;
+            border-color: transparent;
+        }
+
+        .event-poster {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .event-poster.has-image {
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        .event-card.ended .event-poster {
+            filter: grayscale(75%);
+            opacity: 0.85;
+        }
+
+        .event-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(45deg, var(--Gold-color), var(--Light-gold));
+            color: var(--Dark-gray);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .event-card.ended .event-tag {
+            background: #888888;
+            color: var(--White);
+        }
+
+        .event-content {
+            padding: 1.5rem;
+        }
+
+        .event-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .event-subtitle {
+            color: var(--Dark-gray);
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .event-detail {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-detail-label {
+            font-weight: 600;
+            min-width: 100px;
+            color: var(--Royal-purple);
+        }
+
+        .countdown {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+        }
+
+        .countdown-timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .countdown-timer.ended {
+            background: none;
+            -webkit-text-fill-color: #777777;
+            color: #777777;
+        }
+
+        .register-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            color: var(--White);
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 13, 173, 0.4);
+        }
+
+        .register-btn.ended-btn,
+        .register-btn.ended-btn:hover {
+            background: #aaaaaa;
+            color: #666666;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .registration-section {
+            background: linear-gradient(135deg, var(--White), #f8f9fa);
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            margin-top: 2rem;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .registration-section.hidden {
+            display: none;
+        }
+
+        .progress-container {
+            margin: 1.5rem 0 2rem;
+            background: var(--Light-gray);
+            border-radius: 30px;
+            position: relative;
+            height: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(106, 13, 173, 0.25);
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--Royal-purple), var(--Light-purple));
+            transition: width .4s ease;
+        }
+
+        .progress-percent {
+            margin-top: .5rem;
+            font-size: .85rem;
+            font-weight: 600;
+            text-align: right;
+            color: var(--Royal-purple);
+        }
+
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+        }
+
+        .step-nav {
+            display: flex;
+            gap: .75rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .step-nav .btn {
+            flex: 0 0 auto;
+            min-width: 120px;
+        }
+
+        .review-message-box {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            border: 1px solid rgba(106, 13, 173, 0.15);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            white-space: pre-wrap;
+            font-size: .9rem;
+            line-height: 1.4;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .registration-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, var(--Gold-color), var(--Light-gold));
+            border-radius: 15px 15px 0 0;
+        }
+
+        .registration-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .registration-header h2 {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+        }
+
+        .role-selection {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .role-option {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--Light-gray), #e9ecef);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .role-option.active {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            color: var(--White);
+            border-color: var(--Gold-color);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--Dark-gray);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--White);
+        }
+
+        select[multiple] {
+            height: 150px;
+        }
+
+        input.error,
+        select.error,
+        textarea.error {
+            border-color: var(--Error-red);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--Royal-purple);
+            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+        }
+
+        .error-message {
+            color: var(--Error-red);
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .relationship-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .relationship-option {
+            flex: 1;
+            text-align: center;
+        }
+
+        .relationship-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--White);
+        }
+
+        .relationship-card.selected {
+            border-color: var(--Royal-purple);
+            background: linear-gradient(135deg, rgba(106, 13, 173, 0.05), rgba(138, 43, 226, 0.05));
+        }
+
+        .relationship-card input {
+            display: none;
+        }
+
+        .camp-selection {
+            margin-bottom: 1.5rem;
+        }
+
+        .hint-card {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            border-left: 4px solid var(--Gold-color);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin: 1rem 0 0;
+            font-size: .95rem;
+        }
+
+        .hint-card h4 {
+            margin-bottom: .35rem;
+            font-size: 1rem;
+            color: var(--Royal-purple);
+        }
+
+        .hint-card ul {
+            margin-left: 1rem;
+            margin-top: .25rem;
+        }
+
+        .hint-card li {
+            margin: .25rem 0;
+        }
+
+        .camp-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .camp-option {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .camp-card {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--White);
+        }
+
+        .camp-card.selected {
+            border-color: var(--Royal-purple);
+            background: linear-gradient(135deg, rgba(106, 13, 173, 0.05), rgba(138, 43, 226, 0.05));
+        }
+
+        .camp-card input {
+            display: none;
+        }
+
+        .children-section {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .children-section.active {
+            display: block;
+        }
+
+        .child-details {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+        }
+
+        .child-input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            align-items: center;
+        }
+
+        .child-input-group input {
+            flex: 1;
+        }
+
+        .child-age {
+            width: 80px;
+        }
+
+        .cost-summary {
+            background: linear-gradient(135deg, var(--Light-gray), #f8f9fa);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+        }
+
+        .cost-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .cost-total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-top: 2px solid var(--Royal-purple);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .deposit-info {
+            background: linear-gradient(135deg, var(--Light-gold), #f8f9fa);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--Gold-color);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            color: var(--White);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 13, 173, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--Light-gray), #e9ecef);
+            color: var(--Dark-gray);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #e0e0e0, #dee2e6);
+            transform: translateY(-2px);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, var(--Success-green), #27ae60);
+            color: var(--White);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            display: block;
+            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.95rem;
+            }
+
+            .container {
+                width: 95%;
+                padding: 1rem 0;
+            }
+
+            .page-header {
+                margin-bottom: 2rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .page-header p {
+                font-size: 1rem;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+            }
+
+            .events-grid.loading {
+                grid-template-columns: 1fr;
+            }
+
+            .event-card {
+                border-radius: 12px;
+            }
+
+            .event-poster {
+                height: 180px;
+            }
+
+            .event-tag {
+                top: 10px;
+                right: 10px;
+                padding: 4px 10px;
+                font-size: 0.8rem;
+            }
+
+            .event-content {
+                padding: 1.25rem;
+            }
+
+            .event-title {
+                font-size: 1.2rem;
+            }
+
+            .event-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .event-detail {
+                flex-direction: column;
+                gap: 0.25rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .event-detail-label {
+                min-width: auto;
+                font-size: 0.85rem;
+            }
+
+            .countdown {
+                padding: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .countdown-timer {
+                font-size: 1.1rem;
+            }
+
+            .register-btn {
+                padding: 14px;
+                font-size: 1rem;
+                min-height: 48px;
+            }
+
+            .registration-section {
+                padding: 1.25rem;
+                border-radius: 12px;
+                margin-top: 1.5rem;
+            }
+
+            .registration-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .registration-header p {
+                font-size: 0.9rem;
+            }
+
+            .help-banner {
+                padding: 0.75rem;
+                font-size: 0.85rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 0.25rem;
+            }
+
+            .progress-container {
+                height: 20px;
+                margin: 1rem 0 1.5rem;
+            }
+
+            .progress-percent {
+                font-size: 0.8rem;
+            }
+
+            .wizard-step h3 {
+                font-size: 1.3rem;
+            }
+
+            .wizard-step p {
+                font-size: 0.85rem;
+            }
+
+            .role-selection {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .role-option {
+                padding: 14px 26px;
+                width: 100%;
+                text-align: center;
+                font-size: 1rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-row .form-group {
+                min-width: 100%;
+            }
+
+            .form-group {
+                margin-bottom: 1.25rem;
+            }
+
+            label {
+                font-size: 0.95rem;
+                margin-bottom: 0.4rem;
+            }
+
+            input,
+            select,
+            textarea {
+                padding: 14px;
+                font-size: 1rem;
+                min-height: 48px;
+            }
+
+            select[multiple] {
+                height: 180px;
+                padding: 10px;
+            }
+
+            .relationship-options {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .relationship-card {
+                padding: 1.25rem;
+            }
+
+            .relationship-card h4 {
+                font-size: 1.1rem;
+            }
+
+            .relationship-card p {
+                font-size: 0.9rem;
+            }
+
+            .hint-card {
+                padding: 0.85rem 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hint-card h4 {
+                font-size: 0.95rem;
+            }
+
+            .hint-card ul {
+                margin-left: 0.75rem;
+            }
+
+            .hint-card li {
+                font-size: 0.85rem;
+            }
+
+            .camp-options {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .camp-option {
+                min-width: 100%;
+            }
+
+            .camp-card {
+                padding: 1.25rem;
+            }
+
+            .camp-card h4 {
+                font-size: 1.1rem;
+            }
+
+            .camp-card p {
+                font-size: 0.9rem;
+            }
+
+            .camp-card .camp-fee {
+                font-weight: 600;
+                margin-top: 0.5rem;
+            }
+
+            .child-details {
+                padding: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .child-details h5 {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .child-input-group {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .child-age {
+                width: 100%;
+            }
+
+            .cost-summary {
+                padding: 1.25rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .cost-summary h3 {
+                font-size: 1.2rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .cost-item {
+                font-size: 0.9rem;
+                margin-bottom: 0.6rem;
+            }
+
+            .cost-total {
+                font-size: 1.1rem;
+                padding-top: 0.6rem;
+                margin-top: 0.6rem;
+            }
+
+            .deposit-info {
+                padding: 0.85rem;
+                font-size: 0.85rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .whatsapp-info-box {
+                padding: 0.85rem;
+                font-size: 0.85rem;
+                margin: 0.75rem 0;
+            }
+
+            .whatsapp-info-box strong {
+                font-size: 0.9rem;
+            }
+
+            .whatsapp-info-box p {
+                font-size: 0.8rem;
+            }
+
+            .review-message-box {
+                padding: 1rem;
+                font-size: 0.85rem;
+                max-height: 250px;
+            }
+
+            .form-actions {
+                justify-content: stretch;
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+                padding-top: 1.25rem;
+                flex-direction: column;
+            }
+
+            .form-actions .btn {
+                flex: 1;
+                width: 100%;
+            }
+
+            .step-nav {
+                justify-content: stretch;
+                gap: 0.75rem;
+                margin-top: 1.5rem;
+                flex-direction: column-reverse;
+            }
+
+            .step-nav .btn {
+                flex: 1;
+                width: 100%;
+                min-height: 50px;
+                padding: 14px 20px;
+                font-size: 1.05rem;
+                min-width: auto;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 1rem;
+                min-height: 48px;
+            }
+
+            .toast {
+                bottom: 100px;
+                right: 10px;
+                left: 10px;
+                padding: 0.85rem 1rem;
+                font-size: 0.9rem;
+                text-align: center;
+            }
+
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                box-shadow: 0 4px 15px rgba(37, 211, 102, 0.5);
+            }
+
+            .whatsapp-float svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            .whatsapp-float-tooltip {
+                display: none;
+            }
+
+            /* Improve touch targets on mobile */
+            .register-btn,
+            .role-option,
+            .relationship-card,
+            .camp-card,
+            .btn {
+                -webkit-tap-highlight-color: rgba(106, 13, 173, 0.1);
+            }
+
+            /* Better spacing for mobile readability */
+            .wizard-step {
+                padding-bottom: 1rem;
+            }
+
+            /* Ensure inputs are easily tappable */
+            input[type="checkbox"],
+            input[type="radio"] {
+                min-width: 20px;
+                min-height: 20px;
+            }
+        }
+
+        /* Extra small devices (phones in portrait, less than 576px) */
+        @media (max-width: 576px) {
+            .container {
+                width: 100%;
+                padding: 0.75rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .registration-section {
+                padding: 1rem;
+            }
+
+            .event-poster {
+                height: 150px;
+            }
+
+            .registration-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .wizard-step h3 {
+                font-size: 1.2rem;
+            }
+
+            .cost-summary h3 {
+                font-size: 1.1rem;
+            }
+
+            .whatsapp-float {
+                width: 55px;
+                height: 55px;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .whatsapp-float svg {
+                width: 30px;
+                height: 30px;
+            }
+
+            .toast {
+                bottom: 90px;
+                font-size: 0.85rem;
+            }
+        }
+
+        .help-banner {
+            background: linear-gradient(135deg, #fffbe6, #fffaf0);
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-left: 4px solid var(--Gold-color);
+            padding: .75rem 1rem;
+            border-radius: 10px;
+            margin: 0 0 1rem;
+            font-size: .95rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            color: #5a4d00;
+        }
+
+        .help-banner strong {
+            color: var(--Royal-purple);
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
+        }
+
+        .whatsapp-float svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .whatsapp-float-tooltip {
+            position: absolute;
+            right: 80px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--Dark-gray);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .whatsapp-float:hover .whatsapp-float-tooltip {
+            opacity: 1;
+        }
+
+        .whatsapp-float-tooltip::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 8px solid transparent;
+            border-left-color: white;
+        }
+
+        .whatsapp-info-box {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8f4);
+            border: 1px solid #81c784;
+            border-left: 4px solid #25D366;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .whatsapp-info-box strong {
+            color: #128C7E;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .whatsapp-info-box p {
+            margin: 0.25rem 0;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
+            }
+
+            .whatsapp-float svg {
+                width: 35px;
+                height: 35px;
+            }
+
+            .whatsapp-float-tooltip {
+                display: none;
+            }
+        }
+
+        /* ── SKELETON LOADER ── */
+        .skeleton-card {
+            background: #f0e8ff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+        }
+
+        .skeleton-poster {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(90deg, #d4b8ff 25%, #e8d8ff 50%, #d4b8ff 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .skeleton-body {
+            padding: 1.5rem;
+        }
+
+        .skeleton-line {
+            height: 14px;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #d4b8ff 25%, #e8d8ff 50%, #d4b8ff 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-line.short {
+            width: 55%;
+        }
+
+        .skeleton-line.medium {
+            width: 75%;
+        }
+
+        .skeleton-line.full {
+            width: 100%;
+        }
+
+        .skeleton-btn {
+            height: 44px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #d4b8ff 25%, #e8d8ff 50%, #d4b8ff 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            margin-top: 1rem;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ── ENDED EVENT CARD ── */
+        .event-card.ended {
+            opacity: 0.80;
+            cursor: default;
+        }
+
+        .event-card.ended:hover {
+            transform: none;
+            border-color: transparent;
+        }
+
+        .event-card.ended .event-poster {
+            filter: grayscale(75%);
+        }
+
+        .event-tag.ended-tag {
+            background: #888888;
+            color: #ffffff;
+        }
+
+        .event-card.ended .countdown-timer {
+            color: #999999;
+            -webkit-text-fill-color: #999999;
+            background: none;
+            font-size: 1rem;
+        }
+
+        .event-card.ended .register-btn {
+            background: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .event-card.ended .register-btn:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ── FETCH ERROR MESSAGE ── */
+        .events-error {
+            text-align: center;
+            color: #ffffff;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            grid-column: 1 / -1;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .event-popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 0.75rem;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .event-popup-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .event-popup-card {
+            position: relative;
+            width: 92%;
+            max-width: 420px;
+            background: linear-gradient(160deg, #1a0533, #0a1a4a);
+            border: 2px solid rgba(243, 204, 60, 0.4);
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            max-height: 92vh;
+            overflow-y: auto;
+            animation: popupIn 0.4s ease-out;
+        }
+
+        .event-popup-card.closing {
+            animation: popupOut 0.3s ease-in forwards;
+        }
+
+        .event-popup-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 3;
+            transition: background 0.2s ease;
+        }
+
+        .event-popup-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .event-popup-image {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #4b248c, #0047AB);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .event-popup-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(26, 5, 51, 0.9), transparent);
+        }
+
+        .event-popup-tag {
+            position: absolute;
+            left: 16px;
+            bottom: 16px;
+            z-index: 2;
+        }
+
+        .event-popup-content {
+            padding: 1.25rem;
+        }
+
+        .event-popup-label {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--Gold-color);
+            margin-bottom: 0.4rem;
+        }
+
+        .event-popup-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.25rem;
+        }
+
+        .event-popup-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+        }
+
+        .event-popup-countdown-label {
+            font-size: 0.8rem;
+            color: var(--Gold-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-popup-timer {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .event-popup-timer-block {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 8px 10px;
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .event-popup-timer-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .event-popup-timer-label {
+            font-size: 0.6rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .event-popup-meta {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.75);
+            display: grid;
+            gap: 0.4rem;
+        }
+
+        .event-popup-register {
+            margin-top: 1.25rem;
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(90deg, #F3CC3C, #e6b800);
+            color: #000000;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            min-height: 52px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+
+        .event-popup-register:hover {
+            box-shadow: 0 6px 24px rgba(243, 204, 60, 0.45);
+            transform: translateY(-1px);
+        }
+
+        .event-popup-notice {
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        @keyframes popupIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popupOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .event-popup-image {
+                height: 220px;
+            }
+
+            .event-popup-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        body {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .registration-header h2 {
+                font-size: 1.5rem;
+            }
+
+            input,
+            select,
+            textarea {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .events-grid,
+            .events-grid.loading,
+            .events-grid.single {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .page-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .registration-header h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>Upcoming Events</h1>
+            <p>Join us for transformative mentorship experiences</p>
+        </header>
+
+        <section class="events-grid" id="events">
+            <!-- Event cards will be populated by JavaScript -->
+        </section>
+    </div>
+
+    <div id="eventPopupOverlay" class="event-popup-overlay" aria-hidden="true">
+        <div class="event-popup-card" role="dialog" aria-modal="true" aria-label="Upcoming event"></div>
+    </div>
+
+    <script>
+        const EVENTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR58Z6wCKwhZSo9InJmAevsBE_V85ulVc43zmD4qpeqeApt4xROG_GU7KGc11Y7MlDdYLLTQo0CEJvT/pub?gid=0&single=true&output=csv';
+        const REGISTRATION_PAGES = {
+            branch: 'branch-registration.html',
+            camps: 'campsregistration.html'
+        };
+        const LOCAL_EVENT_IMAGES = {
+            branch: 'image/Branch Program 2026.jpg'
+        };
+
+        let EVENTS_DATA = [];
+        const eventsGrid = document.getElementById('events');
+        const countdownIntervals = {};
+        let popupCountdownInterval = null;
+        const popupOverlay = document.getElementById('eventPopupOverlay');
+
+        document.addEventListener('DOMContentLoaded', function () {
+            sessionStorage.removeItem('popupDismissed');
+            showSkeletons();
+            fetchEventsData();
+        });
+
+        async function fetchEventsData() {
+            try {
+                const response = await fetch(EVENTS_CSV_URL, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch events: ${response.status}`);
+                }
+                const csvText = await response.text();
+                const rows = parseCsv(csvText);
+                if (!rows.length) {
+                    throw new Error('Empty CSV response');
+                }
+
+                const headers = rows.shift().map(header => header.trim());
+                const parsed = rows.map(row => {
+                    const item = {};
+                    headers.forEach((header, index) => {
+                        item[header] = (row[index] || '').trim();
+                    });
+                    return item;
+                });
+
+                EVENTS_DATA = parsed
+                    .filter(row => row.isActive === 'TRUE')
+                    .map(row => ({
+                        id: row.id,
+                        title: row.title,
+                        subtitle: row.subtitle,
+                        startDate: row.startDate,
+                        endDate: row.endDate,
+                        feePerChild: Number(row.feePerChild) || 0,
+                        tag: row.tag,
+                        image: row.image,
+                        location: row.location,
+                        details: row.details,
+                        isActive: row.isActive
+                    }));
+
+                renderEvents();
+                checkAndShowPopup();
+            } catch (error) {
+                console.error('Error loading events:', error);
+                showEventsError();
+            }
+        }
+
+        function parseCsv(text) {
+            const rows = [];
+            let row = [];
+            let current = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+
+                if (char === '"') {
+                    if (inQuotes && text[i + 1] === '"') {
+                        current += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                    continue;
+                }
+
+                if (char === ',' && !inQuotes) {
+                    row.push(current);
+                    current = '';
+                    continue;
+                }
+
+                if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && text[i + 1] === '\n') {
+                        i++;
+                    }
+                    row.push(current);
+                    if (row.length > 1 || row[0] !== '') {
+                        rows.push(row);
+                    }
+                    row = [];
+                    current = '';
+                    continue;
+                }
+
+                current += char;
+            }
+
+            if (current.length || row.length) {
+                row.push(current);
+                rows.push(row);
+            }
+
+            return rows;
+        }
+
+        function showSkeletons() {
+            eventsGrid.classList.add('loading');
+            eventsGrid.innerHTML = '';
+
+            const skeletonCard = `
+                <div class="event-card skeleton">
+                    <div class="event-poster skeleton-block skeleton-shimmer"></div>
+                    <div class="event-content">
+                        <div class="skeleton-block skeleton-shimmer" style="height:18px; width:70%; margin-bottom:12px;"></div>
+                        <div class="skeleton-block skeleton-shimmer" style="height:14px; width:55%; margin-bottom:18px;"></div>
+                        <div class="skeleton-block skeleton-shimmer" style="height:12px; width:90%; margin-bottom:10px;"></div>
+                        <div class="skeleton-block skeleton-shimmer" style="height:12px; width:80%; margin-bottom:18px;"></div>
+                        <div class="skeleton-block skeleton-shimmer" style="height:40px; width:100%; margin-bottom:18px;"></div>
+                        <div class="skeleton-block skeleton-shimmer" style="height:42px; width:100%;"></div>
+                    </div>
+                </div>
+            `;
+
+            eventsGrid.innerHTML = skeletonCard + skeletonCard;
+        }
+
+        function showEventsError() {
+            eventsGrid.classList.remove('loading');
+            eventsGrid.innerHTML = `
+                <div class="events-message">
+                    Unable to load events right now. Please refresh the page or contact us on WhatsApp.
+                </div>
+            `;
+        }
+
+        function showNoEventsMessage() {
+            eventsGrid.classList.remove('loading');
+            eventsGrid.innerHTML = `
+                <div class="events-message">
+                    No upcoming events at the moment. Please check back soon.
+                </div>
+            `;
+        }
+
+        function slugify(value) {
+            return value
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-z0-9-]/g, '');
+        }
+
+        function getRegistrationUrl(event) {
+            const rawId = (event.id || '').toString();
+            const key = slugify(rawId);
+            if (key && REGISTRATION_PAGES[key]) {
+                return REGISTRATION_PAGES[key];
+            }
+
+            const title = (event.title || '').toString().toLowerCase();
+            if (title.includes('branch')) {
+                return REGISTRATION_PAGES.branch;
+            }
+            if (title.includes('camp')) {
+                return REGISTRATION_PAGES.camps;
+            }
+
+            if (key) {
+                return `${key}-registration.html`;
+            }
+            return 'branch-registration.html';
+        }
+
+        function renderEvents() {
+            eventsGrid.classList.remove('loading');
+            eventsGrid.innerHTML = '';
+            eventsGrid.classList.toggle('single', EVENTS_DATA.length === 1);
+
+            if (!EVENTS_DATA.length) {
+                showNoEventsMessage();
+                return;
+            }
+
+            EVENTS_DATA.forEach(event => {
+                const card = document.createElement('div');
+                const now = new Date();
+                const startDate = new Date(event.startDate);
+                const endDate = new Date(event.endDate);
+                const isEnded = now > endDate;
+
+                card.className = `event-card${isEnded ? ' ended' : ''}`;
+
+                const imageUrl = getEventImageUrl(event);
+                const hasImage = Boolean(imageUrl);
+                const posterStyle = hasImage
+                    ? `style="background-image: url('${imageUrl}');"`
+                    : '';
+                const posterClass = hasImage ? 'event-poster has-image' : 'event-poster';
+
+                const feeText = Number(event.feePerChild || 0).toLocaleString();
+                const locationHtml = event.location
+                    ? `
+                        <div class="event-detail">
+                            <span class="event-detail-label">Location:</span>
+                            <span>${event.location}</span>
+                        </div>
+                    `
+                    : '';
+                const detailsHtml = event.details
+                    ? `
+                        <div class="event-detail">
+                            <span class="event-detail-label">Details:</span>
+                            <span>${event.details}</span>
+                        </div>
+                    `
+                    : '';
+                const tagText = isEnded ? 'Ended' : event.tag;
+                const countdownText = isEnded ? 'This event has ended' : 'Calculating...';
+                const countdownClass = isEnded ? 'countdown-timer ended' : 'countdown-timer';
+                const registrationUrl = getRegistrationUrl(event);
+
+                let buttonText = 'Register';
+                if (now >= startDate && now <= endDate) {
+                    buttonText = 'Event Ongoing';
+                }
+
+                const buttonHtml = isEnded
+                    ? `<button class="register-btn ended-btn" disabled>Event Ended</button>`
+                    : `<a class="register-btn" href="${registrationUrl}" data-event-id="${event.id}">${buttonText}</a>`;
+
+                card.innerHTML = `
+                    <div class="${posterClass}" ${posterStyle}>
+                        <div class="event-tag">${tagText}</div>
+                    </div>
+                    <div class="event-content">
+                        <h3 class="event-title">${event.title}</h3>
+                        <p class="event-subtitle">${event.subtitle}</p>
+                        <div class="event-details">
+                            <div class="event-detail">
+                                <span class="event-detail-label">Date:</span>
+                                <span>${formatDate(event.startDate)} - ${formatDate(event.endDate)}</span>
+                            </div>
+                            <div class="event-detail">
+                                <span class="event-detail-label">Fee:</span>
+                                <span>${feeText} Ksh</span>
+                            </div>
+                            ${locationHtml}
+                            ${detailsHtml}
+                        </div>
+                        <div class="countdown">
+                            <div class="${countdownClass}" id="countdown-${event.id}">${countdownText}</div>
+                        </div>
+                        ${buttonHtml}
+                    </div>
+                `;
+
+                eventsGrid.appendChild(card);
+
+                if (!isEnded) {
+                    startCountdown(event.id, event.startDate, event.endDate);
+                }
+            });
+        }
+
+        function sanitizeImageUrl(url) {
+            const trimmed = url.trim();
+            let resolved = trimmed;
+
+            if (trimmed.includes('drive.google.com')) {
+                const fileMatch = trimmed.match(/\/file\/d\/([^/]+)/);
+                const idMatch = trimmed.match(/[?&]id=([^&]+)/);
+                const fileId = fileMatch ? fileMatch[1] : (idMatch ? idMatch[1] : '');
+                if (fileId) {
+                    resolved = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`;
+                }
+            }
+
+            return resolved.replace(/'/g, '%27').replace(/\"/g, '%22');
+        }
+
+        function getEventImageUrl(event) {
+            const rawImage = (event.image || '').toString().trim();
+            if (rawImage) {
+                if (!rawImage.includes('://') && !rawImage.startsWith('/')) {
+                    return encodeURI(`image/${rawImage}`);
+                }
+                return sanitizeImageUrl(rawImage);
+            }
+
+            const key = slugify((event.id || '').toString());
+            if (key && LOCAL_EVENT_IMAGES[key]) {
+                return encodeURI(LOCAL_EVENT_IMAGES[key]);
+            }
+
+            const title = (event.title || '').toString().toLowerCase();
+            if (title.includes('branch')) {
+                return encodeURI(LOCAL_EVENT_IMAGES.branch);
+            }
+
+            return '';
+        }
+
+        function checkAndShowPopup() {
+            if (sessionStorage.getItem('popupDismissed') === 'true') return;
+
+            const now = new Date();
+            const windowEnd = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
+            const upcoming = EVENTS_DATA
+                .filter(event => {
+                    const start = new Date(event.startDate);
+                    const end = new Date(event.endDate);
+                    return start >= now && start <= windowEnd && end > now;
+                })
+                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+
+            if (!upcoming.length) return;
+
+            const targetEvent = upcoming[0];
+            setTimeout(() => {
+                if (sessionStorage.getItem('popupDismissed') === 'true') return;
+                showEventPopup(targetEvent);
+            }, 2000);
+        }
+
+        function showEventPopup(event) {
+            if (!popupOverlay) return;
+
+            const card = popupOverlay.querySelector('.event-popup-card');
+            if (!card) return;
+
+            const imageUrl = getEventImageUrl(event);
+            const imageStyle = imageUrl
+                ? `style="background-image: url('${imageUrl}');"`
+                : '';
+            const locationText = event.location ? event.location : 'Kenya';
+            const dateText = new Date(event.startDate).toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            card.innerHTML = `
+                <button class="event-popup-close" type="button" aria-label="Close">×</button>
+                <div class="event-popup-image" ${imageStyle}>
+                    <div class="event-tag event-popup-tag">${event.tag}</div>
+                </div>
+                <div class="event-popup-content">
+                    <div class="event-popup-label">Coming Soon</div>
+                    <div class="event-popup-title">${event.title}</div>
+                    <div class="event-popup-subtitle">${event.subtitle}</div>
+                    <div class="event-popup-countdown-label">Event starts in:</div>
+                    <div class="event-popup-timer">
+                        <div class="event-popup-timer-block">
+                            <div class="event-popup-timer-value" data-unit="days">00</div>
+                            <div class="event-popup-timer-label">Days</div>
+                        </div>
+                        <div class="event-popup-timer-block">
+                            <div class="event-popup-timer-value" data-unit="hours">00</div>
+                            <div class="event-popup-timer-label">Hrs</div>
+                        </div>
+                        <div class="event-popup-timer-block">
+                            <div class="event-popup-timer-value" data-unit="minutes">00</div>
+                            <div class="event-popup-timer-label">Min</div>
+                        </div>
+                        <div class="event-popup-timer-block">
+                            <div class="event-popup-timer-value" data-unit="seconds">00</div>
+                            <div class="event-popup-timer-label">Sec</div>
+                        </div>
+                    </div>
+                    <div class="event-popup-meta">
+                        <div>📅 ${dateText}</div>
+                        <div>📍 ${locationText}</div>
+                    </div>
+                    <button class="event-popup-register" type="button">Register Now →</button>
+                    <div class="event-popup-notice">Free to attend • Limited slots available</div>
+                </div>
+            `;
+
+            popupOverlay.classList.add('show');
+            popupOverlay.setAttribute('aria-hidden', 'false');
+
+            const closeBtn = card.querySelector('.event-popup-close');
+            const registerBtn = card.querySelector('.event-popup-register');
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => closeEventPopup(), { once: true });
+            }
+            if (registerBtn) {
+                registerBtn.addEventListener('click', () => {
+                    closeEventPopup();
+                    focusRegistration(event);
+                }, { once: true });
+            }
+
+            startPopupCountdown(event.startDate, card);
+        }
+
+        function closeEventPopup() {
+            if (!popupOverlay) return;
+            sessionStorage.setItem('popupDismissed', 'true');
+
+            const card = popupOverlay.querySelector('.event-popup-card');
+            if (card) {
+                card.classList.add('closing');
+            }
+
+            if (popupCountdownInterval) {
+                clearInterval(popupCountdownInterval);
+                popupCountdownInterval = null;
+            }
+
+            setTimeout(() => {
+                popupOverlay.classList.remove('show');
+                popupOverlay.setAttribute('aria-hidden', 'true');
+                if (card) {
+                    card.classList.remove('closing');
+                }
+            }, 300);
+        }
+
+        function startPopupCountdown(startDate, card) {
+            if (popupCountdownInterval) {
+                clearInterval(popupCountdownInterval);
+            }
+
+            const updateCountdown = () => {
+                const now = new Date();
+                const start = new Date(startDate);
+                let diff = start - now;
+                if (diff < 0) diff = 0;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                if (!card) return;
+                card.querySelector('[data-unit="days"]').textContent = String(days).padStart(2, '0');
+                card.querySelector('[data-unit="hours"]').textContent = String(hours).padStart(2, '0');
+                card.querySelector('[data-unit="minutes"]').textContent = String(minutes).padStart(2, '0');
+                card.querySelector('[data-unit="seconds"]').textContent = String(seconds).padStart(2, '0');
+            };
+
+            updateCountdown();
+            popupCountdownInterval = setInterval(updateCountdown, 1000);
+        }
+
+        function focusRegistration(event) {
+            const registerButton = document.querySelector(`.register-btn[data-event-id="${event.id}"]`);
+            const registrationSection = document.getElementById('register');
+
+            if (registrationSection) {
+                registrationSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    if (registerButton) registerButton.click();
+                }, 400);
+                return;
+            }
+
+            if (registerButton) {
+                registerButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => registerButton.click(), 400);
+                return;
+            }
+
+            window.location.href = getRegistrationUrl(event);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function startCountdown(eventId, startDate, endDate) {
+            const element = document.getElementById(`countdown-${eventId}`);
+            const update = () => {
+                const now = new Date();
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                let target, label;
+
+                if (now < start) {
+                    target = start;
+                    label = 'Starts in';
+                } else if (now < end) {
+                    target = end;
+                    label = 'Ends in';
+                } else {
+                    element.textContent = 'This event has ended';
+                    element.classList.add('ended');
+                    if (countdownIntervals[eventId]) {
+                        clearInterval(countdownIntervals[eventId]);
+                    }
+                    return;
+                }
+
+                const diff = target - now;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                element.textContent = `${label}: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+            };
+
+            update();
+            countdownIntervals[eventId] = setInterval(update, 1000);
+        }
+    </script>
+</body>
+
+</html>

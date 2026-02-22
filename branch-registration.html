@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRANCH Mentorship Registration | CIOM</title>
+    <style>
+        :root {
+            --Royal-purple: #6A0DAD;
+            --Deep-purple: #4B0082;
+            --Light-purple: #8A2BE2;
+            --Gold-color: #D4AF37;
+            --Light-gold: #F0E68C;
+            --Primary-Blue: #1E3A8A;
+            --Dark-gray: #333333;
+            --Light-gray: #F5F5F5;
+            --White: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--Dark-gray);
+            background: linear-gradient(135deg, var(--Deep-purple), var(--Primary-Blue));
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 0 3rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--White);
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--Gold-color), var(--Light-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            opacity: 0.9;
+        }
+
+        .intro-card,
+        .form-card {
+            background: var(--White);
+            border-radius: 16px;
+            padding: 1.8rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .intro-card h2 {
+            color: var(--Royal-purple);
+            margin-bottom: 0.75rem;
+        }
+
+        .intro-card p {
+            margin-bottom: 0.75rem;
+        }
+
+        .notice {
+            background: linear-gradient(135deg, #fffbe6, #fffaf0);
+            border-left: 4px solid var(--Gold-color);
+            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            margin: 1rem 0 0;
+            font-size: 0.95rem;
+        }
+
+        .notice strong {
+            color: var(--Royal-purple);
+        }
+
+        form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--Dark-gray);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: var(--White);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--Royal-purple);
+            box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+        }
+
+        .helper-text {
+            font-size: 0.9rem;
+            color: #555555;
+        }
+
+        .submit-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 0.5rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--Royal-purple), var(--Light-purple));
+            color: var(--White);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(106, 13, 173, 0.4);
+        }
+
+        .faq-section {
+            background: var(--White);
+            border-radius: 16px;
+            padding: 1.8rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .faq-section h2 {
+            color: var(--Royal-purple);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .faq-item {
+            border: 1px solid rgba(106, 13, 173, 0.12);
+            border-radius: 12px;
+            padding: 0.9rem 1rem;
+            margin-bottom: 0.85rem;
+            background: linear-gradient(135deg, #faf7ff, #ffffff);
+        }
+
+        .faq-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-question {
+            font-weight: 700;
+            color: #2d1b52;
+            margin-bottom: 0.4rem;
+        }
+
+        .faq-answer {
+            color: #4a4a4a;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 1.5rem 0 2.5rem;
+            }
+
+            .page-header h1 {
+                font-size: 1.7rem;
+            }
+
+            .submit-row {
+                justify-content: stretch;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            input,
+            select,
+            textarea {
+                font-size: 16px;
+            }
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        body {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        @media (max-width: 400px) {
+            .page-header h1 {
+                font-size: 1.4rem;
+            }
+
+            .intro-card h2,
+            .faq-section h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h1>BRANCH Mentorship Program</h1>
+            <p>Registration for high school graduates transitioning to college or university.</p>
+        </header>
+
+        <section class="intro-card">
+            <h2>Program Overview</h2>
+            <p>The BRANCH Mentorship Program is an exciting and interactive initiative dedicated to supporting high school graduates as they transition to college or university. With a focus on career development, spiritual growth, leadership development, and holistic personal growth, BRANCH aims to empower young adults with the skills and virtues necessary for success.</p>
+            <p>Dear parent/guardian, thank you for taking your time to fill this form. This registration lets us know the participant is joining the upcoming program.</p>
+            <div class="notice">
+                <strong>Next step:</strong> After you submit, you will be redirected to WhatsApp. Please press <strong>Send</strong> to complete the registration request.
+            </div>
+        </section>
+
+        <section class="form-card">
+            <form id="branchForm">
+                <div>
+                    <label for="participantName">Participant Full Name (CAPITAL LETTERS) *</label>
+                    <input type="text" id="participantName" name="participantName" required placeholder="ENTER FULL NAME">
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="participantPhone">Participant Mobile Number (optional)</label>
+                        <input type="tel" id="participantPhone" name="participantPhone" placeholder="+254 XXX XXX XXX">
+                    </div>
+                    <div>
+                        <label for="educationLevel">Education Level *</label>
+                        <input type="text" id="educationLevel" name="educationLevel" required placeholder="E.g. Form 4 graduate, First Year, etc.">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div>
+                        <label for="parentName">Parent/Guardian Full Name *</label>
+                        <input type="text" id="parentName" name="parentName" required placeholder="ENTER FULL NAME">
+                    </div>
+                    <div>
+                        <label for="parentPhone">Parent/Guardian Phone Number *</label>
+                        <input type="tel" id="parentPhone" name="parentPhone" required placeholder="+254 XXX XXX XXX">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="county">County *</label>
+                    <input type="text" id="county" name="county" required placeholder="County">
+                </div>
+
+                <p class="helper-text">Registration fee is Ksh 3,000. The Branch Program runs for 12 weeks with a minimum of Ksh 300 for lunch every Saturday (issued to the participant).</p>
+                <p class="helper-text">Payments: M-PESA Till Number 951396 (NAWIRI AFRICA). Send payment message to 0725968973 indicating the participant name.</p>
+                <p class="helper-text">For more information: 0725968973; 0714545791; 0712284711. Email: branchmentorshipprogram@gmail.com.</p>
+
+                <div class="submit-row">
+                    <button type="submit" class="btn btn-primary">Continue to WhatsApp</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-item">
+                <div class="faq-question">1. How long is the Branch Mentorship Program?</div>
+                <div class="faq-answer">The Branch Mentorship Program is 12 weeks, sessions are once a week.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">2. Is the Branch Mentorship Program physical or online?</div>
+                <div class="faq-answer">The program is currently physical.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">3. Is the registration fee of 3,000 Ksh per session?</div>
+                <div class="faq-answer">The registration fee is for the entire program.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">4. Do I have to pay the registration fee immediately?</div>
+                <div class="faq-answer">No, you do not have to pay the registration fee immediately. First payment is a commitment fee of 1,000 Ksh within 14 days from the beginning of the program, and the balance before the end of the program. Parent/guardian can make a one-off payment.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">5. Apart from registration fee, are there other expenses that we would need to cater for?</div>
+                <div class="faq-answer">Yes, we have lunch after every session, outdoor sessions and community service. We kindly request you to support your child with the amount required to ensure everything is a success.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">6. Is the Branch Mentorship Program Launch for the ex-candidates alone?</div>
+                <div class="faq-answer">The program launch is for both ex-candidate and parent/guardian. We encourage the parent/guardian to attend to get the complete overview of the program, meet the facilitators, and have any arising question addressed.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">7. What’s the age bracket for Branch Mentorship Program?</div>
+                <div class="faq-answer">The age bracket is 17-19 years.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">8. When and what time is the Branch Mentorship Program Launch?</div>
+                <div class="faq-answer">The Branch Mentorship Program 2026 Launch is on 28th February 2026, 10 a.m. to 12:30 p.m. at Azuri Premier Hotel, Aga-Khan Walk, behind Co-op Bank House.</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const WHATSAPP_NUMBER = '254725968973';
+
+        document.getElementById('branchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const participantName = document.getElementById('participantName').value.trim();
+            const participantPhone = document.getElementById('participantPhone').value.trim();
+            const educationLevel = document.getElementById('educationLevel').value.trim();
+            const parentName = document.getElementById('parentName').value.trim();
+            const parentPhone = document.getElementById('parentPhone').value.trim();
+            const county = document.getElementById('county').value.trim();
+
+            let message = 'Hello Christhood Ministries id like to register for the upcoming Branch Excands program here are my details\n\n';
+            message += `Participant Name: ${participantName}\n`;
+            if (participantPhone) {
+                message += `Participant Phone: ${participantPhone}\n`;
+            }
+            message += `Parent/Guardian Name: ${parentName}\n`;
+            message += `Parent/Guardian Phone: ${parentPhone}\n`;
+            message += `County: ${county}\n`;
+            message += `Education Level: ${educationLevel}\n\n`;
+            message += 'I acknowledge I ought to pay 3000 Ksh as registration fee.';
+
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.location.href = whatsappUrl;
+        });
+    </script>
+</body>
+
+</html>

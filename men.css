@@ -1,0 +1,335 @@
+
+ :root {
+     --text-color: #ffffff;
+     --Black-color: #000000;
+     --Royal-purple: #4b248c;
+     --Primary-Blue: #0047AB;
+     --Gold-color: #F3CC3C;
+     --Background-color: #f9f9f9;
+     --nav-bg: rgba(255, 255, 255, 0.98);
+     --men-light-gray: #f5f7fa;
+     --men-dark-gray: #2d3748;
+ }/* Men's Ministry Specific Styles */
+ /* Intro Section */
+ .men-ministry-intro {
+     background: linear-gradient(rgba(75, 36, 140, 0.8), rgba(75, 36, 140, 0.8)),
+         url('https://source.unsplash.com/random/1200x800/?men,ministry');
+     background-size: cover;
+     background-position: center;
+     height: 60vh;
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+     color: var(--text-color);
+     padding: 0 20px;
+ }
+
+ .men-ministry-intro h1 {
+     font-size: 2.8rem;
+     margin-bottom: 15px;
+     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--Gold-color);
+ }
+
+ .men-ministry-intro h4 {
+     font-size: 1.5rem;
+     font-weight: 300;
+     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+ }
+
+ /* Main Content */
+ .men-ministry-page {
+     padding: 60px 0;
+     background-color: var(--text-color);
+ }
+
+ .men-ministry-main-content {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 0 20px;
+ }
+
+ .men-ministry-row {
+     display: flex;
+     flex-wrap: wrap;
+     align-items: center;
+     gap: 40px;
+ }
+
+ .men-ministry-main-content-col {
+     flex: 1;
+     min-width: 300px;
+ }
+
+ .men-ministry-main-content-col img {
+     width: 100%;
+     border-radius: 8px;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+ }
+
+ .men-ministry-main-content-col p {
+     margin-bottom: 20px;
+     line-height: 1.8;
+     color: var(--men-dark-gray);
+ }
+
+ .men-ministry-main-content-col h4 {
+     color: var(--Royal-purple);
+     margin: 25px 0 15px;
+     font-size: 1.5rem;
+ }
+
+ .men-ministry-button-btn {
+     margin-top: 30px;
+ }
+
+ .men-ministry-button-btn a {
+     display: inline-block;
+     background-color: var(--Primary-Blue);
+     color: var(--text-color);
+     padding: 12px 30px;
+     border-radius: 5px;
+     text-decoration: none;
+     font-weight: 500;
+     transition: all 0.3s ease;
+ }
+
+ .men-ministry-button-btn a:hover {
+     background-color: var(--Royal-purple);
+     transform: translateY(-2px);
+ }
+
+ /* Desktop Pillars */
+ .men-ministry-pillars {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 40px 20px;
+     display: block;
+ }
+
+ .men-ministry-main-banner {
+     background-color: var(--Primary-Blue);
+     color: var(--text-color);
+     padding: 15px 25px;
+     font-size: 1.3rem;
+     margin-bottom: 30px;
+     display: inline-block;
+     border-radius: 5px;
+ }
+
+ .men-ministry-pillars h3 {
+     color: var(--Royal-purple);
+     margin: 25px 0 10px;
+     font-size: 1.4rem;
+ }
+
+ .men-ministry-pillars p {
+     color: var(--men-dark-gray);
+     line-height: 1.8;
+     margin-bottom: 15px;
+ }
+
+ /* Mobile Accordion */
+ .men-accord {
+     display: none;
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 20px;
+ }
+
+ .men-accord-item {
+     margin-bottom: 15px;
+     border-radius: 8px;
+     overflow: hidden;
+     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+ }
+
+ .men-accord-header {
+     background-color: var(--Primary-Blue);
+     color: var(--text-color);
+     padding: 15px 20px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     cursor: pointer;
+ }
+
+ .men-accord-header h3 {
+     font-size: 1.2rem;
+     margin: 0;
+ }
+
+ .men-accord-icon {
+     font-size: 1.3rem;
+     font-weight: bold;
+     transition: transform 0.3s ease;
+ }
+
+ .men-accord-content {
+     max-height: 0;
+     overflow: hidden;
+     transition: max-height 0.3s ease;
+     background-color: var(--men-light-gray);
+ }
+
+ .men-accord-content p {
+     padding: 20px;
+     margin: 0;
+     color: var(--men-dark-gray);
+     line-height: 1.8;
+ }
+
+ .men-accord-item.active .men-accord-content {
+     max-height: 300px;
+ }
+
+ .men-accord-item.active .men-accord-icon {
+     transform: rotate(45deg);
+ }
+/* Continue Page Styles */
+.men-cont-page-intro {
+    background: linear-gradient(rgba(75, 36, 140, 0.8), rgba(75, 36, 140, 0.8)),
+        url('https://source.unsplash.com/random/1200x800/?men,group');
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+    padding: 0 20px;
+}
+
+.men-cont-page-intro h1 {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--Gold-color);
+}
+
+.men-cont-page-intro h4 {
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+}
+
+.men-cont-grid-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.men-cont-main-content {
+    background-color: var(--text-color);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.men-cont-main-banner {
+    background-color: var(--Primary-Blue);
+    color: var(--text-color);
+    padding: 15px 25px;
+    font-size: 1.3rem;
+    margin: 40px 0 30px;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.men-cont-pillar {
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.men-cont-pillar h3 {
+    color: var(--Royal-purple);
+    margin-bottom: 15px;
+}
+
+.men-cont-activities {
+    margin-left: 20px;
+}
+
+.men-cont-activities h4 {
+    color: var(--Royal-purple);
+    margin: 20px 0 10px;
+    font-size: 1.2rem;
+}
+
+.men-cont-social-sidebar {
+    background-color: var(--men-light-gray);
+    padding: 30px;
+    border-radius: 8px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.men-cont-social-title {
+    color: var(--Primary-Blue);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    border-bottom: 2px solid var(--Gold-color);
+    padding-bottom: 10px;
+}
+
+.men-cont-social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.men-cont-social-icons a {
+    color: var(--Primary-Blue);
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
+}
+
+.men-cont-social-icons a:hover {
+    color: var(--Gold-color);
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .men-cont-grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .men-cont-social-sidebar {
+        position: static;
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .men-cont-page-intro h1 {
+        font-size: 2.2rem;
+    }
+
+    .men-cont-page-intro h4 {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .men-cont-page-intro h1 {
+        font-size: 1.8rem;
+    }
+
+    .men-cont-page-intro h4 {
+        font-size: 1rem;
+    }
+}

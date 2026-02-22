@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quick Test - Multiple Children</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .pass { background: #d4edda; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; border: 1px solid #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .info { background: #d1ecf1; padding: 15px; border-radius: 5px; margin: 20px 0; }
+
+        img,
+        video,
+        iframe {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        body {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1.25rem;
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            button {
+                width: 100%;
+                min-height: 48px;
+                margin: 6px 0;
+                padding: 14px 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Event Registration Test</h1>
+    
+    <div class="info">
+        <strong>Test Scenario:</strong><br>
+        1. Register as Parent with 2 children<br>
+        2. Fill in details and proceed to review<br>
+        3. Check if WhatsApp message generates correctly
+    </div>
+
+    <button onclick="runTest()">Run Test</button>
+    <button onclick="clearTest()">Clear Results</button>
+
+    <div id="results"></div>
+
+    <script>
+        const CONTACT_NUMBERS = {
+            camper: "+254725968973",
+            facilitator: "+254732364434",
+            sponsor: "+254714545791"
+        };
+
+        function log(message, isPass) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${isPass ? 'pass' : 'fail'}`;
+            div.textContent = (isPass ? '✓ ' : '✗ ') + message;
+            results.appendChild(div);
+        }
+
+        function clearTest() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        function runTest() {
+            clearTest();
+            log('Starting test...', true);
+
+            // Test 1: Check if camp selectors work
+            const testCamps = '#camp-jewels:checked, #camp-teenlife:checked';
+            log(`Camp selector pattern: ${testCamps}`, true);
+
+            // Test 2: Simulate child data collection
+            const childrenData = [];
+            const childCount = 2;
+            
+            for (let i = 1; i <= childCount; i++) {
+                childrenData.push({
+                    name: `Test Child ${i}`,
+                    age: `${7 + i}`
+                });
+            }
+            
+            log(`Collected ${childrenData.length} children's data`, childrenData.length === 2);
+
+            // Test 3: Generate sample WhatsApp message
+            const message = generateTestMessage(childrenData);
+            log('Message generation successful', message.length > 0);
+            log(`Message length: ${message.length} characters`, true);
+
+            // Test 4: Check phone number format
+            const phone = CONTACT_NUMBERS.camper;
+            log(`Contact number: ${phone}`, phone.startsWith('+254'));
+
+            // Test 5: Check sessionStorage
+            try {
+                const testData = {
+                    childrenData: childrenData,
+                    camps: ['jewels', 'teenlife']
+                };
+                sessionStorage.setItem('test', JSON.stringify(testData));
+                const restored = JSON.parse(sessionStorage.getItem('test'));
+                log('SessionStorage works', restored.childrenData.length === 2);
+                sessionStorage.removeItem('test');
+            } catch (e) {
+                log('SessionStorage error: ' + e.message, false);
+            }
+
+            // Display sample message
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'info';
+            msgDiv.innerHTML = '<strong>Sample WhatsApp Message:</strong><br><pre style="white-space: pre-wrap;">' + 
+                message + '</pre>';
+            document.getElementById('results').appendChild(msgDiv);
+        }
+
+        function generateTestMessage(childrenData) {
+            const fullName = "John Doe";
+            const phone = "+254712345678";
+            let message = `*NEW CAMP REGISTRATION - PARENT*\n\n`;
+            message += `Event: Jewels Kids Mentorship Camp\n\n`;
+            message += `Name: ${fullName}\n`;
+            message += `Phone: ${phone}\n`;
+            message += `Relationship: Parent\n\n`;
+            message += `Number of Children: ${childrenData.length}\n\n`;
+
+            childrenData.forEach((child, index) => {
+                message += `Child ${index + 1}: ${child.name} (Age: ${child.age})\n`;
+            });
+
+            message += `\nSelected Camps:\n`;
+            message += `• Jewels Kids Camp\n`;
+            message += `• Teen-Life Camp\n\n`;
+            message += `Total Cost: 39,840 Ksh\n\n`;
+            message += `Deposit: Ksh. 2,000 required within 14 days\n\n`;
+            message += `Contact: Lydiah Opwaka`;
+
+            return message;
+        }
+
+        // Auto-run test on load
+        window.onload = () => {
+            setTimeout(runTest, 500);
+        };
+    </script>
+</body>
+</html>
