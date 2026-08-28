@@ -18,9 +18,9 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--body-font);
     line-height: 1.6;
-    color: #333;
+    color: var(--Dark-gray);
     background-color: var(--Background-color);
 }
 
@@ -29,7 +29,7 @@ body {
     position: relative;
     height: 80vh;
     overflow: hidden;
-    margin-top: 80px;
+    margin-top: 0;
 }
 
 .jm-slideshow {
@@ -121,15 +121,20 @@ body {
 
 .centered-title {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2.5rem;
+    display: block;
 }
 
 .jm-section-title {
     font-size: 2.5rem;
     color: var(--Royal-purple);
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     position: relative;
-    display: inline-block;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
 }
 
@@ -137,8 +142,9 @@ body {
     content: '';
     position: absolute;
     bottom: -10px;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
     height: 4px;
     background: linear-gradient(to right, var(--Royal-purple), var(--Primary-Blue), var(--Gold-color));
     border-radius: 2px;
@@ -147,7 +153,7 @@ body {
 .centered-content .jm-section-title::after {
     left: 50%;
     transform: translateX(-50%);
-    width: 60%;
+    width: 90px;
 }
 
 /* Two Column Layout */
@@ -225,7 +231,24 @@ body {
     font-size: 2.5rem;
     margin-bottom: 3rem;
     color: white;
+    position: relative;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 4px;
+    background: var(--Gold-color);
+    border-radius: 2px;
+}
+
 
 .categories-container {
     display: flex;
@@ -759,8 +782,18 @@ body {
         height: 60vh;
     }
 
+    .jm-hero-main {
+        width: calc(100% - 2rem);
+        padding: 1.25rem 1rem;
+        border-radius: 20px;
+        background: rgba(31, 16, 71, 0.28);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
     .jm-hero-main h1 {
         font-size: 2.2rem;
+        line-height: 1.12;
     }
 
     .section-spacing {
@@ -2868,11 +2901,13 @@ body {
    .christhood-apologetics-hero div {
        max-width: 900px;
        z-index: 1;
+       position: relative;
    }
 
    .christhood-apologetics-hero h1 {
        font-size: 4rem;
        margin-bottom: 1rem;
+       color: var(--White-color, #ffffff);
        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
        font-weight: 800;
    }
@@ -3225,13 +3260,29 @@ body {
    }
 
    @media (max-width: 600px) {
+       .christhood-apologetics-hero {
+           min-height: 60vh;
+           padding: 1.5rem;
+       }
+
+       .christhood-apologetics-hero div {
+           padding: 1.25rem 1rem;
+           border-radius: 20px;
+           background: rgba(31, 16, 71, 0.4);
+           backdrop-filter: blur(6px);
+           -webkit-backdrop-filter: blur(6px);
+       }
+
        .christhood-apologetics-hero h1 {
-           font-size: 2.5rem;
+           font-size: 2rem;
+           line-height: 1.1;
+           margin-bottom: 0.75rem;
        }
 
        .christhood-apologetics-hero h2 {
-           font-size: 1.5rem;
-       }
+           font-size: 1.15rem;
+           line-height: 1.4;
+        }
 
        .christhood-apologetics-intro h2,
        .christhood-apologetics-challenges h2,
@@ -3245,3 +3296,347 @@ body {
            font-size: 1.1rem;
        }
    }
+
+
+/* ======================
+2026 ULTRA-MODERN PROGRAM SOCIALS
+====================== */
+
+.programs-socials-v2 {
+    position: relative;
+    overflow: hidden;
+    padding: 5.5rem 1.5rem;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(243, 204, 60, 0.14), transparent 28%),
+        radial-gradient(circle at 90% 80%, rgba(0, 71, 171, 0.22), transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(75, 36, 140, 0.35), transparent 45%),
+        linear-gradient(145deg, #0d071a 0%, #1a0c33 40%, #0c204d 100%);
+}
+
+.programs-socials-v2 .cosmic-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(1.5px 1.5px at 15% 15%, rgba(255, 255, 255, 0.5), transparent),
+        radial-gradient(2px 2px at 85% 25%, rgba(243, 204, 60, 0.4), transparent),
+        radial-gradient(1.5px 1.5px at 50% 75%, rgba(255, 255, 255, 0.3), transparent),
+        radial-gradient(2px 2px at 70% 90%, rgba(0, 71, 171, 0.4), transparent);
+    background-size: 300px 300px;
+    animation: cosmicDrift 30s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes cosmicDrift {
+    0% { background-position: 0 0; }
+    100% { background-position: 300px 300px; }
+}
+
+.programs-socials-v2 .section-heading {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto 3rem auto;
+    text-align: center;
+}
+
+.programs-socials-v2 .title-glitch {
+    color: #FFFFFF;
+    font-size: 2.3rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #FFFFFF 40%, #F3CC3C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.75rem;
+}
+
+.programs-socials-v2 .subtitle-shine {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.social-matrix {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+}
+
+.social-tile {
+    position: relative;
+    min-height: 340px;
+    padding: 2.2rem 1.8rem;
+    border-radius: 24px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.social-tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(243, 204, 60, 0.2), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+.social-tile:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 28px 60px rgba(0, 0, 0, 0.5), 0 0 30px rgba(243, 204, 60, 0.2);
+    border-color: rgba(243, 204, 60, 0.4);
+}
+
+.insta-tile {
+    background: linear-gradient(145deg, rgba(131, 58, 180, 0.45) 0%, rgba(253, 29, 29, 0.35) 60%, rgba(245, 96, 64, 0.25) 100%), rgba(20, 10, 35, 0.7);
+}
+
+.fb-tile {
+    background: linear-gradient(145deg, rgba(24, 119, 242, 0.45) 0%, rgba(75, 36, 140, 0.35) 100%), rgba(10, 15, 35, 0.7);
+}
+
+.tiktok-tile {
+    background: linear-gradient(145deg, rgba(105, 201, 208, 0.3) 0%, rgba(238, 29, 82, 0.35) 60%, rgba(1, 1, 1, 0.6) 100%), rgba(15, 15, 25, 0.75);
+}
+
+.tile-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+}
+
+.platform-logo {
+    width: 60px;
+    height: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+    font-size: 1.85rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    margin-bottom: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.social-tile:hover .platform-logo {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.social-tile h3 {
+    margin: 0 0 0.6rem 0;
+    color: #FFFFFF;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.social-tile p {
+    margin: 0 0 1.75rem 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.98rem;
+    line-height: 1.65;
+}
+
+.social-cta {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-cta .cta-arrow {
+    transition: transform 0.3s ease;
+}
+
+.social-cta:hover {
+    background: #F3CC3C;
+    color: #111111;
+    border-color: #F3CC3C;
+    box-shadow: 0 8px 22px rgba(243, 204, 60, 0.4);
+    transform: translateY(-2px);
+}
+
+.social-cta:hover .cta-arrow {
+    transform: translateX(4px);
+}
+
+.tile-glow {
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(243, 204, 60, 0.2), transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (max-width: 768px) {
+    .programs-socials-v2 {
+        padding: 3.5rem 1rem;
+    }
+    .social-matrix {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .social-tile {
+        min-height: auto;
+    }
+}
+
+
+@media (max-width: 992px) {
+    .social-matrix {
+        grid-template-columns: 1fr;
+    }
+
+    .social-tile {
+        min-height: 0;
+    }
+}
+
+
+/* ====================================================
+   UNIVERSAL 2026 CENTERING & BALANCED SPACING LAYER
+==================================================== */
+
+.centered-title,
+.jm-section-title,
+.section-title,
+.bm-heading,
+.bp-section-title,
+.tlm-section-title,
+.impact-section-title,
+.iact-section-title,
+.apologetics-section-title {
+    display: table !important;
+    margin: 0 auto 1.5rem auto !important;
+    text-align: center !important;
+    position: relative !important;
+    color: var(--Royal-purple) !important;
+    font-weight: 800 !important;
+}
+
+.centered-title::after,
+.jm-section-title::after,
+.section-title::after,
+.bm-heading::after,
+.bp-section-title::after,
+.tlm-section-title::after,
+.impact-section-title::after,
+.iact-section-title::after,
+.apologetics-section-title::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 80px !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #4b248c, #0047AB, #F3CC3C) !important;
+    border-radius: 4px !important;
+}
+
+.bm-subheading,
+.section-subtitle,
+.jm-subheading,
+.subtitle-shine {
+    text-align: center !important;
+    margin: 0 auto 2.5rem auto !important;
+    max-width: 800px !important;
+    line-height: 1.7 !important;
+}
+
+/* About Nawiri Africa Layout Balance */
+.bm-about-layout {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3.5rem !important;
+    max-width: 1120px !important;
+    margin: 0 auto !important;
+    padding: 1rem 0 !important;
+}
+
+.bm-about-layout .bm-logo-column {
+    flex: 0 0 400px !important;
+    max-width: 400px !important;
+}
+
+.bm-about-layout .bm-logo-wrapper img {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 20px !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.15) !important;
+}
+
+.bm-about-layout .bm-content-column {
+    flex: 1 !important;
+    text-align: left !important;
+}
+
+.bm-about-layout .bm-content-column .bm-heading {
+    display: table !important;
+    margin: 0 0 1.5rem 0 !important;
+    text-align: left !important;
+}
+
+.bm-about-layout .bm-content-column .bm-heading::after {
+    left: 0 !important;
+    transform: none !important;
+}
+
+@media (max-width: 900px) {
+    .bm-about-layout {
+        flex-direction: column !important;
+        gap: 2rem !important;
+        text-align: center !important;
+    }
+    .bm-about-layout .bm-logo-column {
+        flex: 0 0 auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .bm-about-layout .bm-content-column {
+        text-align: center !important;
+    }
+    .bm-about-layout .bm-content-column .bm-heading {
+        margin: 0 auto 1.5rem auto !important;
+        text-align: center !important;
+    }
+    .bm-about-layout .bm-content-column .bm-heading::after {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}

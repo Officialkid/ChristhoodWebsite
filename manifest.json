@@ -2,20 +2,20 @@
   "name": "Christhood Ministries",
   "short_name": "Christhood",
   "description": "Beleive Belong Become",
-  "start_url": "/",
+  "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#4b248c",
   "background_color": "#4b248c",
   "icons": [
     {
-      "src": "/image/logo.png",
+      "src": "image/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/image/logo.png",
+      "src": "image/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

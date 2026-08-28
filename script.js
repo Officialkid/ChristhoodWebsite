@@ -1,902 +1,876 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // DOM Elements
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const closeMenuBtn = document.querySelector('.close-menu-btn');
-    const navLinks = document.querySelector('.nav-links');
-    const activePageIndicator = document.getElementById('activePageIndicator');
-    const navLinksAll = document.querySelectorAll('.nav-link');
-    const topBars = document.querySelectorAll('.top-bar');
-    let topBar = document.getElementById('topBar');
-    const navbar = document.getElementById('navbar');
+const SITE_CONFIG = {
+    email: 'christhoodministries01@gmail.com',
+    phones: [
+        '+254 714 545791',
+        '+254 712 284711'
+    ],
+    phoneLinks: [
+        'tel:+254714545791',
+        'tel:+254712284711'
+    ],
+    portalUrl: 'https://instituteofapologetics.org',
+    logoPath: 'image/logo.png',
+    navMap: {
+        Home: 'index.html',
+        Humanitarian: 'humanitarian.html',
+        Give: 'give.html',
+        Explore: 'christhood.html',
+        Ministries: 'international-faith-chapel.html',
+        Programmes: 'jewels.html'
+    }
+};
 
-    // Initialize mobile menu state
+function onReady(callback) {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', callback);
+    } else {
+        callback();
+    }
+}
+
+function safeQuery(selector, root = document) {
+    try {
+        return root.querySelector(selector);
+    } catch (error) {
+        return null;
+    }
+}
+
+function safeQueryAll(selector, root = document) {
+    try {
+        return Array.from(root.querySelectorAll(selector));
+    } catch (error) {
+        return [];
+    }
+}
+
+function getCurrentPage() {
+    const page = window.location.pathname.split('/').pop();
+    return page || 'index.html';
+}
+
+function buildTopBarMarkup() {
+    return `
+        <div class="top-bar-container">
+            <a href="${SITE_CONFIG.phoneLinks[0]}" aria-label="Call ${SITE_CONFIG.phones[0]}"><i class='bx bx-phone'></i> ${SITE_CONFIG.phones[0]}</a>
+            <a href="${SITE_CONFIG.phoneLinks[1]}" aria-label="Call ${SITE_CONFIG.phones[1]}"><i class='bx bx-phone'></i> ${SITE_CONFIG.phones[1]}</a>
+            <a href="mailto:${SITE_CONFIG.email}" aria-label="Email ${SITE_CONFIG.email}"><i class='bx bx-envelope'></i> ${SITE_CONFIG.email}</a>
+            <a href="${SITE_CONFIG.portalUrl}" class="portal-btn"><i class='bx bx-book'></i> Christhood Learning Portal</a>
+        </div>
+    `;
+}
+
+function buildNavigationMarkup() {
+    return `
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html">Christhood<span>Ministries</span></a>
+            </div>
+
+            <button class="mobile-menu-btn" type="button" aria-label="Open navigation menu">
+                <i class="bx bx-menu"></i>
+            </button>
+
+            <div class="nav-links">
+                <button class="close-menu-btn" type="button" aria-label="Close navigation menu">
+                    <i class="bx bx-x"></i>
+                </button>
+                <ul>
+                    <li><a href="index.html" class="nav-link" data-indicator="Home">Home</a></li>
+                    <li>
+                        <a href="christhood.html" class="nav-link has-dropdown" data-indicator="Explore">Explore <i class="bx bx-chevron-down"></i></a>
+                        <div class="dropdown mega-menu">
+                            <div class="dropdown-column">
+                                <h4>About Us</h4>
+                                <ul class="dropdown-links">
+                                    <li><a href="apostle.html">Apostle Dennis</a></li>
+                                    <li><a href="leadership.html">Christhood Leadership</a></li>
+                                    <li><a href="christhood.html">Christhood Ministries</a></li>
+                                    <li><a href="mission.html">Mission Vision & Statement of Faith</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="international-faith-chapel.html" class="nav-link has-dropdown" data-indicator="Ministries">Ministries <i class="bx bx-chevron-down"></i></a>
+                        <div class="dropdown mega-menu">
+                            <div class="dropdown-column">
+                                <h4>Ministries</h4>
+                                <ul class="dropdown-links">
+                                    <li><a href="international-faith-chapel.html">International Faith Chapel</a></li>
+                                    <li><a href="worship.html">Worship Ministry</a></li>
+                                    <li><a href="missions-outreach.html">Missions Ministry</a></li>
+                                    <li><a href="Counselling.html">Counselling Ministry</a></li>
+                                    <li><a href="media.html">Media Ministry</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h4>More Ministries</h4>
+                                <ul class="dropdown-links">
+                                    <li><a href="men.html">Men's Ministry</a></li>
+                                    <li><a href="ladies.html">Ladies Ministry</a></li>
+                                    <li><a href="administration.html">Administration</a></li>
+                                    <li><a href="protocol.html">Protocol & Security</a></li>
+                                    <li><a href="creative.html">Creative & Beautification</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="jewels.html" class="nav-link has-dropdown" data-indicator="Programmes">Programmes <i class="bx bx-chevron-down"></i></a>
+                        <div class="dropdown mega-menu">
+                            <div class="dropdown-column">
+                                <h4>Programs</h4>
+                                <ul class="dropdown-links">
+                                    <li><a href="jewels.html">Jewels</a></li>
+                                    <li><a href="teen-life.html">Teen Life Mentorship</a></li>
+                                    <li><a href="branch.html">Branch</a></li>
+                                </ul>
+                            </div>
+                            <div class="dropdown-column">
+                                <h4>More Programs</h4>
+                                <ul class="dropdown-links">
+                                    <li><a href="impact.html">Impact</a></li>
+                                    <li><a href="iAct.html">iAct</a></li>
+                                    <li><a href="apologetics.html">Apologetics</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a href="humanitarian.html" class="nav-link" data-indicator="Humanitarian">Humanitarian</a></li>
+                    <li><a href="give.html" class="nav-link" data-indicator="Give">Give</a></li>
+                </ul>
+            </div>
+        </div>
+    `;
+}
+
+function ensureTopBar() {
+    const topBars = safeQueryAll('.top-bar');
+    let topBar = topBars[0];
+    if (!topBar && document.body) {
+        topBar = document.createElement('div');
+        topBar.className = 'top-bar';
+        document.body.insertBefore(topBar, document.body.firstChild);
+    }
+    if (!topBar) {
+        return null;
+    }
+
+    topBars.slice(1).forEach((bar) => bar.remove());
+    if (!topBar.id) {
+        topBar.id = 'topBar';
+    }
+    topBar.innerHTML = buildTopBarMarkup();
+    return topBar;
+}
+
+function ensureBrandAssets() {
+    const iconHref = SITE_CONFIG.logoPath;
+    let icon = document.querySelector('link[rel="icon"]');
+    if (!icon) {
+        icon = document.createElement('link');
+        icon.rel = 'icon';
+        document.head.appendChild(icon);
+    }
+    icon.type = 'image/png';
+    icon.href = iconHref;
+
+    let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+    if (!appleIcon) {
+        appleIcon = document.createElement('link');
+        appleIcon.rel = 'apple-touch-icon';
+        document.head.appendChild(appleIcon);
+    }
+    appleIcon.href = iconHref;
+
+    let themeColor = document.querySelector('meta[name="theme-color"]');
+    if (!themeColor) {
+        themeColor = document.createElement('meta');
+        themeColor.name = 'theme-color';
+        document.head.appendChild(themeColor);
+    }
+    themeColor.content = '#4b248c';
+}
+
+function ensureFooter() {
+    const footer = safeQuery('footer.home-footer');
+    if (!footer) {
+        return;
+    }
+
+    footer.innerHTML = `
+        <div class="footer-container">
+            <div class="scripture-section">
+                <div class="scripture-box">
+                    <p class="scripture-text">"Therefore go and make disciples of all nations..."</p>
+                    <p class="scripture-reference">Matthew 28:19</p>
+                </div>
+            </div>
+            <div class="pillars-social-icons">
+                <a href="https://www.instagram.com/christhoodministries?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="pillars-social-icon pillars-instagram" target="_blank" rel="noreferrer"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.facebook.com/christhoodministries" class="pillars-social-icon pillars-facebook" target="_blank" rel="noreferrer"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://www.tiktok.com/@christhoodministries_int?_t=8qla8Z1SWNZ&_r=1" class="pillars-social-icon pillars-tiktok" target="_blank" rel="noreferrer"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://x.com/christhood_ciom?s=11" class="pillars-social-icon pillars-x-twitter" target="_blank" rel="noreferrer"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://youtube.com/@christhoodministries?si=NHa000S6Hx58IMen" class="pillars-social-icon pillars-youtube" target="_blank" rel="noreferrer"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="copyright-section">
+            <div class="footer-logo">
+                <a href="index.html">Christhood<span>Ministries</span></a>
+            </div>
+            <p class="copyright-text">&copy; <span id="currentYear"></span> Christhood Ministries. All Rights Reserved.</p>
+        </div>
+    `;
+
+    const yearEl = footer.querySelector('#currentYear');
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    }
+}
+
+function normalizeNavigationMarkup() {
+    let navbar = safeQuery('#navbar, .navbar');
+    if (!navbar && document.body) {
+        navbar = document.createElement('nav');
+        navbar.className = 'navbar';
+        const topBar = safeQuery('#topBar, .top-bar');
+        if (topBar && topBar.parentNode === document.body) {
+            topBar.insertAdjacentElement('afterend', navbar);
+        } else {
+            document.body.insertBefore(navbar, document.body.firstChild);
+        }
+    }
+    if (!navbar) {
+        return;
+    }
+
+    navbar.classList.add('navbar');
+    navbar.id = 'navbar';
+    navbar.innerHTML = buildNavigationMarkup();
+}
+
+function repairMojibakeText(text) {
+    if (!text) {
+        return text;
+    }
+
+    const replacements = new Map([
+        ['\u00c2\u00a0', ' '],
+        ['\u00e2\u0080\u0093', '–'],
+        ['\u00e2\u0080\u0094', '—'],
+        ['\u00e2\u0080\u0098', '‘'],
+        ['\u00e2\u0080\u0099', '’'],
+        ['\u00e2\u0080\u009c', '“'],
+        ['\u00e2\u0080\u009d', '”'],
+        ['\u00e2\u0080\u00a6', '…'],
+        ['\u00e2\u0080\u00a2', '•'],
+        ['\u00c3\u0097', '×'],
+        ['\u00c3\u00a9', 'é'],
+        ['\u00f0\u009f\u0093\u0085', '📅'],
+        ['\u00f0\u009f\u0093\u008d', '📍'],
+        ['\u00e2\u0086\u0092', '→']
+    ]);
+
+    let repaired = text;
+    replacements.forEach((value, key) => {
+        repaired = repaired.split(key).join(value);
+    });
+
+    return repaired;
+}
+
+function repairRenderedText() {
+    if (!document.body) {
+        return;
+    }
+
+    if (document.title) {
+        document.title = repairMojibakeText(document.title);
+    }
+
+    const textWalker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let currentNode = textWalker.nextNode();
+    while (currentNode) {
+        const repaired = repairMojibakeText(currentNode.nodeValue);
+        if (repaired !== currentNode.nodeValue) {
+            currentNode.nodeValue = repaired;
+        }
+        currentNode = textWalker.nextNode();
+    }
+
+    safeQueryAll('[aria-label], [title], [placeholder]').forEach((element) => {
+        ['aria-label', 'title', 'placeholder'].forEach((attributeName) => {
+            const attributeValue = element.getAttribute(attributeName);
+            if (!attributeValue) {
+                return;
+            }
+            const repaired = repairMojibakeText(attributeValue);
+            if (repaired !== attributeValue) {
+                element.setAttribute(attributeName, repaired);
+            }
+        });
+    });
+}
+
+function initTextRepairObserver() {
+    if (!document.body || !('MutationObserver' in window)) {
+        return;
+    }
+
+    const observer = new MutationObserver((mutations) => {
+        let shouldRepair = false;
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                shouldRepair = true;
+            }
+            if (mutation.type === 'attributes') {
+                const value = mutation.target.getAttribute(mutation.attributeName);
+                if (!value) {
+                    return;
+                }
+                const repaired = repairMojibakeText(value);
+                if (repaired !== value) {
+                    mutation.target.setAttribute(mutation.attributeName, repaired);
+                }
+            }
+        });
+
+        if (shouldRepair) {
+            repairRenderedText();
+        }
+    });
+
+    observer.observe(document.body, {
+        subtree: true,
+        childList: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ['aria-label', 'title', 'placeholder']
+    });
+}
+
+function normalizeNavLinks() {
+    const currentPage = getCurrentPage();
+    const navLinks = safeQueryAll('.nav-link');
+
+    navLinks.forEach((link) => {
+        const indicator = link.getAttribute('data-indicator');
+        const href = link.getAttribute('href');
+        const mappedHref = indicator ? SITE_CONFIG.navMap[indicator] : null;
+
+        if ((href === '#' || href === '') && mappedHref) {
+            link.setAttribute('href', mappedHref);
+        }
+
+        const finalHref = link.getAttribute('href') || '';
+        if (finalHref === currentPage || finalHref === `./${currentPage}`) {
+            link.classList.add('is-current');
+            link.setAttribute('aria-current', 'page');
+        }
+    });
+}
+
+function initNavigation() {
+    const mobileMenuBtn = safeQuery('.mobile-menu-btn');
+    const closeMenuBtn = safeQuery('.close-menu-btn');
+    const navLinks = safeQuery('.nav-links');
+    const navbar = safeQuery('#navbar, .navbar');
+    const topBar = ensureTopBar();
+    const activePageIndicator = safeQuery('#activePageIndicator');
+    const navLinkItems = safeQueryAll('.nav-link');
+    const dropdownTriggers = safeQueryAll('.nav-link.has-dropdown, .has-dropdown > a');
     let isMobileMenuOpen = false;
     let lastScrollY = window.scrollY;
 
-    if (topBars.length) {
-        const primaryTopBar = topBars[0];
-        topBars.forEach((bar, index) => {
-            if (index > 0) {
-                bar.remove();
+    function syncMenuState(open) {
+        if (!navLinks || !mobileMenuBtn || !closeMenuBtn) {
+            return;
+        }
+        isMobileMenuOpen = open;
+        navLinks.classList.toggle('active', open);
+        mobileMenuBtn.style.display = open ? 'none' : 'block';
+        closeMenuBtn.style.display = open ? 'block' : 'none';
+        document.body.style.overflow = open ? 'hidden' : 'auto';
+        if (!open) {
+            safeQueryAll('.dropdown, .dropdown-menu').forEach((dropdown) => dropdown.classList.remove('active'));
+            safeQueryAll('.has-dropdown').forEach((item) => item.classList.remove('open'));
+        }
+    }
+
+    if (mobileMenuBtn && closeMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => syncMenuState(true));
+        closeMenuBtn.addEventListener('click', () => syncMenuState(false));
+
+        document.addEventListener('click', (event) => {
+            if (window.innerWidth > 992 || !isMobileMenuOpen) {
+                return;
+            }
+            if (!event.target.closest('.nav-links') && !event.target.closest('.mobile-menu-btn')) {
+                syncMenuState(false);
             }
         });
 
-        if (!primaryTopBar.id) {
-            primaryTopBar.id = 'topBar';
-        }
-
-        primaryTopBar.innerHTML = `
-            <div class="top-bar-container">
-                <a href="#"><i class='bx bx-phone'></i> +254 714 545791</a>
-                <a href="#"><i class='bx bx-phone'></i> +254 712 284711</a>
-                <a href="#"><i class='bx bx-envelope'></i> christhoodministries01@gmail.com</a>
-                <a href="https://instituteofapologetics.org" class="portal-btn"><i class='bx bx-book'></i> Christhood Learning Portal</a>
-            </div>
-        `;
-        topBar = primaryTopBar;
-    }
-
-
-    // Mobile Menu Toggle Functionality
-    function toggleMobileMenu() {
-        isMobileMenuOpen = !isMobileMenuOpen;
-
-        if (isMobileMenuOpen) {
-            // Open menu
-            navLinks.classList.add('active');
-            mobileMenuBtn.style.display = 'none';
-            closeMenuBtn.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        } else {
-            // Close menu
-            navLinks.classList.remove('active');
-            mobileMenuBtn.style.display = 'block';
-            closeMenuBtn.style.display = 'none';
-            document.body.style.overflow = 'auto';
-
-            // Close all dropdowns when closing main menu
-            document.querySelectorAll('.dropdown').forEach(dropdown => {
-                dropdown.classList.remove('active');
-            });
-
-            document.querySelectorAll('.has-dropdown').forEach(item => {
-                item.classList.remove('open');
-            });
-        }
-    }
-
-    // Event Listeners
-    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-    closeMenuBtn.addEventListener('click', toggleMobileMenu);
-
-    // Close menu when clicking outside on mobile
-    document.addEventListener('click', function (e) {
-        if (window.innerWidth <= 992 && isMobileMenuOpen) {
-            if (!e.target.closest('.nav-links') && !e.target.closest('.mobile-menu-btn')) {
-                toggleMobileMenu();
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 992 && isMobileMenuOpen) {
+                syncMenuState(false);
             }
-        }
-    });
+        });
+    }
 
-    // Close menu when window is resized to desktop
-    window.addEventListener('resize', function () {
-        if (window.innerWidth > 992 && isMobileMenuOpen) {
-            toggleMobileMenu();
-        }
-    });
-
-    // Active page indicator functionality
-    navLinksAll.forEach(link => {
-        link.addEventListener('click', function (e) {
-            // For dropdown toggles, prevent default only on mobile
-            if (window.innerWidth <= 992 && this.classList.contains('has-dropdown')) {
-                e.preventDefault();
-            } else {
-                const indicatorText = this.getAttribute('data-indicator');
-                activePageIndicator.textContent = indicatorText;
-                activePageIndicator.style.display = 'block';
-
-                // Hide after 5 seconds
-                setTimeout(() => {
-                    activePageIndicator.style.display = 'none';
-                }, 5000);
+    dropdownTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
+            if (window.innerWidth > 992 || !trigger.classList.contains('has-dropdown')) {
+                return;
+            }
+            event.preventDefault();
+            const listItem = trigger.closest('li');
+            if (!listItem) {
+                return;
+            }
+            const isOpen = listItem.classList.contains('open');
+            safeQueryAll('.has-dropdown').forEach((item) => item.classList.remove('open'));
+            if (!isOpen) {
+                listItem.classList.add('open');
             }
         });
     });
 
-    // Scroll behavior for top bar and navbar
+    navLinkItems.forEach((link) => {
+        link.addEventListener('click', () => {
+            if (!activePageIndicator) {
+                return;
+            }
+            const indicatorText = link.getAttribute('data-indicator');
+            if (!indicatorText) {
+                return;
+            }
+            activePageIndicator.textContent = indicatorText;
+            activePageIndicator.style.display = 'block';
+            window.setTimeout(() => {
+                activePageIndicator.style.display = 'none';
+            }, 3000);
+        });
+    });
+
     window.addEventListener('scroll', () => {
-        // Top bar hide/show on scroll
+        const currentScroll = window.scrollY;
         if (topBar) {
-            if (window.scrollY > lastScrollY && window.scrollY > 100) {
+            if (currentScroll > lastScrollY && currentScroll > 100) {
                 topBar.classList.add('hide');
             } else {
                 topBar.classList.remove('hide');
             }
         }
 
-        // Navbar sticky behavior
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        if (navbar) {
+            navbar.classList.toggle('scrolled', currentScroll > 50);
         }
-
-        if (window.scrollY > 60) {
-            document.body.classList.add('scrolled');
-        } else {
-            document.body.classList.remove('scrolled');
-        }
-
-        lastScrollY = window.scrollY;
+        document.body.classList.toggle('scrolled', currentScroll > 60);
+        lastScrollY = currentScroll;
     });
-});
+}
 
-/* ======================
-   NAVBAR SCROLL BEHAVIOR
-   ====================== */
-(function () {
-    const navbar = document.querySelector('.navbar');
-    const topBar = document.querySelector('.top-bar');
-    let lastScroll = 0;
-
-    window.addEventListener('scroll', function () {
-        const currentScroll = window.scrollY;
-        if (currentScroll <= 0) {
-            if (topBar) {
-                topBar.classList.remove('hide');
+function initSmoothScroll() {
+    safeQueryAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', (event) => {
+            const targetId = anchor.getAttribute('href');
+            if (!targetId || targetId === '#') {
+                return;
             }
-            if (navbar) {
-                navbar.classList.remove('scrolled');
+            const targetElement = safeQuery(targetId);
+            if (!targetElement) {
+                return;
             }
-        } else if (currentScroll > lastScroll) {
-            if (topBar) {
-                topBar.classList.add('hide');
-            }
-            if (navbar) {
-                navbar.classList.add('scrolled');
-            }
-        } else {
-            if (topBar) {
-                topBar.classList.remove('hide');
-            }
-            if (navbar) {
-                navbar.classList.add('scrolled');
-            }
-        }
-
-        if (currentScroll > 60) {
-            document.body.classList.add('scrolled');
-        } else {
-            document.body.classList.remove('scrolled');
-        }
-        lastScroll = currentScroll;
+            event.preventDefault();
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+        });
     });
-})();
+}
 
+function initHeroSlider() {
+    const slider = safeQuery('.hero-slider');
+    const slides = safeQueryAll('.slide');
+    const dots = safeQueryAll('.slider-dot');
+    const prevBtn = safeQuery('.prev-slide');
+    const nextBtn = safeQuery('.next-slide');
+    const progressBar = safeQuery('.progress-bar');
 
-   /*HERO SLIDER FUNCTIONALITY*/
-
-document.addEventListener('DOMContentLoaded', function () {
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.slider-dot');
-    const prevBtn = document.querySelector('.prev-slide');
-    const nextBtn = document.querySelector('.next-slide');
-    const progressBar = document.querySelector('.progress-bar');
+    if (!slider || !slides.length || !prevBtn || !nextBtn || !progressBar) {
+        return;
+    }
 
     let currentSlide = 0;
-    let slideInterval;
-    let progressInterval;
-    const slideDuration = 4000; // 4 seconds
+    let slideInterval = null;
+    let progressInterval = null;
+    const slideDuration = 4000;
 
-    // Initialize slider
-    function initSlider() {
-        updateSlider();
-        startSlideTimer();
+    function updateSlider() {
+        slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
+        dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
     }
 
-    // Start automatic slide timer
-    function startSlideTimer() {
-        clearInterval(slideInterval);
-        clearInterval(progressInterval);
-
-        progressBar.style.width = '0%';
-
-        slideInterval = setInterval(nextSlide, slideDuration);
-        progressInterval = setInterval(updateProgressBar, 50);
-    }
-
-    // Update progress bar
     function updateProgressBar() {
         const currentWidth = parseFloat(progressBar.style.width) || 0;
-        const increment = (100 / (slideDuration / 50));
-
-        if (currentWidth >= 100) {
-            progressBar.style.width = '0%';
-        } else {
-            progressBar.style.width = (currentWidth + increment) + '%';
-        }
+        const increment = 100 / (slideDuration / 50);
+        progressBar.style.width = `${currentWidth >= 100 ? 0 : currentWidth + increment}%`;
     }
 
-    // Go to next slide
+    function startSlideTimer() {
+        window.clearInterval(slideInterval);
+        window.clearInterval(progressInterval);
+        progressBar.style.width = '0%';
+        slideInterval = window.setInterval(nextSlide, slideDuration);
+        progressInterval = window.setInterval(updateProgressBar, 50);
+    }
+
     function nextSlide() {
         currentSlide = (currentSlide + 1) % slides.length;
         updateSlider();
         startSlideTimer();
     }
 
-    // Go to previous slide
     function prevSlide() {
         currentSlide = (currentSlide - 1 + slides.length) % slides.length;
         updateSlider();
         startSlideTimer();
     }
 
-    // Update slider display
-    function updateSlider() {
-        slides.forEach((slide, index) => {
-            slide.classList.remove('active');
-            if (index === currentSlide) {
-                slide.classList.add('active');
-            }
-        });
-
-        dots.forEach((dot, index) => {
-            dot.classList.remove('active');
-            if (index === currentSlide) {
-                dot.classList.add('active');
-            }
-        });
-    }
-
-    // Go to specific slide
-    function goToSlide(index) {
-        currentSlide = index;
-        updateSlider();
-        startSlideTimer();
-    }
-
-    // Event listeners
-    nextBtn.addEventListener('click', nextSlide);
-    prevBtn.addEventListener('click', prevSlide);
-
-    dots.forEach(dot => {
-        dot.addEventListener('click', function () {
-            const slideIndex = parseInt(this.getAttribute('data-slide'));
-            goToSlide(slideIndex);
-        });
-    });
-
-    // Pause on hover
-    const slider = document.querySelector('.hero-slider');
-    slider.addEventListener('mouseenter', () => {
-        clearInterval(slideInterval);
-        clearInterval(progressInterval);
-    });
-
-    slider.addEventListener('mouseleave', startSlideTimer);
-
-    // Touch events for mobile
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    slider.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-        clearInterval(slideInterval);
-        clearInterval(progressInterval);
-    }, { passive: true });
-
-    slider.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-        startSlideTimer();
-    }, { passive: true });
-
-    function handleSwipe() {
+    function handleSwipe(startX, endX) {
         const threshold = 50;
-        if (touchEndX < touchStartX - threshold) {
+        if (endX < startX - threshold) {
             nextSlide();
-        } else if (touchEndX > touchStartX + threshold) {
+        } else if (endX > startX + threshold) {
             prevSlide();
         }
     }
 
-    // Initialize the slider
-    initSlider();
-});
-
-/* ======================
-   MOBILE SLIDER ADJUSTMENTS
-   ====================== */
-function adjustSliderForMobile() {
-    const slider = document.querySelector('.hero-slider');
-    const slides = document.querySelectorAll('.slide');
-
-    if (window.innerWidth <= 768) {
-        // Mobile adjustments
-        slider.style.aspectRatio = '9/16';
-        slides.forEach(slide => {
-            slide.style.paddingTop = '177.78%'; // 9:16 aspect ratio
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+            const slideIndex = Number.parseInt(dot.getAttribute('data-slide') || '0', 10);
+            if (Number.isNaN(slideIndex)) {
+                return;
+            }
+            currentSlide = slideIndex;
+            updateSlider();
+            startSlideTimer();
         });
-    } else {
-        // Desktop settings
-        slider.style.aspectRatio = '16/9';
-        slides.forEach(slide => {
-            slide.style.paddingTop = '56.25%'; // 16:9 aspect ratio
-        });
-    }
+    });
+
+    slider.addEventListener('mouseenter', () => {
+        window.clearInterval(slideInterval);
+        window.clearInterval(progressInterval);
+    });
+    slider.addEventListener('mouseleave', startSlideTimer);
+
+    let touchStartX = 0;
+    slider.addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].screenX;
+        window.clearInterval(slideInterval);
+        window.clearInterval(progressInterval);
+    }, { passive: true });
+    slider.addEventListener('touchend', (event) => {
+        handleSwipe(touchStartX, event.changedTouches[0].screenX);
+        startSlideTimer();
+    }, { passive: true });
+
+    updateSlider();
+    startSlideTimer();
 }
 
-// Run on load and resize
-window.addEventListener('load', adjustSliderForMobile);
-window.addEventListener('resize', adjustSliderForMobile);
+function adjustSliderForMobile() {
+    const slider = safeQuery('.hero-slider');
+    const slides = safeQueryAll('.slide');
+    if (!slider || !slides.length) {
+        return;
+    }
 
-/* ======================
-   FELLOWSHIP DETAILS ANIMATIONS
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize elements with opacity 0
-    const elements = [
-        { element: document.querySelector('.image-container'), delay: 0 },
-        { element: document.querySelector('.fellowship-details'), delay: 300 },
-        { element: document.querySelector('.upcoming-events'), delay: 600 },
-        { element: document.querySelector('.icon-bar'), delay: 900 }
-    ];
+    if (window.innerWidth <= 768) {
+        slider.style.aspectRatio = '9/16';
+    } else {
+        slider.style.aspectRatio = '16/9';
+    }
 
-    // Set initial opacity to 0 for all animated elements
-    elements.forEach(item => {
-        if (item.element) {
-            item.element.style.opacity = '0';
-        }
+    slides.forEach((slide) => {
+        slide.style.paddingTop = '0';
     });
+}
 
-    // Animate elements with staggered delays
-    elements.forEach(item => {
-        if (item.element) {
-            setTimeout(() => {
-                item.element.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-                item.element.style.opacity = '1';
-                item.element.style.transform = 'translateY(0)';
-            }, item.delay);
-        }
-    });
-});
+function initSectionObserver() {
+    if (!('IntersectionObserver' in window)) {
+        return;
+    }
+    const sections = safeQueryAll('section, .section-hidden');
+    if (!sections.length) {
+        return;
+    }
 
-/* ======================
-   GENERAL PAGE ANIMATIONS
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    // Section Observer for animations
-    const sections = document.querySelectorAll('section');
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+    const observer = new IntersectionObserver((entries, activeObserver) => {
+        entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('active');
+                entry.target.classList.add('active', 'section-visible');
+                if (entry.target.classList.contains('section-hidden')) {
+                    activeObserver.unobserve(entry.target);
+                }
             }
         });
-    }, {
-        threshold: 0.1
-    });
+    }, { threshold: 0.1 });
 
-    sections.forEach(section => {
-        observer.observe(section);
-    });
+    sections.forEach((section) => observer.observe(section));
+}
 
-    // Smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // Social media icon hover effects
-    const socialIcons = document.querySelectorAll('.icon-bar a');
-    socialIcons.forEach(icon => {
-        icon.addEventListener('mouseenter', function () {
-            this.style.transform = 'translateY(-5px)';
-        });
-        icon.addEventListener('mouseleave', function () {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-});
-
-/* ======================
-   UTILITY FUNCTIONS
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    // Map loader
-    const mapLoader = document.getElementById('mapLoader');
-    const locationMap = document.getElementById('locationMap');
-
-    if (locationMap) {
-        locationMap.addEventListener('load', function () {
-            if (mapLoader) mapLoader.style.display = 'none';
-        });
-    }
-
-    // Set current year in footer
-    const currentYearElement = document.getElementById('currentYear');
-    if (currentYearElement) {
-        currentYearElement.textContent = new Date().getFullYear();
-    }
-});
-
-/* ======================
-   BACK TO TOP BUTTON
-   ======================
-document.addEventListener('DOMContentLoaded', function () {
-    const backToTopButton = document.getElementById('backToTop');
-    if (!backToTopButton) return;
-
-    const navbarHeight = document.querySelector('nav')?.offsetHeight || 50;
-    const scrollThreshold = Math.max(window.innerHeight * 0.5, 300); // At least 50vh or 300px
-
-    function toggleBackToTop() {
-        if (window.pageYOffset > scrollThreshold) {
-            backToTopButton.classList.add('active');
-        } else {
-            backToTopButton.classList.remove('active');
-        }
-    }
-
-    // Initial check
-    toggleBackToTop();
-
-    // Scroll event listener
-    window.addEventListener('scroll', function () {
-        toggleBackToTop();
-    });
-
-    // More reliable scroll detection
-    function checkScroll() {
-        const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-        const halfViewport = window.innerHeight / 2;
-
-        if (scrollPosition > halfViewport) {
-            backToTopButton.classList.add('active');
-        } else {
-            backToTopButton.classList.remove('active');
-        }
-    }
-
-    // Throttled scroll event for better performance
-    let isScrolling;
-    window.addEventListener('scroll', function () {
-        window.clearTimeout(isScrolling);
-        isScrolling = setTimeout(checkScroll, 50);
-    }, false);
-
-    // Smooth scroll with offset if you have fixed navbar
-    backToTopButton.addEventListener('click', function (e) {
-        e.preventDefault();
-        const navbarHeight = document.querySelector('nav')?.offsetHeight || 0;
-
-        window.scrollTo({
-            top: navbarHeight, // Stops at navbar if exists
-            behavior: 'smooth'
-        });
-    });
-
-    // Handle resize events
-    window.addEventListener('resize', checkScroll);
-});/*
-
-======================
- /*  COPY TO CLIPBOARD FUNCTION
-   ====================== */
-window.copyToClipboard = function (text) {
-    navigator.clipboard.writeText(text).then(function () {
-        alert('Copied to clipboard: ' + text);
-    }, function (err) {
-        console.error('Could not copy text: ', err);
-    });
-};
-
-/* ======================
-   SOCIAL MEDIA ICON EFFECTS
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    const socialIcons = document.querySelectorAll('.social-media-icons a');
-    socialIcons.forEach(icon => {
-        const platform = icon.getAttribute('aria-label')?.toLowerCase();
-        if (!platform) return;
-
-        icon.addEventListener('mouseenter', () => {
-            switch (platform) {
-                case 'instagram':
-                    icon.style.background = 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)';
-                    break;
-                case 'facebook':
-                    icon.style.background = '#3b5998';
-                    break;
-                case 'tiktok':
-                    icon.style.background = '#000000';
-                    break;
-                case 'youtube':
-                    icon.style.background = '#ff0000';
-                    break;
-                case 'twitter':
-                    icon.style.background = '#000000';
-                    break;
+function initReadMoreBlocks() {
+    safeQueryAll('.read-more, .christhood-read-more').forEach((button) => {
+        button.addEventListener('click', () => {
+            const fullContent = button.nextElementSibling;
+            if (!fullContent) {
+                return;
             }
-        });
-        icon.addEventListener('mouseleave', () => {
-            icon.style.background = 'transparent';
-        });
-    });
-});
-
-/* ======================
-   READ MORE FUNCTIONALITY (GENERAL)
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.read-more').forEach(button => {
-        button.addEventListener('click', function () {
-            const fullContent = this.nextElementSibling;
-            this.classList.toggle('active');
-
-            if (fullContent.classList.contains('show')) {
-                fullContent.classList.remove('show');
-                this.innerHTML = 'Read More <i class="fas fa-chevron-down"></i>';
+            const isCurrentlyOpen = fullContent.classList.contains('active') || fullContent.classList.contains('show');
+            if (isCurrentlyOpen) {
+                fullContent.classList.remove('active', 'show');
+                button.classList.remove('active');
+                button.innerHTML = 'Read More <i class="fas fa-chevron-down"></i>';
             } else {
-                fullContent.classList.add('show');
-                this.innerHTML = 'Read Less <i class="fas fa-chevron-up"></i>';
-            }
-        });
-    });
-});
-
-/* ======================
-   CHRISTHOOD LEADERSHIP SECTION
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    // Read More Functionality
-    document.querySelectorAll('.christhood-read-more').forEach(button => {
-        button.addEventListener('click', function () {
-            const fullMessage = this.nextElementSibling;
-            this.classList.toggle('active');
-
-            if (fullMessage.classList.contains('show')) {
-                fullMessage.classList.remove('show');
-                this.innerHTML = 'Read More <i class="fas fa-chevron-down"></i>';
-            } else {
-                fullMessage.classList.add('show');
-                this.innerHTML = 'Read Less <i class="fas fa-chevron-up"></i>';
+                fullContent.classList.add('active', 'show');
+                button.classList.add('active');
+                button.innerHTML = 'Read Less <i class="fas fa-chevron-up"></i>';
             }
         });
     });
 
-    // Scroll Animation
-    const observerOptions = {
-        threshold: 0.1
-    };
-
-    const leaderObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+    safeQueryAll('.christhood-read-more-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+            const card = button.closest('.christhood-testimonial-card');
+            const content = card ? safeQuery('.christhood-testimonial-content', card) : null;
+            if (!card || !content) {
+                return;
             }
-        });
-    }, observerOptions);
-
-    const testimonialObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                // Stagger the animations
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target);
-                }, index * 200);
-            }
-        });
-    }, observerOptions);
-
-    // Observe leader cards
-    document.querySelectorAll('.christhood-leader-card').forEach(card => {
-        leaderObserver.observe(card);
-    });
-
-    // Observe testimonial cards
-    document.querySelectorAll('.christhood-testimonial-card').forEach(card => {
-        testimonialObserver.observe(card);
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Read More functionality
-    const readMoreButtons = document.querySelectorAll('.christhood-read-more-btn');
-
-    readMoreButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const card = this.closest('.christhood-testimonial-card');
-            const content = card.querySelector('.christhood-testimonial-content');
-
-            if (content.classList.contains('collapsed')) {
-                content.classList.remove('collapsed');
-                content.classList.add('expanded');
-                this.textContent = 'Read Less';
-                card.style.minHeight = 'auto'; // Adjust height to fit expanded content
-            } else {
-                content.classList.remove('expanded');
-                content.classList.add('collapsed');
-                this.textContent = 'Read More';
-                card.style.minHeight = '300px'; // Reset to original height
-            }
+            const expanding = content.classList.contains('collapsed');
+            content.classList.toggle('collapsed', !expanding);
+            content.classList.toggle('expanded', expanding);
+            button.textContent = expanding ? 'Read Less' : 'Read More';
+            card.style.minHeight = expanding ? 'auto' : '300px';
         });
     });
+}
 
-    // Original carousel functionality
-    const track = document.querySelector('.christhood-testimonial-track');
-    const cards = document.querySelectorAll('.christhood-testimonial-card');
-    const prevBtn = document.querySelector('.christhood-carousel-arrow.prev');
-    const nextBtn = document.querySelector('.christhood-carousel-arrow.next');
-    const dotsContainer = document.querySelector('.christhood-carousel-dots');
-
-    if (!track || cards.length === 0) return;
-
-    // Clone first few cards and append to end for infinite effect
-    const firstCards = Array.from(cards).slice(0, 3);
-    firstCards.forEach(card => {
-        const clone = card.cloneNode(true);
-        track.appendChild(clone);
-    });
-
-    // Clone last few cards and prepend to beginning for infinite effect
-    const lastCards = Array.from(cards).slice(-3);
-    lastCards.reverse().forEach(card => {
-        const clone = card.cloneNode(true);
-        track.insertBefore(clone, track.firstChild);
-    });
-
-    const allCards = document.querySelectorAll('.christhood-testimonial-card');
-    const cardCount = allCards.length;
-    let cardWidth = allCards[0].offsetWidth + 20; // including gap
-    let currentPosition = 3; // Start at original first card
-    let autoScrollInterval;
-    let visibleCards = window.innerWidth >= 992 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
-    const dotCount = Math.ceil(cards.length / visibleCards);
-
-    // Create dots
-    for (let i = 0; i < dotCount; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('christhood-carousel-dot');
-        if (i === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goToSlide(i));
-        dotsContainer.appendChild(dot);
-    }
-
-    const dots = document.querySelectorAll('.christhood-carousel-dot');
-
-    // Update carousel position
-    function updateCarousel() {
-        track.style.transition = 'transform 0.5s ease';
-        track.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
-
-        // Update active dot
-        const activeDot = Math.floor((currentPosition - 3) / visibleCards) % dotCount;
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === activeDot);
-        });
-    }
-
-    // Handle infinite loop
-    function checkPosition() {
-        track.style.transition = 'none';
-
-        if (currentPosition <= 2) {
-            currentPosition = cardCount - 3;
-            track.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
-        } else if (currentPosition >= cardCount - 3) {
-            currentPosition = 3;
-            track.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
-        }
-
-        setTimeout(() => {
-            track.style.transition = 'transform 0.5s ease';
-        }, 10);
-    }
-
-    // Go to specific slide
-    function goToSlide(index) {
-        currentPosition = index * visibleCards + 3;
-        updateCarousel();
-        resetAutoScroll();
-    }
-
-    // Next slide
-    function nextSlide() {
-        currentPosition++;
-        updateCarousel();
-        resetAutoScroll();
-
-        if (currentPosition >= cardCount - 3) {
-            setTimeout(checkPosition, 500);
-        }
-    }
-
-    // Previous slide
-    function prevSlide() {
-        currentPosition--;
-        updateCarousel();
-        resetAutoScroll();
-
-        if (currentPosition <= 2) {
-            setTimeout(checkPosition, 500);
-        }
-    }
-
-    // Auto-scroll functionality
-    function startAutoScroll() {
-        autoScrollInterval = setInterval(nextSlide, 5000);
-    }
-
-    function resetAutoScroll() {
-        clearInterval(autoScrollInterval);
-        startAutoScroll();
-    }
-
-    // Event listeners
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    // Start auto-scroll
-    startAutoScroll();
-
-    // Pause auto-scroll on hover
-    track.addEventListener('mouseenter', () => {
-        clearInterval(autoScrollInterval);
-    });
-
-    track.addEventListener('mouseleave', () => {
-        startAutoScroll();
-    });
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        const newVisibleCards = window.innerWidth >= 992 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
-        cardWidth = allCards[0].offsetWidth + 20;
-
-        // Recreate dots if visible cards count changes
-        if (newVisibleCards !== visibleCards) {
-            visibleCards = newVisibleCards;
-            dotsContainer.innerHTML = '';
-            const newDotCount = Math.ceil(cards.length / visibleCards);
-
-            for (let i = 0; i < newDotCount; i++) {
-                const dot = document.createElement('div');
-                dot.classList.add('christhood-carousel-dot');
-                if (i === 0) dot.classList.add('active');
-                dot.addEventListener('click', () => goToSlide(i));
-                dotsContainer.appendChild(dot);
+function initAccordion() {
+    safeQueryAll('.accord-header').forEach((header) => {
+        header.addEventListener('click', () => {
+            const accordionContent = header.nextElementSibling;
+            if (!accordionContent) {
+                return;
             }
-        }
-
-        updateCarousel();
-    });
-});
-
-
-/* ======================
-   CHRISTHOOD MISSION/VISION PAGE
-   ====================== */
-// Toggle read more buttons
-document.querySelectorAll('.read-more').forEach(button => {
-    button.addEventListener('click', function () {
-        const fullContent = this.nextElementSibling;
-        fullContent.classList.toggle('active');
-        this.classList.toggle('active');
-
-        if (fullContent.classList.contains('active')) {
-            this.innerHTML = 'Read Less <i class="fas fa-chevron-up"></i>';
-        } else {
-            this.innerHTML = 'Read More <i class="fas fa-chevron-down"></i>';
-        }
-    });
-});
- 
-
-
-/* ======================
-   ADMINISTRATION PAGE
-   ====================== */
-document.addEventListener('DOMContentLoaded', function () {
-    // Accordion functionality for mobile
-    const accordHeaders = document.querySelectorAll('.accord-header');
-
-    accordHeaders.forEach(header => {
-        header.addEventListener('click', function () {
-            const accordionItem = this.parentElement;
-            const accordionContent = this.nextElementSibling;
-            const accordionIcon = this.querySelector('.accord-icon');
-
-            // Close all other open accordion items
-            document.querySelectorAll('.accord-content').forEach(content => {
-                if (content !== accordionContent && content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                    const icon = content.previousElementSibling.querySelector('.accord-icon');
-                    if (icon) icon.textContent = '+';
-                    content.previousElementSibling.style.backgroundColor = 'var(--Primary-Blue)';
+            const accordionIcon = safeQuery('.accord-icon', header);
+            safeQueryAll('.accord-content').forEach((content) => {
+                if (content === accordionContent || !content.style.maxHeight) {
+                    return;
+                }
+                content.style.maxHeight = null;
+                const peerHeader = content.previousElementSibling;
+                const icon = peerHeader ? safeQuery('.accord-icon', peerHeader) : null;
+                if (icon) {
+                    icon.textContent = '+';
+                }
+                if (peerHeader) {
+                    peerHeader.style.backgroundColor = 'var(--Primary-Blue)';
                 }
             });
 
-            // Toggle current item
-            if (accordionContent.style.maxHeight) {
-                accordionContent.style.maxHeight = null;
-                if (accordionIcon) accordionIcon.textContent = '+';
-                this.style.backgroundColor = 'var(--Primary-Blue)';
-            } else {
-                accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
-                if (accordionIcon) accordionIcon.textContent = '-';
-                this.style.backgroundColor = '#003b8e';
+            const isOpen = Boolean(accordionContent.style.maxHeight);
+            accordionContent.style.maxHeight = isOpen ? null : `${accordionContent.scrollHeight}px`;
+            if (accordionIcon) {
+                accordionIcon.textContent = isOpen ? '+' : '-';
             }
+            header.style.backgroundColor = isOpen ? 'var(--Primary-Blue)' : '#003b8e';
         });
     });
+}
 
-    // Animation on scroll
-    function animateOnScroll() {
-        const elements = document.querySelectorAll('.min-content-col, .button-btn a');
+function initAnimateOnScroll() {
+    const animatedSelectors = [
+        '.min-content-col',
+        '.button-btn a',
+        '.flip-card',
+        '.mission-section p',
+        '.action-section'
+    ];
+    const animatedElements = safeQueryAll(animatedSelectors.join(', '));
+    if (!animatedElements.length) {
+        return;
+    }
+
+    animatedElements.forEach((element) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+
+    function onScroll() {
         const windowHeight = window.innerHeight;
-
-        elements.forEach(element => {
-            const elementPosition = element.getBoundingClientRect().top;
-            const elementVisible = 150;
-
-            if (elementPosition < windowHeight - elementVisible) {
+        animatedElements.forEach((element) => {
+            if (element.getBoundingClientRect().top < windowHeight - 100) {
                 element.style.opacity = '1';
                 element.style.transform = 'translateY(0)';
             }
         });
     }
 
-    // Set initial state for animation
-    document.querySelectorAll('.min-content-col, .button-btn a').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    window.addEventListener('scroll', onScroll);
+    onScroll();
+}
+
+function initLeadershipAnimations() {
+    if (!('IntersectionObserver' in window)) {
+        return;
+    }
+    const cards = safeQueryAll('.christhood-leader-card, .christhood-testimonial-card');
+    if (!cards.length) {
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries, activeObserver) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                activeObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    cards.forEach((card) => observer.observe(card));
+}
+
+function initTestimonialCarousel() {
+    const track = safeQuery('.christhood-testimonial-track');
+    const cards = safeQueryAll('.christhood-testimonial-card');
+    const prevBtn = safeQuery('.christhood-carousel-arrow.prev');
+    const nextBtn = safeQuery('.christhood-carousel-arrow.next');
+    const dotsContainer = safeQuery('.christhood-carousel-dots');
+
+    if (!track || cards.length === 0 || !prevBtn || !nextBtn || !dotsContainer) {
+        return;
+    }
+
+    const firstCards = cards.slice(0, 3).map((card) => card.cloneNode(true));
+    const lastCards = cards.slice(-3).reverse().map((card) => card.cloneNode(true));
+    firstCards.forEach((card) => track.appendChild(card));
+    lastCards.forEach((card) => track.insertBefore(card, track.firstChild));
+
+    const allCards = safeQueryAll('.christhood-testimonial-card');
+    let visibleCards = window.innerWidth >= 992 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
+    let currentPosition = 3;
+    let cardWidth = allCards[0] ? allCards[0].offsetWidth + 20 : 0;
+    let autoScrollInterval = null;
+
+    function buildDots() {
+        dotsContainer.innerHTML = '';
+        const dotCount = Math.ceil(cards.length / visibleCards);
+        for (let index = 0; index < dotCount; index += 1) {
+            const dot = document.createElement('div');
+            dot.className = 'christhood-carousel-dot';
+            dot.addEventListener('click', () => {
+                currentPosition = index * visibleCards + 3;
+                updateCarousel();
+                restartAutoScroll();
+            });
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function updateCarousel() {
+        const dots = safeQueryAll('.christhood-carousel-dot', dotsContainer);
+        const dotCount = dots.length || 1;
+        track.style.transition = 'transform 0.5s ease';
+        track.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
+        const activeDot = ((Math.floor((currentPosition - 3) / visibleCards) % dotCount) + dotCount) % dotCount;
+        dots.forEach((dot, index) => dot.classList.toggle('active', index === activeDot));
+    }
+
+    function normalizePosition() {
+        const cardCount = safeQueryAll('.christhood-testimonial-card').length;
+        track.style.transition = 'none';
+        if (currentPosition <= 2) {
+            currentPosition = cardCount - 3;
+        } else if (currentPosition >= cardCount - 3) {
+            currentPosition = 3;
+        }
+        track.style.transform = `translateX(-${currentPosition * cardWidth}px)`;
+        window.setTimeout(() => {
+            track.style.transition = 'transform 0.5s ease';
+        }, 10);
+    }
+
+    function nextSlide() {
+        currentPosition += 1;
+        updateCarousel();
+        restartAutoScroll();
+        window.setTimeout(normalizePosition, 500);
+    }
+
+    function prevSlide() {
+        currentPosition -= 1;
+        updateCarousel();
+        restartAutoScroll();
+        window.setTimeout(normalizePosition, 500);
+    }
+
+    function restartAutoScroll() {
+        window.clearInterval(autoScrollInterval);
+        autoScrollInterval = window.setInterval(nextSlide, 5000);
+    }
+
+    buildDots();
+    updateCarousel();
+    restartAutoScroll();
+
+    prevBtn.addEventListener('click', prevSlide);
+    nextBtn.addEventListener('click', nextSlide);
+    track.addEventListener('mouseenter', () => window.clearInterval(autoScrollInterval));
+    track.addEventListener('mouseleave', restartAutoScroll);
+    window.addEventListener('resize', () => {
+        visibleCards = window.innerWidth >= 992 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
+        cardWidth = allCards[0] ? allCards[0].offsetWidth + 20 : 0;
+        buildDots();
+        updateCarousel();
     });
+}
 
-    window.addEventListener('scroll', animateOnScroll);
-    animateOnScroll(); // Run once on load
-});
+function initEventSectionCarousel() {
+    const eventCards = safeQueryAll('.Events-section .event-card');
+    const indicators = safeQueryAll('.Events-section .indicator');
+    const prevBtn = safeQuery('#prevBtn');
+    const nextBtn = safeQuery('#nextBtn');
+    const registrationBtn = safeQuery('.registration-link-btn');
 
-/*EVENTS SECTION */
-document.addEventListener('DOMContentLoaded', function () {
-    const eventCards = document.querySelectorAll('.Events-section .event-card');
-    const indicators = document.querySelectorAll('.Events-section .indicator');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+    if (registrationBtn) {
+        window.setInterval(() => {
+            registrationBtn.style.transform = 'scale(1.02)';
+            window.setTimeout(() => {
+                registrationBtn.style.transform = '';
+            }, 500);
+        }, 2000);
+    }
+
+    if (!eventCards.length || !prevBtn || !nextBtn) {
+        return;
+    }
 
     let currentIndex = 0;
 
-    // Function to update active event
     function updateActiveEvent() {
         eventCards.forEach((card, index) => {
-            if (index === currentIndex) {
-                card.style.transform = 'scale(1.05)';
-                card.style.zIndex = '10';
-            } else {
-                card.style.transform = 'scale(0.95)';
-                card.style.zIndex = '1';
-            }
+            card.style.transform = index === currentIndex ? 'scale(1.05)' : 'scale(0.95)';
+            card.style.zIndex = index === currentIndex ? '10' : '1';
         });
-
-        // Update active indicator
         indicators.forEach((indicator, index) => {
-            if (index === currentIndex) {
-                indicator.classList.add('active');
-            } else {
-                indicator.classList.remove('active');
-            }
+            indicator.classList.toggle('active', index === currentIndex);
         });
     }
 
-    // Navigation event listeners
     prevBtn.addEventListener('click', () => {
         currentIndex = (currentIndex - 1 + eventCards.length) % eventCards.length;
         updateActiveEvent();
@@ -907,7 +881,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateActiveEvent();
     });
 
-    // Indicator click event
     indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => {
             currentIndex = index;
@@ -915,297 +888,131 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Add click handlers for buttons
-    document.querySelectorAll('.Events-section .learn-more').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const eventName = e.target.closest('.event-card').querySelector('h3').textContent;
-            alert(`Learn more about: ${eventName}`);
-        });
-    });
-
-    document.querySelectorAll('.Events-section .register').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const eventName = e.target.closest('.event-card').querySelector('h3').textContent;
-            alert(`Register for: ${eventName}`);
-        });
-    });
-
-    // Initialize
-    updateActiveEvent();
-
-    // Auto-advance carousel every 5 seconds
-    setInterval(() => {
+    window.setInterval(() => {
         currentIndex = (currentIndex + 1) % eventCards.length;
         updateActiveEvent();
     }, 5000);
-});
 
+    updateActiveEvent();
+}
 
-/*EVENTS JS */
-// Simple animation for the registration link
-document.addEventListener('DOMContentLoaded', function () {
-    const registrationBtn = document.querySelector('.registration-link-btn');
-
-    // Add a subtle pulsing animation
-    setInterval(() => {
-        registrationBtn.style.transform = 'scale(1.02)';
-        setTimeout(() => {
-            registrationBtn.style.transform = '';
-        }, 500);
-    }, 2000);
-});
-
-// ── MOBILE NAV ──
-(function () {
-    const nav = document.querySelector('nav, #navbar, .navbar, header nav');
-    if (!nav) return;
-
-    const navLinks = nav.querySelector('.nav-links');
-    let dropdownItems = [];
-
-    try {
-        dropdownItems = nav.querySelectorAll('li:has(ul), li:has(.dropdown-menu)');
-    } catch (error) {
-        dropdownItems = Array.from(nav.querySelectorAll('li')).filter(item => {
-            return item.querySelector(':scope > ul, :scope > .dropdown-menu');
+function initClipboardButtons() {
+    window.copyToClipboard = function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert(`Copied to clipboard: ${text}`);
+        }).catch((error) => {
+            console.error('Could not copy text: ', error);
         });
-    }
-
-    dropdownItems.forEach(item => {
-        item.classList.add('has-dropdown');
-        const link = item.querySelector(':scope > a');
-        if (link && !link.querySelector('.nav-chevron')) {
-            const chevron = document.createElement('span');
-            chevron.className = 'nav-chevron';
-            chevron.setAttribute('aria-hidden', 'true');
-            link.appendChild(chevron);
-        }
-    });
-
-    dropdownItems.forEach(item => {
-        const link = item.querySelector(':scope > a');
-        if (!link) return;
-        link.addEventListener('click', function (e) {
-            if (window.innerWidth > 768) return;
-            e.preventDefault();
-            const isOpen = item.classList.contains('open');
-            dropdownItems.forEach(i => i.classList.remove('open'));
-            if (!isOpen) item.classList.add('open');
-        });
-    });
-
-    const subLinks = nav.querySelectorAll('.has-dropdown ul a, .has-dropdown .dropdown-menu a');
-    subLinks.forEach(link => {
-        link.addEventListener('click', function () {
-            if (window.innerWidth > 768) return;
-            dropdownItems.forEach(i => i.classList.remove('open'));
-            if (!navLinks) return;
-            navLinks.classList.remove('active');
-            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-            const closeMenuBtn = document.querySelector('.close-menu-btn');
-            if (mobileMenuBtn) mobileMenuBtn.style.display = 'block';
-            if (closeMenuBtn) closeMenuBtn.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        });
-    });
-
-})();
-
-(function initAppSplash() {
-    const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
-    const isIosStandalone = window.navigator.standalone === true;
-    if (!isStandalone && !isIosStandalone) return;
-
-    function showSplash() {
-        if (!document.body) return;
-        const splash = document.createElement('div');
-        splash.className = 'app-splash';
-        splash.innerHTML = `
-            <div class="app-splash__content">
-                <img class="app-splash__logo" src="/image/logo.png" alt="Christhood Ministries Logo">
-                <div class="app-splash__title">CHRISTHOOD MINISTRIES</div>
-                <div class="app-splash__tagline">BELEIVE BELONG BECOME</div>
-            </div>
-        `;
-        document.body.appendChild(splash);
-
-        setTimeout(() => {
-            splash.classList.add('app-splash--hide');
-            setTimeout(() => splash.remove(), 450);
-        }, 1400);
-    }
-
-    if (sessionStorage.getItem('appSplashSeen') === 'true') return;
-    sessionStorage.setItem('appSplashSeen', 'true');
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', showSplash);
-    } else {
-        showSplash();
-    }
-})();
-
-(function initPwaUpdates() {
-    let newWorker;
-
-    function ensureUpdateBanner() {
-        if (!document.body) return null;
-        let banner = document.getElementById('updateBanner');
-        if (banner) return banner;
-
-        banner = document.createElement('div');
-        banner.id = 'updateBanner';
-        banner.style.cssText = 'display:none; position:fixed; bottom:0; left:0; right:0; background:linear-gradient(90deg,#4b248c,#0047AB); color:#ffffff; padding:14px 20px; align-items:center; justify-content:space-between; z-index:9999; font-size:0.95rem; box-shadow:0 -4px 20px rgba(0,0,0,0.3);';
-        banner.innerHTML = '<span>✨ A new version of Christhood Ministries is available</span>' +
-            '<button type="button" id="updateAppBtn" style="background:#F3CC3C; color:#000000; border:none; padding:8px 18px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.9rem; margin-left:1rem;">Update Now</button>';
-        document.body.appendChild(banner);
-
-        const updateBtn = banner.querySelector('#updateAppBtn');
-        if (updateBtn) {
-            updateBtn.addEventListener('click', () => {
-                if (typeof window.applyUpdate === 'function') {
-                    window.applyUpdate();
-                }
-            });
-        }
-
-        return banner;
-    }
-
-    function showUpdateBanner() {
-        const banner = ensureUpdateBanner();
-        if (banner) {
-            banner.style.display = 'flex';
-        }
-    }
-
-    if (!('serviceWorker' in navigator)) return;
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', ensureUpdateBanner);
-    } else {
-        ensureUpdateBanner();
-    }
-
-    navigator.serviceWorker.register('/service-worker.js').then(reg => {
-        reg.addEventListener('updatefound', () => {
-            newWorker = reg.installing;
-            if (!newWorker) return;
-            newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    showUpdateBanner();
-                }
-            });
-        });
-    });
-
-    navigator.serviceWorker.addEventListener('message', event => {
-        if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
-            showUpdateBanner();
-        }
-    });
-
-    window.applyUpdate = function () {
-        if (newWorker) {
-            newWorker.postMessage({ type: 'SKIP_WAITING' });
-        }
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            window.location.reload();
-        }, { once: true });
     };
-})();
 
-(function initGlobalFooterAndIcons() {
-    function ensureFavicon() {
-        const iconHref = '/image/logo.png';
-        let icon = document.querySelector('link[rel="icon"]');
-        if (!icon) {
-            icon = document.createElement('link');
-            icon.rel = 'icon';
-            document.head.appendChild(icon);
-        }
-        icon.type = 'image/png';
-        icon.href = iconHref;
-
-        let appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-        if (!appleIcon) {
-            appleIcon = document.createElement('link');
-            appleIcon.rel = 'apple-touch-icon';
-            document.head.appendChild(appleIcon);
-        }
-        appleIcon.href = iconHref;
-    }
-
-    function ensureFooter() {
-        const footer = document.querySelector('footer.home-footer');
-        if (!footer) return;
-        footer.innerHTML = `
-            <div class="footer-container">
-                <div class="scripture-section">
-                    <div class="scripture-box">
-                        <p class="scripture-text">"Therefore go and make disciples of all nations..."</p>
-                        <p class="scripture-reference">Matthew 28:19</p>
-                    </div>
-                </div>
-
-                <div class="pillars-social-icons">
-                    <a href="https://www.instagram.com/christhoodministries?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="pillars-social-icon pillars-instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.facebook.com/christhoodministries" target="_blank" class="pillars-social-icon pillars-facebook"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="https://www.tiktok.com/@christhoodministries_int?_t=8qla8Z1SWNZ&_r=1" class="pillars-social-icon pillars-tiktok"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="https://x.com/christhood_ciom?s=11" target="_blank" class="pillars-social-icon pillars-x-twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                    <a href="https://youtube.com/@christhoodministries?si=NHa000S6Hx58IMen" class="pillars-social-icon pillars-youtube"><i class="fa-brands fa-youtube"></i></a>
-                </div>
-            </div>
-
-            <div class="copyright-section">
-                <div class="footer-logo">
-                    <a href="#">Christhood<span>Ministries</span></a>
-                </div>
-                <p class="copyright-text">&copy; <span id="currentYear"></span> Christhood Ministries. All Rights Reserved.</p>
-            </div>
-        `;
-
-        const yearEl = footer.querySelector('#currentYear');
-        if (yearEl) {
-            yearEl.textContent = new Date().getFullYear();
-        }
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            ensureFavicon();
-            ensureFooter();
+    safeQueryAll('.christhood-copy-btn').forEach((button) => {
+        button.addEventListener('click', function onCopyClick() {
+            const textToCopy = button.getAttribute('data-text');
+            if (!textToCopy) {
+                return;
+            }
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                window.setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 2000);
+            }).catch((error) => {
+                console.error('Failed to copy text: ', error);
+            });
         });
-    } else {
-        ensureFavicon();
-        ensureFooter();
-    }
-})();
+    });
+}
 
-(function initScrollToTop() {
+function initTabButtons() {
+    safeQueryAll('.christhood-tab-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            if (!tabId) {
+                return;
+            }
+            safeQueryAll('.christhood-tab-btn').forEach((tabButton) => tabButton.classList.remove('active'));
+            safeQueryAll('.christhood-tab-content').forEach((tabContent) => tabContent.classList.remove('active'));
+            button.classList.add('active');
+            const tabPanel = document.getElementById(tabId);
+            if (tabPanel) {
+                tabPanel.classList.add('active');
+            }
+        });
+    });
+}
+
+function initMapLoaderAndForms() {
+    const mapLoader = safeQuery('#mapLoader');
+    const locationMap = safeQuery('#locationMap');
+    if (locationMap) {
+        locationMap.addEventListener('load', () => {
+            if (mapLoader) {
+                mapLoader.style.display = 'none';
+            }
+        });
+    }
+
+    const humanitarianForm = safeQuery('.contact-form');
+    if (humanitarianForm) {
+        humanitarianForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            humanitarianForm.reset();
+        });
+    }
+}
+
+function initSocialEffects() {
+    safeQueryAll('.icon-bar a').forEach((icon) => {
+        icon.addEventListener('mouseenter', () => {
+            icon.style.transform = 'translateY(-5px)';
+        });
+        icon.addEventListener('mouseleave', () => {
+            icon.style.transform = 'translateY(0)';
+        });
+    });
+
+    safeQueryAll('.social-media-icons a').forEach((icon) => {
+        const platform = icon.getAttribute('aria-label')?.toLowerCase();
+        if (!platform) {
+            return;
+        }
+        icon.addEventListener('mouseenter', () => {
+            const backgrounds = {
+                instagram: 'radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)',
+                facebook: '#3b5998',
+                tiktok: '#000000',
+                youtube: '#ff0000',
+                twitter: '#000000'
+            };
+            icon.style.background = backgrounds[platform] || 'transparent';
+        });
+        icon.addEventListener('mouseleave', () => {
+            icon.style.background = 'transparent';
+        });
+    });
+}
+
+function initScrollTopButton() {
+    if (!document.body || safeQuery('.scroll-top-button')) {
+        return;
+    }
+
     const button = document.createElement('button');
     button.className = 'scroll-top-button';
     button.type = 'button';
     button.setAttribute('aria-label', 'Back to top');
-    button.innerHTML = '<span class="scroll-top-icon">↑</span>';
+    button.innerHTML = '<span class="scroll-top-icon"><i class="bx bx-chevron-up"></i></span>';
     document.body.appendChild(button);
 
     function getThreshold() {
-        const hero = document.querySelector(
-            '.hero-slider, .bm-main-banner, .apostle-hero, .christhood-hero, .christhood-mission-hero, .protocolministry-intro, .mediaministry-cont-page-intro, .jm-hero-banner, .tlm-hero-v2, .christhood-iact-hero, .christhood-apologetics-hero, .christhood-impact-hero, .hero, .men-ministry-intro, .ladiesministry-intro, .worship-hero, .missions-hero, .pillars-hero'
-        );
+        const hero = safeQuery('.hero-slider, .bm-main-banner, .apostle-hero, .christhood-hero, .christhood-mission-hero, .protocolministry-intro, .mediaministry-cont-page-intro, .jm-hero-banner, .tlm-hero-v2, .christhood-iact-hero, .christhood-apologetics-hero, .christhood-impact-hero, .hero, .men-ministry-intro, .ladiesministry-intro, .worship-hero, .missions-hero, .pillars-hero');
         return hero ? hero.offsetHeight : 400;
     }
 
     function onScroll() {
-        const threshold = getThreshold();
-        if (window.scrollY > threshold) {
-            button.classList.add('show');
-        } else {
-            button.classList.remove('show');
-        }
+        button.classList.toggle('show', window.scrollY > getThreshold());
     }
 
     button.addEventListener('click', () => {
@@ -1214,4 +1021,118 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.addEventListener('scroll', onScroll);
     window.addEventListener('load', onScroll);
-})();
+}
+
+function initPwaUpdates() {
+    if (!('serviceWorker' in navigator)) {
+        return;
+    }
+
+    let newWorker = null;
+
+    function ensureUpdateBanner() {
+        let banner = document.getElementById('updateBanner');
+        if (banner) {
+            return banner;
+        }
+        banner = document.createElement('div');
+        banner.id = 'updateBanner';
+        banner.style.cssText = 'display:none; position:fixed; bottom:0; left:0; right:0; background:linear-gradient(90deg,#4b248c,#0047AB); color:#ffffff; padding:14px 20px; align-items:center; justify-content:space-between; z-index:9999; font-size:0.95rem; box-shadow:0 -4px 20px rgba(0,0,0,0.3);';
+        banner.innerHTML = '<span>A new version of Christhood Ministries is available</span><button type="button" id="updateAppBtn" style="background:#F3CC3C; color:#000000; border:none; padding:8px 18px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.9rem; margin-left:1rem;">Update Now</button>';
+        document.body.appendChild(banner);
+        const updateBtn = banner.querySelector('#updateAppBtn');
+        if (updateBtn) {
+            updateBtn.addEventListener('click', () => {
+                if (newWorker) {
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                }
+            });
+        }
+        return banner;
+    }
+
+    const serviceWorkerPath = 'service-worker.js';
+    navigator.serviceWorker.register(serviceWorkerPath).then((registration) => {
+        registration.addEventListener('updatefound', () => {
+            newWorker = registration.installing;
+            if (!newWorker) {
+                return;
+            }
+            newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    ensureUpdateBanner().style.display = 'flex';
+                }
+            });
+        });
+    }).catch((error) => {
+        console.error('Service worker registration failed:', error);
+    });
+
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'UPDATE_AVAILABLE') {
+            ensureUpdateBanner().style.display = 'flex';
+        }
+    });
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+    }, { once: true });
+}
+
+function initStandaloneSplash() {
+    const isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    const isIosStandalone = window.navigator.standalone === true;
+    if (!isStandalone && !isIosStandalone) {
+        return;
+    }
+    if (sessionStorage.getItem('appSplashSeen') === 'true') {
+        return;
+    }
+    sessionStorage.setItem('appSplashSeen', 'true');
+
+    const splash = document.createElement('div');
+    splash.className = 'app-splash';
+    splash.innerHTML = `
+        <div class="app-splash__content">
+            <img class="app-splash__logo" src="${SITE_CONFIG.logoPath}" alt="Christhood Ministries Logo">
+            <div class="app-splash__title">CHRISTHOOD MINISTRIES</div>
+            <div class="app-splash__tagline">BELIEVE BELONG BECOME</div>
+        </div>
+    `;
+    document.body.appendChild(splash);
+
+    window.setTimeout(() => {
+        splash.classList.add('app-splash--hide');
+        window.setTimeout(() => splash.remove(), 450);
+    }, 1400);
+}
+
+onReady(() => {
+    ensureBrandAssets();
+    ensureFooter();
+    ensureTopBar();
+    normalizeNavigationMarkup();
+    normalizeNavLinks();
+    repairRenderedText();
+    initTextRepairObserver();
+    initNavigation();
+    initSmoothScroll();
+    initHeroSlider();
+    adjustSliderForMobile();
+    initSectionObserver();
+    initReadMoreBlocks();
+    initAccordion();
+    initAnimateOnScroll();
+    initLeadershipAnimations();
+    initTestimonialCarousel();
+    initEventSectionCarousel();
+    initClipboardButtons();
+    initTabButtons();
+    initMapLoaderAndForms();
+    initSocialEffects();
+    initScrollTopButton();
+    initStandaloneSplash();
+    initPwaUpdates();
+});
+
+window.addEventListener('resize', adjustSliderForMobile);

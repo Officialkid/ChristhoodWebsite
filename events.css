@@ -3,7 +3,7 @@
      background: linear-gradient(135deg, var(--Deep-purple), var(--Primary-Blue));
      color: var(--White-color);
      padding: 4rem 2rem;
-     font-family: 'Montserrat', sans-serif;
+     font-family: var(--body-font);
      width: 100%;
  }
 

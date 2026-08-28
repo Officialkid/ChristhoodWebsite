@@ -1,4 +1,4 @@
-/*CHRISTHOOD IMPACT  */
+/* CHRISTHOOD IMPACT */
 
 /* Hero Section */
 .christhood-impact-hero {
@@ -10,15 +10,20 @@
     text-align: center;
     color: var(--text-color);
     padding: 2rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .christhood-impact-hero div {
     max-width: 800px;
+    position: relative;
+    z-index: 1;
 }
 
 .christhood-impact-hero h1 {
     font-size: 3.5rem;
     margin-bottom: 1rem;
+    color: var(--White-color, #ffffff);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -171,7 +176,7 @@
 }
 
 .christhood-impact-objectives-list li:before {
-    content: '✓';
+    content: '\2713';
     position: absolute;
     left: 0;
     top: 50%;
@@ -179,7 +184,7 @@
     width: 25px;
     height: 25px;
     background-color: var(--Primary-Blue);
-    color: white;
+    color: #ffffff;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -217,6 +222,7 @@
     margin: 0 auto;
     font-size: 1.1rem;
 }
+
 .christhood-impact-pillars .christhood-impact-section-title {
     color: var(--Gold-color);
 }
@@ -231,19 +237,35 @@
         font-size: 2.5rem;
     }
 
-    color: var(--Gold-color);
     .christhood-impact-hero h2 {
         font-size: 3rem;
     }
 }
 
 @media (max-width: 600px) {
+    .christhood-impact-hero {
+        min-height: 60vh;
+        padding: 1.5rem;
+    }
+
+    .christhood-impact-hero div {
+        padding: 1.25rem 1rem;
+        border-radius: 20px;
+        background: rgba(31, 16, 71, 0.35);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
     .christhood-impact-hero h1 {
-        font-size: 2rem;
+        font-size: 1.6rem;
+        line-height: 1.15;
+        margin-bottom: 0.65rem;
     }
 
     .christhood-impact-hero h2 {
-        font-size: 2.5rem;
+        font-size: 2.15rem;
+        letter-spacing: 3px;
+        line-height: 1;
     }
 
     .christhood-impact-content h2,

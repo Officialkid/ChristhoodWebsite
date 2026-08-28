@@ -16,7 +16,7 @@
  }
 
  body {
-     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     font-family: var(--body-font);
      line-height: 1.6;
      color: var(--Black-color);
      background-color: var(--Background-color);
@@ -609,7 +609,7 @@
      }
  }
 
- @media (max-width: 480px) {
+@media (max-width: 480px) {
      .hero-content h1 {
          font-size: 2rem;
      }
@@ -626,3 +626,217 @@
          padding: 20px;
      }
  }
+
+/* ======================
+HUMANITARIAN REDESIGN LAYER
+====================== */
+
+.humanitarian-page {
+    background: linear-gradient(180deg, #f6f4fb 0%, #ffffff 32%);
+}
+
+.humanitarian-page-hero {
+    min-height: 52vh !important;
+    padding: 8rem 1.5rem 5rem 1.5rem !important;
+    background:
+        linear-gradient(135deg, rgba(27, 15, 56, 0.85), rgba(0, 71, 171, 0.72)),
+        url('image/humanitarian-women.jpg') center center / cover no-repeat !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.humanitarian-page-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 40%, rgba(243, 204, 60, 0.15), transparent 70%);
+    pointer-events: none;
+}
+
+.humanitarian-page-kicker {
+    display: inline-flex;
+    padding: 0.45rem 0.95rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(243, 204, 60, 0.34);
+    color: var(--Gold-color);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+}
+
+.humanitarian-page .hero-content {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.humanitarian-page-intro {
+    margin-top: -3rem;
+    position: relative;
+    z-index: 2;
+}
+
+.humanitarian-page-intro .grid-container {
+    background: linear-gradient(180deg, #ffffff 0%, #f9f6ff 100%);
+    border-radius: 32px;
+    padding: 2rem;
+    box-shadow: 0 24px 60px rgba(27, 14, 58, 0.12);
+    border: 1px solid rgba(75, 36, 140, 0.08);
+}
+
+.humanitarian-page-intro .about-media,
+.humanitarian-page-intro .video-container,
+.humanitarian-page-intro video {
+    border-radius: 24px;
+}
+
+.humanitarian-page-intro video {
+    width: 100%;
+    display: block;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.humanitarian-page-highlights {
+    padding: 0 0 2rem;
+}
+
+.humanitarian-page-highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.humanitarian-highlight-card {
+    background: linear-gradient(160deg, rgba(75, 36, 140, 0.98), rgba(0, 71, 171, 0.92));
+    color: var(--text-color);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 44px rgba(27, 14, 58, 0.16);
+}
+
+.humanitarian-highlight-card span {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.74);
+    font-size: 0.8rem;
+    margin-bottom: 0.55rem;
+}
+
+.humanitarian-highlight-card strong {
+    display: block;
+    color: var(--Gold-color);
+    font-size: 1.4rem;
+    margin-bottom: 0.7rem;
+}
+
+.humanitarian-highlight-card p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.humanitarian-page-section-heading {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.humanitarian-page-section-heading p {
+    max-width: 720px;
+    margin: 0.75rem auto 0;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.humanitarian-page-programs .container,
+.humanitarian-page-purpose .container {
+    max-width: 1240px;
+}
+
+.humanitarian-page-programs .flip-card,
+.humanitarian-page-programs .flip-card-front,
+.humanitarian-page-programs .flip-card-back {
+    border-radius: 24px;
+}
+
+.humanitarian-page-programs .flip-card-front,
+.humanitarian-page-programs .flip-card-back {
+    box-shadow: 0 22px 48px rgba(27, 14, 58, 0.12);
+}
+
+.humanitarian-page-purpose {
+    background: linear-gradient(180deg, #ffffff 0%, #f7f5fb 100%);
+}
+
+.humanitarian-page-action {
+    background:
+        linear-gradient(rgba(12, 19, 52, 0.92), rgba(27, 15, 56, 0.92)),
+        url('image/humanitarian-women.jpg') center/cover no-repeat;
+}
+
+.humanitarian-donate-card,
+.humanitarian-contact-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    padding: 1.75rem;
+    box-shadow: 0 20px 46px rgba(10, 12, 30, 0.2);
+}
+
+.humanitarian-contact-card .contact-form {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+}
+
+.humanitarian-contact-card .submit-btn,
+.humanitarian-donate-card .donate-btn {
+    border-radius: 14px;
+}
+
+@media (max-width: 992px) {
+    .humanitarian-page-highlights-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .humanitarian-page-hero {
+        min-height: auto;
+        padding: 5rem 1rem 0.35rem;
+        display: flex;
+        align-items: flex-start;
+        background-position: center top;
+    }
+
+    .humanitarian-page-intro {
+        margin-top: -13rem;
+    }
+
+    .humanitarian-page-intro .grid-container,
+    .humanitarian-donate-card,
+    .humanitarian-contact-card {
+        border-radius: 24px;
+        padding: 1.25rem;
+    }
+
+    .humanitarian-page-intro {
+        padding-top: 0;
+    }
+
+    .humanitarian-page-highlights {
+        padding-top: 0.5rem;
+    }
+
+    .humanitarian-page .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .humanitarian-page .tagline {
+        font-size: 0.95rem;
+    }
+}
