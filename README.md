@@ -63,6 +63,12 @@ Everything below is set in the Vercel project, not in code. The **System status*
 
 Until the database is connected the public site still works from the content in `src/content/`, and forms tell visitors to call or WhatsApp instead of losing their message.
 
+## The online test copy
+
+A copy of this branch runs at **https://christhood-team-site.vercel.app** (Vercel project `christhood-team-site` in the John Hika team, free Neon Postgres database `christhood-team-db`). It exists so the team area can be used and checked online before the real project is switched over. It is kept out of search results (`NOINDEX=1`). Open `/123admin`, create the first administrator with the setup key (the `ADMIN_SETUP_KEY` value in that project's environment variables), then add each department head.
+
+Redeploy it from this folder with `vercel deploy --prod`. Remove it by deleting the project and the database in the Vercel dashboard. The real church project (`christhoodministries.org`, in another Vercel account) is untouched.
+
 ## How the site reads content
 
 `src/lib/content.ts` reads what the team saved first and falls back to `src/content/` if nothing was saved or the database is unreachable. Saves call `publish()` (`src/lib/publish.ts`), so changes show on the live site straight away. A page edited in the team area replaces the shipped wording; "Back to the original wording" removes the edit.
