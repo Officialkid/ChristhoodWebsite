@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useActionStateKeep } from "../forms/keep";
 import { useFormStatus } from "react-dom";
 import { Loader2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -12,7 +13,7 @@ export const idle: Result = { ok: false };
 
 /** Runs a save action and shows its result as a short message. */
 export function useSave(action: (prev: Result, fd: FormData) => Promise<Result>, onDone?: (r: Result) => void) {
-  const [state, run, pending] = useActionState(action, idle);
+  const [state, run, pending, formRef] = useActionStateKeep(action, idle);
   const seen = useRef<number | undefined>(undefined);
   useEffect(() => {
     if (!state.stamp || seen.current === state.stamp) return;
@@ -20,7 +21,7 @@ export function useSave(action: (prev: Result, fd: FormData) => Promise<Result>,
     if (state.message) (state.ok ? toast.success : toast.error)(state.message);
     if (state.ok) onDone?.(state);
   }, [state, onDone]);
-  return { state, run, pending, errors: state.errors ?? {} };
+  return { state, run, pending, formRef, errors: state.errors ?? {} };
 }
 
 export function SaveButton({ children = "Save changes", label }: { children?: React.ReactNode; label?: string }) {

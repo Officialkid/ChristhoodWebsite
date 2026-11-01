@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useActionStateKeep } from "./keep";
 import { CheckCircle2, Lock } from "lucide-react";
 import { submitVisitor, type FormState } from "@/app/(site)/connect-actions";
 import { BotTraps, Choices, Field, SubmitButton, nairobiToday, useFocusFirstError } from "./fields";
@@ -20,9 +21,8 @@ const interests = [
 ];
 
 function Inner({ onReset }: { onReset: () => void }) {
-  const [state, action] = useActionState(submitVisitor, initial);
+  const [state, action, , formRef] = useActionStateKeep(submitVisitor, initial);
   const [today, setToday] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
   const doneRef = useRef<HTMLHeadingElement>(null);
   const err = state.errors ?? {};
 

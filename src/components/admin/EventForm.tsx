@@ -19,9 +19,9 @@ const categories = [
 
 export default function EventForm({ event, departments, startValue, endValue, canPickNone }: Props) {
   const router = useRouter();
-  const { run, errors } = useSave(saveEvent, () => router.push("/123admin/events"));
+  const { run, formRef, errors } = useSave(saveEvent, () => router.push("/123admin/events"));
   return (
-    <form action={run} className="grid gap-8" noValidate>
+    <form ref={formRef} action={run} className="grid gap-8" noValidate>
       <input type="hidden" name="id" value={event?.id ?? ""} />
       <div className="grid gap-6 sm:grid-cols-2">
         <TextField name="title" label="Name of the event" defaultValue={event?.title} error={errors.title} required maxLength={120} />

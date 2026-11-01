@@ -6,7 +6,8 @@ import { formatEventDates, formatMoney, googleCalendarUrl } from "@/lib/time";
 import type { EventDoc } from "@/lib/types";
 
 /** One event as a row: date, what and where, then the action. No box, no photo to compete with the words. */
-export function EventRow({ event, showCountdown }: { event: EventDoc; showCountdown?: boolean }) {
+export function EventRow({ event, showCountdown, level = 3 }: { event: EventDoc; showCountdown?: boolean; level?: 2 | 3 }) {
+  const Heading = level === 2 ? "h2" : "h3";
   const d = new Date(event.start);
   const day = new Intl.DateTimeFormat("en-KE", { timeZone: "Africa/Nairobi", day: "numeric" }).format(d);
   const mon = new Intl.DateTimeFormat("en-KE", { timeZone: "Africa/Nairobi", month: "short", year: "numeric" }).format(d);
@@ -18,7 +19,7 @@ export function EventRow({ event, showCountdown }: { event: EventDoc; showCountd
       </p>
       <div>
         <p className="text-[0.9rem] font-semibold text-purple">{categoryLabel[event.category]}</p>
-        <h3 className="mt-1 text-[1.6rem] leading-tight">{event.title}</h3>
+        <Heading className="mt-1 text-[1.6rem] leading-tight">{event.title}</Heading>
         {event.subtitle && <p className="mt-1 text-muted">{event.subtitle}</p>}
         <dl className="mt-4 grid gap-x-8 gap-y-1 text-[0.98rem] sm:grid-cols-[auto_1fr]">
           <dt className="font-semibold">When</dt><dd className="text-muted">{formatEventDates(event.start, event.end)}</dd>

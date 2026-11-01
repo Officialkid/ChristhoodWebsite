@@ -8,7 +8,7 @@ import "./globals.css";
 // Archivo: a sturdy grotesque with a width axis, used for headings, navigation and labels.
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 // Literata: a text serif made for reading on screens, used for long passages.
-const literata = Literata({ subsets: ["latin"], axes: ["opsz"], style: ["normal", "italic"], variable: "--font-literata", display: "swap" });
+const literata = Literata({ subsets: ["latin"], axes: ["opsz"], variable: "--font-literata", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

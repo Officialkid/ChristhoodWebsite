@@ -29,7 +29,7 @@ export default async function EventsPage() {
           <>
             {cats.length > 1 && <EventFilter options={cats} targetId="event-list" />}
             <div id="event-list" className={cats.length > 1 ? "" : "border-t border-rule"}>
-              {upcoming.map((e, i) => <div key={e.id} data-cat={e.category} className="[&[hidden]]:hidden"><EventRow event={e} showCountdown={i === 0} /></div>)}
+              {upcoming.map((e, i) => <div key={e.id} data-cat={e.category} className="[&[hidden]]:hidden"><EventRow event={e} showCountdown={i === 0} level={2} /></div>)}
             </div>
           </>
         ) : (

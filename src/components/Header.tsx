@@ -47,7 +47,7 @@ export default function Header({ menu, portal, banner }: Props) {
       <header className="sticky top-0 z-50 border-b border-rule bg-paper">
         <nav aria-label="Main" className="wrap flex h-[4.5rem] items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" alt="" width={44} height={44} className="size-10 rounded-full" priority />
+            <Image src="/logo-96.png" alt="" width={44} height={44} className="size-10 rounded-full" priority />
             <span className="leading-none">
               <span className="block text-[1.35rem] font-extrabold tracking-tight [font-variation-settings:'wdth'_86]">Christhood</span>
               <span className="mt-0.5 block text-[0.8rem] font-semibold text-purple">Ministries<span className="sr-only"> (home)</span></span>

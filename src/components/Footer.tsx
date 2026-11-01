@@ -14,7 +14,7 @@ export default function Footer({ menu, settings }: { menu: MenuItem[]; settings:
         <div className="grid gap-12 lg:grid-cols-[1.2fr_2fr]">
           <div>
             <Link href="/" className="inline-flex items-center gap-3">
-              <Image src="/logo.png" alt="" width={48} height={48} className="size-12 rounded-full" />
+              <Image src="/logo-96.png" alt="" width={48} height={48} className="size-12 rounded-full" />
               <span className="text-2xl font-extrabold [font-variation-settings:'wdth'_86]">Christhood Ministries</span>
             </Link>
             <p className="mt-6 max-w-sm font-serif text-xl leading-snug text-on-purple-muted">“{site.scripture.text}”<span className="mt-1 block font-sans text-base font-semibold text-on-purple">{site.scripture.ref}</span></p>

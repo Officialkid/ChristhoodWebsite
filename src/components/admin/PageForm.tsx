@@ -11,9 +11,9 @@ import type { PageDoc } from "@/lib/types";
 
 export default function PageForm({ page, publicHref, focus }: { page: PageDoc; publicHref: string; focus?: string }) {
   const router = useRouter();
-  const { run, errors } = useSave(savePage);
+  const { run, formRef, errors } = useSave(savePage);
   return (
-    <form action={run} className="grid max-w-4xl gap-10" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-4xl gap-10" noValidate>
       <input type="hidden" name="kind" value={page.kind} />
       <input type="hidden" name="slug" value={page.slug} />
       <input type="hidden" name="heroOriginal" value={page.hero} />

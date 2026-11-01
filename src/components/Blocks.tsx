@@ -96,7 +96,7 @@ export default function Blocks({ blocks }: { blocks: Block[] }) {
             return (
               <Section key={gi} tone="alt">
                 <Reveal className="mx-auto max-w-3xl">
-                  <blockquote className="font-serif text-[clamp(1.5rem,2.8vw,2.3rem)] italic leading-[1.35]">{b.text}</blockquote>
+                  <blockquote className="font-serif text-[clamp(1.5rem,2.8vw,2.3rem)] leading-[1.35]">{b.text}</blockquote>
                   {b.cite && <p className="mt-5 font-semibold text-purple">{b.cite}</p>}
                 </Reveal>
               </Section>

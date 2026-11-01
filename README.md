@@ -91,6 +91,6 @@ Every old `.html` address redirects to its new page (see `next.config.ts`), so b
 
 - `framework` is set to `nextjs` in `vercel.json`, so the existing Vercel project builds this branch correctly.
 - Delete `legacy/` once the new site is live and confirmed.
-- Confirm the live domain (the old pages refer to `christhoodministries.org`) and set `NEXT_PUBLIC_SITE_URL` to it.
+- Live domain: `https://www.christhoodministries.org` (the bare `christhoodministries.org` redirects to it; both are served by Vercel and currently show the old static site from `main`). It is now the default site address. Override with `NEXT_PUBLIC_SITE_URL` if that changes.
 - Camp fees come from the events (Events screen). The old camp form showed KES 9,960 and 9,500 while the events sheet showed KES 10,960. Confirm the correct amounts and set them there.
 - The Jewels logo (`legacy/image/Jewels Logo.png`) uses Disney characters. It is not used on the new site. Replace it before using it anywhere public.

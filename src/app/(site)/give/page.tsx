@@ -27,7 +27,7 @@ export default async function GivePage() {
       <Section>
         <div className="grid gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-24">
           <div>
-            <blockquote className="font-serif text-[clamp(1.4rem,2.2vw,1.8rem)] italic leading-snug">“Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.”<footer className="mt-3 font-sans text-base font-semibold not-italic text-purple">2 Corinthians 9:7</footer></blockquote>
+            <blockquote className="font-serif text-[clamp(1.4rem,2.2vw,1.8rem)] leading-snug">“Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.”<footer className="mt-3 font-sans text-base font-semibold not-italic text-purple">2 Corinthians 9:7</footer></blockquote>
             <h2 className="mt-14 text-2xl">What your giving supports</h2>
             <ul className="mt-4 border-t border-rule">{supports.map(([t, d]) => <li key={t} className="border-b border-rule py-4"><p className="font-bold">{t}</p><p className="reading text-muted">{d}</p></li>)}</ul>
           </div>

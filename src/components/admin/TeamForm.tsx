@@ -27,7 +27,7 @@ export default function TeamForm({ user, groups, selfId }: { user?: StoredUser; 
   const [role, setRole] = useState(user?.role ?? "head");
   const [secret, setSecret] = useState<{ title: string; value: string } | null>(null);
   const [resetting, startReset] = useTransition();
-  const { run, errors } = useSave(saveUser, (r) => {
+  const { run, formRef, errors } = useSave(saveUser, (r) => {
     if (r.secret) setSecret({ title: r.message ?? "Temporary password", value: r.secret });
     else router.push("/123admin/team");
   });
@@ -41,7 +41,7 @@ export default function TeamForm({ user, groups, selfId }: { user?: StoredUser; 
           <div><LinkButton href="/123admin/team" variant="purple">Back to the team</LinkButton></div>
         </div>
       )}
-      <form action={run} className="grid gap-8" noValidate>
+      <form ref={formRef} action={run} className="grid gap-8" noValidate>
         <input type="hidden" name="id" value={user?.id ?? ""} />
         <div className="grid gap-6 sm:grid-cols-2">
           <TextField name="name" label="Name" defaultValue={user?.name} error={errors.name} required maxLength={80} />

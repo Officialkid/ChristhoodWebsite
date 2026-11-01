@@ -20,18 +20,19 @@ export async function saveUpload(input: Buffer, name: string, level: EnhanceLeve
   if (!store.writable) throw new StorageUnavailable();
   const id = newId();
   // Pictures kept in the database must fit comfortably in one request.
-  const p = await preparePhoto(input, level, { maxBytes: photoHost === "database" ? 420_000 : 900_000 });
+  const p = await preparePhoto(input, level, { maxBytes: photoHost === "database" ? 380_000 : 900_000 });
   let url: string;
   let small: string;
   if (photoHost === "blob") {
     const [a, b] = await Promise.all([
       put(`photos/${id}.webp`, p.full, { access: "public", contentType: "image/webp", addRandomSuffix: false }),
       put(`photos/${id}-sm.webp`, p.small, { access: "public", contentType: "image/webp", addRandomSuffix: false }),
+      put(`photos/${id}-md.webp`, p.medium, { access: "public", contentType: "image/webp", addRandomSuffix: false }),
     ]);
     url = a.url;
     small = b.url;
   } else {
-    await Promise.all([store.putBlob(`${id}.webp`, p.full.toString("base64")), store.putBlob(`${id}-sm.webp`, p.small.toString("base64"))]);
+    await Promise.all([store.putBlob(`${id}.webp`, p.full.toString("base64")), store.putBlob(`${id}-md.webp`, p.medium.toString("base64")), store.putBlob(`${id}-sm.webp`, p.small.toString("base64"))]);
     url = `/media/${id}.webp`;
     small = `/media/${id}-sm.webp`;
   }
@@ -53,7 +54,7 @@ export async function saveUpload(input: Buffer, name: string, level: EnhanceLeve
 export async function deleteUpload(id: string) {
   const item = await mediaDb.get(id);
   if (!item) return;
-  if (photoHost === "blob" && item.url.startsWith("http")) await del([item.url, item.small]).catch(() => undefined);
-  else await Promise.all([store.deleteBlob(`${id}.webp`), store.deleteBlob(`${id}-sm.webp`)]);
+  if (photoHost === "blob" && item.url.startsWith("http")) await del([item.url, item.small, item.url.replace(/.webp$/, "-md.webp")]).catch(() => undefined);
+  else await Promise.all([store.deleteBlob(`${id}.webp`), store.deleteBlob(`${id}-md.webp`), store.deleteBlob(`${id}-sm.webp`)]);
   await mediaDb.remove(id);
 }

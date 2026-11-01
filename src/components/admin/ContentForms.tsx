@@ -12,9 +12,9 @@ const actionsRow = "flex flex-wrap items-center gap-3 border-t border-rule pt-6"
 
 /* ---------- announcement bar ---------- */
 export function BannerForm({ banner }: { banner: BannerDoc | null }) {
-  const { run, errors } = useSave(saveBanner);
+  const { run, formRef, errors } = useSave(saveBanner);
   return (
-    <form action={run} className="grid max-w-2xl gap-6" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-2xl gap-6" noValidate>
       <Toggle name="active" label="Show the announcement bar" hint="A short line across the top of every page." defaultChecked={banner?.active} />
       <TextField name="message" label="Message" defaultValue={banner?.message} error={errors.message} maxLength={200} hint="Keep it to one line. For example “Jewels Kids Camp registration is open.”" />
       <div className="grid gap-6 sm:grid-cols-2">
@@ -30,9 +30,9 @@ export function BannerForm({ banner }: { banner: BannerDoc | null }) {
 /* ---------- messages ---------- */
 export function MessageForm({ message }: { message?: MessageRec }) {
   const router = useRouter();
-  const { run, errors } = useSave(saveMessage, () => router.push("/123admin/messages"));
+  const { run, formRef, errors } = useSave(saveMessage, () => router.push("/123admin/messages"));
   return (
-    <form action={run} className="grid max-w-2xl gap-6" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-2xl gap-6" noValidate>
       <input type="hidden" name="id" value={message?.id ?? ""} />
       <TextField name="title" label="Title" defaultValue={message?.title} error={errors.title} maxLength={140} required />
       <div className="grid gap-6 sm:grid-cols-2">
@@ -53,9 +53,9 @@ export function MessageForm({ message }: { message?: MessageRec }) {
 /* ---------- leaders and stories ---------- */
 export function LeaderForm({ leader }: { leader?: LeaderRec }) {
   const router = useRouter();
-  const { run, errors } = useSave(saveLeader, () => router.push("/123admin/people"));
+  const { run, formRef, errors } = useSave(saveLeader, () => router.push("/123admin/people"));
   return (
-    <form action={run} className="grid max-w-3xl gap-6" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-3xl gap-6" noValidate>
       <input type="hidden" name="id" value={leader?.id ?? ""} />
       <div className="grid gap-6 sm:grid-cols-2">
         <TextField name="name" label="Name" defaultValue={leader?.name} error={errors.name} maxLength={80} required />
@@ -75,9 +75,9 @@ export function LeaderForm({ leader }: { leader?: LeaderRec }) {
 
 export function StoryForm({ story }: { story?: StoryRec }) {
   const router = useRouter();
-  const { run, errors } = useSave(saveStory, () => router.push("/123admin/people"));
+  const { run, formRef, errors } = useSave(saveStory, () => router.push("/123admin/people"));
   return (
-    <form action={run} className="grid max-w-3xl gap-6" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-3xl gap-6" noValidate>
       <input type="hidden" name="id" value={story?.id ?? ""} />
       <div className="grid gap-6 sm:grid-cols-2">
         <TextField name="name" label="Name" defaultValue={story?.name} error={errors.name} maxLength={80} required />
@@ -96,9 +96,9 @@ export function StoryForm({ story }: { story?: StoryRec }) {
 
 /* ---------- home page words ---------- */
 export function HomeForm({ settings }: { settings: SiteSettings }) {
-  const { run, errors } = useSave(saveHome);
+  const { run, formRef, errors } = useSave(saveHome);
   return (
-    <form action={run} className="grid max-w-3xl gap-8" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-3xl gap-8" noValidate>
       <fieldset className="grid gap-6">
         <legend className="mb-1 text-xl font-bold">Top of the page</legend>
         <TextField name="headline" label="Big headline" defaultValue={settings.hero.headline} error={errors.headline} maxLength={60} hint="Short and strong. Three words work best." />
@@ -121,11 +121,11 @@ export function HomeForm({ settings }: { settings: SiteSettings }) {
 
 /* ---------- church details ---------- */
 export function SettingsForm({ settings }: { settings: SiteSettings }) {
-  const { run, errors } = useSave(saveSettings);
+  const { run, formRef, errors } = useSave(saveSettings);
   const f = settings.fellowship;
   const phones = [0, 1, 2].map((i) => settings.contact.phones[i]);
   return (
-    <form action={run} className="grid max-w-3xl gap-10" noValidate>
+    <form ref={formRef} action={run} className="grid max-w-3xl gap-10" noValidate>
       <fieldset className="grid gap-6">
         <legend className="mb-1 text-xl font-bold">Saturday fellowship</legend>
         <div className="grid gap-6 sm:grid-cols-3">

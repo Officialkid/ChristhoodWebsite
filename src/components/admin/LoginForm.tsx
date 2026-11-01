@@ -25,9 +25,9 @@ function Password({ name, label, error, autoComplete, hint }: { name: string; la
 }
 
 export function SignIn() {
-  const { run, pending, state } = useSave(login);
+  const { run, formRef, pending, state } = useSave(login);
   return (
-    <form action={run} className="grid gap-6" noValidate>
+    <form ref={formRef} action={run} className="grid gap-6" noValidate>
       <TextField name="email" label="Email" type="email" autoComplete="username" required autoFocus />
       <Password name="password" label="Password" autoComplete="current-password" />
       {state.message && !state.ok && <p role="alert" className="border border-danger bg-danger-tint px-4 py-3 font-semibold text-danger">{state.message}</p>}
@@ -40,9 +40,9 @@ export function SignIn() {
 }
 
 export function FirstSetup({ needsKey }: { needsKey: boolean }) {
-  const { run, pending, state, errors } = useSave(setupFirstAdmin);
+  const { run, formRef, pending, state, errors } = useSave(setupFirstAdmin);
   return (
-    <form action={run} className="grid gap-6" noValidate>
+    <form ref={formRef} action={run} className="grid gap-6" noValidate>
       <TextField name="name" label="Your name" autoComplete="name" required error={errors.name} />
       <TextField name="email" label="Email" type="email" autoComplete="username" required error={errors.email} />
       <Password name="password" label="Choose a password" autoComplete="new-password" error={errors.password} hint="At least 10 characters, with letters and numbers." />

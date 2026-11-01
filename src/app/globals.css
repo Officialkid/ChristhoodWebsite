@@ -39,10 +39,6 @@
   /* Boxes may shrink below the width of their contents, so nothing can push a small screen wider than itself. */
   fieldset { min-width: 0; }
   .grid { grid-template-columns: minmax(0, 1fr); }
-  /* Foldables with two screens: keep content clear of the hinge. */
-  @media (horizontal-viewport-segments: 2) {
-    .wrap, .wrap-narrow { width: min(100% - 2.5rem, 46rem); }
-  }
 }
 
 @layer components {
@@ -75,15 +71,15 @@
   .rise { animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0s); }
 }
 
-/* Headline waits for its line-by-line reveal, but always shows within a moment even if scripts never run. */
-.split-hide { opacity: 0; animation: reveal-anyway 0s 2.2s forwards; }
-@keyframes reveal-anyway { to { opacity: 1; } }
-.split-line { padding-bottom: 0.08em; }
+/* Headline words rise into place. Painted at once; only the movement is decorative. */
+.word-mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.1em; margin-bottom: -0.1em; }
+.word-rise { display: inline-block; animation: word-rise 0.95s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 0.11s + 0.05s); }
+@keyframes word-rise { from { transform: translateY(105%); } to { transform: none; } }
 
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .rise { animation: none; }
-  .split-hide { opacity: 1; animation: none; }
+  .word-rise { animation: none; }
   * { scroll-behavior: auto !important; }
 }

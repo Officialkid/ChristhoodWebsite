@@ -4,8 +4,9 @@ import Img from "@/components/Img";
 import SlotImg from "@/components/SlotImg";
 import { Icon } from "@/components/icons";
 import MotesLayer from "@/components/fx/MotesLayer";
-import VerseCard from "@/components/fx/VerseCard";
-import { SplitHeading, Stagger, Wipe } from "@/components/fx/gsap";
+import { Stagger, Wipe } from "@/components/fx/gsap";
+import WordReveal from "@/components/WordReveal";
+import VerseSlot from "@/components/fx/VerseSlot";
 import Reveal from "@/components/Reveal";
 import Directory from "@/components/Directory";
 import { Button, Section, SectionHead } from "@/components/ui";
@@ -39,7 +40,7 @@ export default async function Home() {
         <MotesLayer />
         <div className="wrap relative z-[2] pb-24 pt-32 md:pb-16 md:pt-40">
           <p className="rise text-lg font-semibold">Christhood International Outfield Ministry</p>
-          <SplitHeading className="t-hero mt-3 max-w-[9ch]">{hero.headline}</SplitHeading>
+          <WordReveal className="t-hero mt-3 max-w-[9ch]">{hero.headline}</WordReveal>
           <p className="t-lead rise mt-6 max-w-xl text-on-purple" style={{ "--d": ".18s" } as CSSProperties}>{hero.sub}</p>
           <div className="rise mt-8 flex flex-wrap gap-3" style={{ "--d": ".28s" } as CSSProperties}>
             <Button href="/visit">I&apos;m new: plan my visit</Button>
@@ -80,7 +81,7 @@ export default async function Home() {
             <p className="t-lead mt-4 max-w-md text-on-purple-muted">A verse to carry with you through the week. It changes every week.</p>
             <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2"><Button href="/prayer" variant="outline-light">Send a prayer request</Button><Button href="/give" variant="text" className="!text-gold !decoration-gold/50">Partner with us</Button></div>
           </div>
-          <Reveal><VerseCard text={verse.text} reference={verse.ref} photos={versePhotos} /></Reveal>
+          <Reveal><VerseSlot text={verse.text} reference={verse.ref} photos={versePhotos} /></Reveal>
         </div>
       </Section>
 

@@ -24,7 +24,7 @@ export default function Img({ src, alt, className = "", sizes = "100vw", priorit
     // eslint-disable-next-line @next/next/no-img-element -- photos are prepared ahead of time
     <img
       src={p.full}
-      srcSet={p.small !== p.full ? `${p.small} 720w, ${p.full} 1800w` : undefined}
+      srcSet={p.small !== p.full ? `${p.small} 720w, ${p.medium} 1200w, ${p.full} 1800w` : undefined}
       sizes={sizes}
       width={p.w}
       height={p.h}

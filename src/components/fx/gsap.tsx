@@ -1,59 +1,47 @@
 "use client";
 
-import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { useGSAP } from "@gsap/react";
+import { useEffect, useRef } from "react";
 
-gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
-
-const motionOk = "(prefers-reduced-motion: no-preference)";
-
-/** The page headline, revealed line by line as it appears. The words are real text from the start, so nothing is lost without scripts. */
-export function SplitHeading({ as: Tag = "h1", className = "", style, children }: { as?: "h1" | "h2"; className?: string; style?: React.CSSProperties; children: string }) {
-  const ref = useRef<HTMLHeadingElement>(null);
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el) return;
-      const mm = gsap.matchMedia();
-      mm.add(motionOk, () => {
-        let split: SplitText | undefined;
-        document.fonts.ready.then(() => {
-          split = SplitText.create(el, { type: "lines", mask: "lines", linesClass: "split-line" });
-          gsap.from(split.lines, { yPercent: 105, duration: 1, ease: "expo.out", stagger: 0.12, delay: 0.1 });
-          gsap.set(el, { opacity: 1 });
-        });
-        return () => split?.revert();
-      });
-      return () => mm.revert();
-    },
-    { scope: ref },
-  );
-  return (
-    <Tag ref={ref as never} className={`split-hide ${className}`} style={style}>
-      {children}
-    </Tag>
-  );
+/**
+ * Scroll reveals. GSAP is loaded only when something is about to come into view, so it never slows the first screen.
+ * The hidden starting state is set by script too, so without scripts (or with reduced motion) everything simply shows.
+ */
+function useReveal(ref: React.RefObject<HTMLElement | null>, from: (el: HTMLElement) => void, play: (gsap: typeof import("gsap").gsap, el: HTMLElement) => void) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    from(el);
+    let done = false;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || done) return;
+        done = true;
+        io.disconnect();
+        void import("gsap").then(({ gsap }) => play(gsap, el));
+      },
+      { rootMargin: "0px 0px -8% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- set up once per element
+  }, []);
 }
 
-/** A picture that is uncovered from the top as it scrolls into view. Still for anyone who prefers reduced motion. */
+/** A picture that is uncovered from the top as it scrolls into view, settling from a slight zoom. */
 export function Wipe({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el) return;
-      const mm = gsap.matchMedia();
-      mm.add(motionOk, () => {
-        gsap.fromTo(el, { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 1.2, ease: "power3.inOut", scrollTrigger: { trigger: el, start: "top 88%", once: true } });
-        const img = el.querySelector("img");
-        if (img) gsap.fromTo(img, { scale: 1.12 }, { scale: 1, duration: 1.6, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%", once: true } });
-      });
-      return () => mm.revert();
+  useReveal(
+    ref,
+    (el) => {
+      el.style.clipPath = "inset(0 0 100% 0)";
+      const img = el.querySelector("img");
+      if (img) img.style.transform = "scale(1.12)";
     },
-    { scope: ref },
+    (gsap, el) => {
+      gsap.to(el, { clipPath: "inset(0 0 0% 0)", duration: 1.2, ease: "power3.inOut", onComplete: () => { el.style.clipPath = ""; } });
+      const img = el.querySelector("img");
+      if (img) gsap.to(img, { scale: 1, duration: 1.6, ease: "power3.out", onComplete: () => { img.style.transform = ""; } });
+    },
   );
   return <div ref={ref} className={className}>{children}</div>;
 }
@@ -61,17 +49,13 @@ export function Wipe({ children, className = "" }: { children: React.ReactNode; 
 /** Children rise in one after another as the list scrolls into view. */
 export function Stagger({ children, className = "", selector = ":scope > *" }: { children: React.ReactNode; className?: string; selector?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  useGSAP(
-    () => {
-      const el = ref.current;
-      if (!el) return;
-      const mm = gsap.matchMedia();
-      mm.add(motionOk, () => {
-        gsap.from(el.querySelectorAll(selector), { y: 28, opacity: 0, duration: 0.8, ease: "power3.out", stagger: 0.09, scrollTrigger: { trigger: el, start: "top 85%", once: true } });
-      });
-      return () => mm.revert();
+  useReveal(
+    ref,
+    (el) => el.querySelectorAll<HTMLElement>(selector).forEach((c) => { c.style.opacity = "0"; c.style.transform = "translateY(28px)"; }),
+    (gsap, el) => {
+      const items = el.querySelectorAll(selector);
+      gsap.to(items, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", stagger: 0.09, clearProps: "opacity,transform,y" });
     },
-    { scope: ref },
   );
   return <div ref={ref} className={className}>{children}</div>;
 }

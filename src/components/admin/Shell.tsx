@@ -105,7 +105,7 @@ export default function Shell({ groups, user, signOut, children }: Props) {
       <div className="lg:contents">
         <header className="sticky top-0 z-40 flex min-h-14 items-center gap-2 border-b border-rule bg-paper px-3 pt-[env(safe-area-inset-top)] lg:hidden">
           <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open} aria-controls="admin-drawer" className="inline-flex size-11 items-center justify-center rounded-sm border border-rule"><Menu className="size-5" aria-hidden /></button>
-          <Link href="/123admin" className="flex min-h-11 min-w-0 flex-1 items-center gap-2 font-extrabold [font-variation-settings:'wdth'_86]"><Image src="/logo.png" alt="" width={32} height={32} className="size-8 rounded-full" /><span className="truncate">Christhood team</span></Link>
+          <Link href="/123admin" className="flex min-h-11 min-w-0 flex-1 items-center gap-2 font-extrabold [font-variation-settings:'wdth'_86]"><Image src="/logo-96.png" alt="" width={32} height={32} className="size-8 rounded-full" /><span className="truncate">Christhood team</span></Link>
           <button type="button" onClick={() => setPalette(true)} aria-label="Jump to a screen" className="inline-flex size-11 items-center justify-center rounded-sm border border-rule"><Search className="size-5" aria-hidden /></button>
         </header>
 
@@ -152,7 +152,7 @@ export default function Shell({ groups, user, signOut, children }: Props) {
 function Brand() {
   return (
     <Link href="/123admin" className="flex items-center gap-3 px-5 py-6">
-      <Image src="/logo.png" alt="" width={40} height={40} className="size-10 rounded-full" />
+      <Image src="/logo-96.png" alt="" width={40} height={40} className="size-10 rounded-full" />
       <span className="leading-none">
         <span className="block text-[1.2rem] font-extrabold [font-variation-settings:'wdth'_86]">Christhood</span>
         <span className="mt-1 block text-[0.82rem] font-semibold text-gold">Team area</span>

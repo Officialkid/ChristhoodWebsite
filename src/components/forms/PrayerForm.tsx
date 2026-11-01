@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useActionStateKeep } from "./keep";
 import { CheckCircle2, HandHeart, Lock, PartyPopper } from "lucide-react";
 import { submitPrayer, type FormState } from "@/app/(site)/connect-actions";
 import { BotTraps, Choices, Field, SubmitButton, useFocusFirstError } from "./fields";
@@ -19,10 +20,9 @@ const categories = [
 ];
 
 function Inner({ onReset, initialType }: { onReset: () => void; initialType: "prayer" | "thanksgiving" }) {
-  const [state, action] = useActionState(submitPrayer, initial);
+  const [state, action, , formRef] = useActionStateKeep(submitPrayer, initial);
   const [type, setType] = useState<"prayer" | "thanksgiving">(initialType);
   const [anon, setAnon] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
   const doneRef = useRef<HTMLHeadingElement>(null);
   const err = state.errors ?? {};
   const prayer = type === "prayer";

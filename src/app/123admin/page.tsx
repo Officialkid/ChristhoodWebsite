@@ -26,7 +26,7 @@ async function LoginScreen() {
     <div className="grid min-h-svh lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
       <section className="relative flex flex-col justify-between gap-12 bg-purple-deep px-6 py-10 text-on-purple sm:px-10 lg:px-14 lg:py-14">
         <Link href="/" className="inline-flex items-center gap-3 self-start">
-          <Image src="/logo.png" alt="" width={48} height={48} className="size-12 rounded-full" priority />
+          <Image src="/logo-96.png" alt="" width={48} height={48} className="size-12 rounded-full" priority />
           <span className="text-2xl font-extrabold [font-variation-settings:'wdth'_86]">Christhood Ministries</span>
         </Link>
         <div>

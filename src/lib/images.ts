@@ -20,12 +20,14 @@ export function resolvePhoto(src: string) {
   // A picture the team uploaded: a small copy sits beside the full one with "-sm" before the extension.
   if (/^https?:\/\//.test(src) || src.startsWith("/media/")) {
     const small = src.replace(/\.webp$/, "-sm.webp");
-    return { full: src, small, w: 1800, h: 1200, blur: undefined as string | undefined };
+    const medium = src.replace(/\.webp$/, "-md.webp");
+    return { full: src, medium, small, w: 1800, h: 1200, blur: undefined as string | undefined };
   }
-  if (src.startsWith("/")) return { full: src, small: src, w: 1600, h: 1000, blur: undefined as string | undefined };
+  if (src.startsWith("/")) return { full: src, medium: src, small: src, w: 1600, h: 1000, blur: undefined as string | undefined };
   const info = images[src];
   return {
     full: `/img/${src}.webp`,
+    medium: `/img/${src}-md.webp`,
     small: `/img/${src}-sm.webp`,
     w: info?.w ?? 1600,
     h: info?.h ?? 1000,

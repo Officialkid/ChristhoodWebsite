@@ -6,7 +6,7 @@ export const site = {
   short: "C.I.O.M",
   mantra: ["Believe", "Belong", "Become"],
   scripture: { text: "Therefore go and make disciples of all nations…", ref: "Matthew 28:19" },
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://christhood-website.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.christhoodministries.org",
   mapsLink: "https://www.google.com/maps/search/?api=1&query=Azuri+Premier+Cuisines+Nairobi",
   mapEmbed:
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.8093851399153!2d36.82375007320759!3d-1.2885517356249188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f1114511e8a1d%3A0x10609fba1f57532!2sAzuri%20Premier%20Cuisines!5e0!3m2!1sen!2ske!4v1729920524128!5m2!1sen!2ske",

@@ -12,6 +12,7 @@ export type EnhanceLevel = "off" | "natural" | "strong";
 
 export type PreparedPhoto = {
   full: Buffer;
+  medium: Buffer;
   small: Buffer;
   w: number;
   h: number;
@@ -22,6 +23,7 @@ export type PreparedPhoto = {
 
 type Options = {
   fullWidth?: number;
+  mediumWidth?: number;
   smallWidth?: number;
   maxBytes?: number;
   /** A flyer, poster or logo: only the sharper enlargement is applied, never tone changes. */
@@ -32,6 +34,7 @@ const clamp = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n
 
 export async function preparePhoto(source: Buffer | string, level: EnhanceLevel = "natural", options: Options = {}): Promise<PreparedPhoto> {
   const fullWidth = options.fullWidth ?? 1800;
+  const mediumWidth = options.mediumWidth ?? 1200;
   const smallWidth = options.smallWidth ?? 720;
 
   const base = sharp(source, { failOn: "none" }).rotate();
@@ -84,11 +87,13 @@ export async function preparePhoto(source: Buffer | string, level: EnhanceLevel 
     quality -= 8;
     full = await img.clone().webp({ quality, effort: 5 }).toBuffer({ resolveWithObject: true });
   }
+  const medium = await sharp(full.data).resize({ width: mediumWidth, withoutEnlargement: true }).webp({ quality: 76 }).toBuffer();
   const small = await sharp(full.data).resize({ width: smallWidth, withoutEnlargement: true }).webp({ quality: 74 }).toBuffer();
   const tiny = await sharp(full.data).resize({ width: 16 }).webp({ quality: 40 }).toBuffer();
 
   return {
     full: full.data,
+    medium,
     small,
     w: full.info.width,
     h: full.info.height,

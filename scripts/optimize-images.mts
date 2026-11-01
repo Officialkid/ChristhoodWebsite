@@ -36,6 +36,7 @@ async function one(file: string) {
 
   const p = await preparePhoto(path.join(SRC, file), level, { graphic: isGraphic(file), maxBytes: 400_000 });
   await fs.writeFile(path.join(OUT, `${slug}.webp`), p.full);
+  await fs.writeFile(path.join(OUT, `${slug}-md.webp`), p.medium);
   await fs.writeFile(path.join(OUT, `${slug}-sm.webp`), p.small);
   manifest[slug] = { w: p.w, h: p.h, blur: p.blur, from: file };
   console.log(`${slug}: ${p.note}`);

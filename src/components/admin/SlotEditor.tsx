@@ -14,7 +14,7 @@ type Props = { slotKey: string; label: string; fallback?: string; src?: string; 
 export default function SlotEditor({ slotKey, label, fallback, src, focus, changedBy, defaultFocus }: Props) {
   const [open, setOpen] = useState(false);
   const [resetting, start] = useTransition();
-  const { run } = useSave(saveSlot);
+  const { run, formRef } = useSave(saveSlot);
   const shown = src ?? fallback;
   return (
     <li className="border-b border-rule">
@@ -35,7 +35,7 @@ export default function SlotEditor({ slotKey, label, fallback, src, focus, chang
         </button>
       </div>
       {open && (
-        <form action={run} className="grid gap-5 pb-6 pl-0 sm:pl-[6.75rem]">
+        <form ref={formRef} action={run} className="grid gap-5 pb-6 pl-0 sm:pl-[6.75rem]">
           <input type="hidden" name="key" value={slotKey} />
           <PhotoField name="src" label="New picture" defaultValue={src ?? ""} fallback={fallback} focusName="focus" defaultFocus={focus ?? defaultFocus} />
           <div className="flex flex-wrap items-center gap-3">
