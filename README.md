@@ -55,7 +55,7 @@ Replaces the separate visitor and prayer forms project. Public pages: `/visit`, 
 
 Everything below is set in the Vercel project, not in code. The **System status** screen in the team area shows what is still missing.
 
-1. **Database (needed to save anything).** Project → Storage → add the free **Upstash Redis** database from the Marketplace and connect it. This adds `KV_REST_API_URL` and `KV_REST_API_TOKEN` (or the `UPSTASH_REDIS_REST_*` names). Both work.
+1. **Database (needed to save anything).** Project → Storage → add a free database from the Marketplace and connect it: **Neon Postgres** (adds `DATABASE_URL`/`POSTGRES_URL`) or **Upstash Redis** (adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`). Either works; tables are created on first use.
 2. **`AUTH_SECRET`** (needed to sign in): a long random value, 32 characters or more.
 3. **`ADMIN_SETUP_KEY`**: any secret phrase. Typed once on `/123admin` to create the first administrator.
 4. Redeploy, open `/123admin`, create the administrator, then add each department head under Team and access. Each gets a temporary password to share privately and must choose their own at first sign-in.

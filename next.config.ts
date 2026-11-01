@@ -47,6 +47,8 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
     ];
+    // A test copy of the site (NOINDEX=1) is kept out of search results so it never competes with the real one.
+    if (process.env.NOINDEX === "1") secure.push({ key: "X-Robots-Tag", value: "noindex, nofollow" });
     return [
       { source: "/:path*", headers: secure },
       {

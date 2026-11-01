@@ -1,0 +1,7 @@
+legacy/
+docs/
+.scratch/
+.data/
+.next/
+node_modules/
+tsconfig.tsbuildinfo
