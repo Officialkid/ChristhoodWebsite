@@ -1,0 +1,37 @@
+{
+  "name": "christhood-website",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Christhood Ministries website with a built-in admin area for the team",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "images": "node scripts/optimize-images.mjs",
+    "seed": "tsx --env-file=.env.local scripts/seed-sanity.ts"
+  },
+  "dependencies": {
+    "@sanity/image-url": "^2.1.1",
+    "@sanity/vision": "^6.21.0",
+    "lucide-react": "^1.66.0",
+    "motion": "^14.9.0",
+    "next": "16.4.3",
+    "next-sanity": "^13.4.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sanity": "^6.21.0",
+    "server-only": "^0.0.1",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "sharp": "^0.35.5",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.15",
+    "typescript": "^5"
+  }
+}

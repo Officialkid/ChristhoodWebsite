@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/*
+  Christhood: warm paper, ink-dark type, one royal purple, gold only for the main action.
+  Neutrals are tinted toward the brand's purple hue. No pure black or white.
+*/
+@theme {
+  --color-paper: oklch(0.985 0.006 300);
+  --color-paper-2: oklch(0.957 0.014 300);
+  --color-ink: oklch(0.22 0.04 300);
+  --color-muted: oklch(0.45 0.035 300);
+  --color-rule: oklch(0.87 0.02 300);
+  --color-purple: oklch(0.36 0.15 300);
+  --color-purple-deep: oklch(0.28 0.12 300);
+  --color-purple-tint: oklch(0.93 0.035 300);
+  --color-on-purple: oklch(0.975 0.01 300);
+  --color-on-purple-muted: oklch(0.84 0.045 300);
+  --color-gold: oklch(0.86 0.16 92);
+  --color-gold-hover: oklch(0.91 0.15 92);
+
+  --font-display: var(--font-archivo), "Arial Narrow", Arial, sans-serif;
+  --font-sans: var(--font-archivo), Arial, sans-serif;
+  --font-serif: var(--font-literata), Georgia, "Times New Roman", serif;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; background: var(--color-purple-deep); scroll-padding-top: 5rem; }
+  body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  ::selection { background: var(--color-gold); color: var(--color-ink); }
+  :focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+  h1, h2 { font-family: var(--font-display); font-weight: 800; font-variation-settings: "wdth" 86; letter-spacing: -0.02em; line-height: 1.02; text-wrap: balance; }
+  h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.005em; line-height: 1.22; text-wrap: balance; }
+  p { text-wrap: pretty; }
+  img { max-width: 100%; }
+}
+
+@layer components {
+  .wrap { width: min(100% - 2.5rem, 78rem); margin-inline: auto; }
+  .wrap-narrow { width: min(100% - 2.5rem, 46rem); margin-inline: auto; }
+
+  /* Type scale: five steps, generous contrast between them */
+  .t-hero { font-size: clamp(2.9rem, 8.4vw, 7.25rem); line-height: 0.95; }
+  .t-h1 { font-size: clamp(2.5rem, 6.2vw, 5rem); line-height: 0.98; }
+  .t-h2 { font-size: clamp(1.9rem, 3.8vw, 3rem); }
+  .t-lead { font-family: var(--font-serif); font-size: clamp(1.2rem, 1.7vw, 1.45rem); line-height: 1.5; }
+  .reading { font-family: var(--font-serif); font-size: 1.0625rem; line-height: 1.75; max-width: 66ch; }
+  .label { font-size: 0.9rem; font-weight: 650; color: var(--color-purple); }
+  .rise { animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0s); }
+}
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise { animation: none; }
+  * { scroll-behavior: auto !important; }
+}
