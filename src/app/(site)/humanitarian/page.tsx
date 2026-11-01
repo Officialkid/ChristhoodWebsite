@@ -17,7 +17,7 @@ export default async function HumanitarianPage() {
   const { contact } = await getSettings();
   return (
     <>
-      <PageHero title="Humanitarian wing" tagline={h.tagline} image="humanitarian-women" focus="50% 45%" crumbs={[{ label: "Humanitarian" }]} actions={[{ label: "Donate now", href: "/give" }, { label: "Sponsor a child", href: "#involved" }]} />
+      <PageHero slot="humanitarian.hero" title="Humanitarian wing" tagline={h.tagline} image="humanitarian-women" focus="50% 45%" crumbs={[{ label: "Humanitarian" }]} actions={[{ label: "Donate now", href: "/give" }, { label: "Sponsor a child", href: "#involved" }]} />
 
       <Section>
         <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-24">

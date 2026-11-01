@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import { CopyButton } from "@/components/Interactive";
 import { Button, Section } from "@/components/ui";
@@ -21,7 +22,7 @@ export default async function GivePage() {
   ];
   return (
     <>
-      <PageHero title="Giving and partnership" tagline="Thank you for your generous heart and willingness to support the work of God through Christhood Ministry. Your giving enables us to spread the Gospel and transform lives." crumbs={[{ label: "Give" }]} />
+      <PageHero slot="give.hero" title="Giving and partnership" tagline="Thank you for your generous heart and willingness to support the work of God through Christhood Ministry. Your giving enables us to spread the Gospel and transform lives." crumbs={[{ label: "Give" }]} />
 
       <Section>
         <div className="grid gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-24">
@@ -48,7 +49,7 @@ export default async function GivePage() {
                 <div className="flex flex-wrap items-baseline justify-between gap-3 py-4"><dt className="text-muted">Account number</dt><dd className="break-all text-xl font-bold">{giving.account}</dd></div>
               </dl>
             </section>
-            <p className="text-muted">Giving another way, or a question about a gift? Call <a className="font-semibold text-purple underline underline-offset-4" href={`tel:${contact.phones[0]?.tel}`}>{contact.phones[0]?.display}</a> or write to <a className="font-semibold text-purple underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a>.</p>
+            <p className="text-muted">Giving another way, or a question about a gift? Call <a className="font-semibold text-purple underline underline-offset-4" href={`tel:${contact.phones[0]?.tel}`}>{contact.phones[0]?.display}</a> or write to <a className="break-all font-semibold text-purple underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a>.</p>
           </div>
         </div>
       </Section>
@@ -58,9 +59,13 @@ export default async function GivePage() {
           <div>
             <h2 className="t-h2">Prayer request or testimony</h2>
             <p className="t-lead mt-4 text-muted">Tell us how we can pray with you, or share what God has done. Your information is securely submitted to Christhood Ministry.</p>
-            <div className="mt-8"><Button href="/ministries/counselling#care" variant="outline">Prefer WhatsApp or counselling?</Button></div>
+            <div className="mt-8 flex flex-wrap gap-3"><Button href="/prayer">Send a prayer request</Button><Button href="/prayer?type=thanksgiving" variant="outline">Share a thanksgiving</Button></div>
+            <p className="mt-6 text-muted">Prefer WhatsApp or a conversation? <Link href="/ministries/counselling#care" className="font-semibold text-purple underline underline-offset-4">Talk to our counselling ministry</Link>.</p>
           </div>
-          <div className="overflow-hidden border border-rule bg-paper"><iframe src={site.prayerForm} title="Prayer request and testimony form" loading="lazy" className="h-[44rem] w-full border-0">Loading prayer request form…</iframe></div>
+          <ul className="border-t border-rule self-start">
+            <li className="border-b border-rule py-5"><p className="font-bold">Private and confidential</p><p className="reading text-muted">Only the people you choose on the form will read your message.</p></li>
+            <li className="border-b border-rule py-5"><p className="font-bold">You can stay anonymous</p><p className="reading text-muted">Tick the box and we will not ask for your name or number.</p></li>
+          </ul>
         </div>
       </Section>
     </>

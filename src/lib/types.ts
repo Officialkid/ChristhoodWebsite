@@ -50,6 +50,8 @@ export type EventDoc = {
   details?: string;
   registrationOpen: boolean;
   registerHref?: string;
+  /** The department that looks after this event (department id). Only that team and the web team may edit it. */
+  department?: string;
 };
 
 export type Announcement = { message: string; href?: string; label?: string };
@@ -57,8 +59,101 @@ export type Announcement = { message: string; href?: string; label?: string };
 export type Message = { title: string; speaker?: string; date?: string; youtubeId?: string; summary?: string; thumb?: string };
 
 export type SiteSettings = {
+  verse: { text: string; ref: string; image?: string };
+  /** The welcome words on the home page, one paragraph each. */
+  welcome: string[];
   fellowship: { day: string; start: string; end: string; display: string; venue: string; area: string; address: string };
   contact: { phones: { label: string; display: string; tel: string }[]; email: string };
   giving: { bank: string; paybill: string; account: string };
   hero: { kicker: string; headline: string; sub: string };
 };
+
+/* ---------- admin area ---------- */
+
+export type Role = "admin" | "head";
+
+export type StoredUser = {
+  id: string;
+  email: string;
+  name: string;
+  role: Role;
+  /** Department ids the person leads (ignored for admins, who may do everything). */
+  departments: string[];
+  hash: string;
+  active: boolean;
+  /** Must choose a new password at next sign-in. */
+  mustChange?: boolean;
+  createdAt: string;
+  lastLogin?: string;
+};
+
+/** What a department head changed on a ministry or programme page. Anything left out keeps the shipped wording. */
+export type PageOverride = {
+  id: string; // "ministry:worship"
+  kind: PageDoc["kind"];
+  slug: string;
+  title?: string;
+  tagline?: string;
+  audience?: string;
+  summary?: string;
+  intro?: string[];
+  blocks?: Block[];
+  updatedAt: string;
+  updatedBy: string;
+};
+
+export type SlotValue = { id: string; src: string; focus?: string; updatedAt: string; updatedBy: string };
+
+export type MediaItem = {
+  id: string;
+  /** Address of the full-size picture. */
+  url: string;
+  /** Address of the small picture used on phones. */
+  small: string;
+  w: number;
+  h: number;
+  name: string;
+  note: string;
+  bytes: number;
+  createdAt: string;
+  by: string;
+};
+
+export type Visitor = {
+  id: string;
+  createdAt: string;
+  fullName: string;
+  phone: string;
+  email?: string;
+  area?: string;
+  ageGroup?: string;
+  visitDate: string;
+  firstVisit: string;
+  heardFrom?: string;
+  invitedBy?: string;
+  homeChurch?: string;
+  interests: string[];
+  prayerRequest?: string;
+  status: "new" | "contacted" | "settled";
+  followedUpBy?: string;
+  notes?: string;
+};
+
+export type Prayer = {
+  id: string;
+  createdAt: string;
+  type: "prayer" | "thanksgiving";
+  anonymous: boolean;
+  name?: string;
+  phone?: string;
+  category?: string;
+  message: string;
+  whoMaySee?: string;
+  mayShare?: string;
+  callBack: boolean;
+  status: "new" | "praying" | "done";
+  handledBy?: string;
+  notes?: string;
+};
+
+export type Activity = { id: string; at: string; by: string; action: string; target?: string };

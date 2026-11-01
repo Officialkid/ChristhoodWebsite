@@ -23,7 +23,7 @@ export default async function EventsPage() {
 
   return (
     <>
-      <PageHero title="Upcoming events" tagline="Mentorship, missions, camps and worship gatherings. Register online, or add the date to your calendar." crumbs={[{ label: "Events" }]} actions={[{ label: "Register for camp", href: "/events/register" }]} />
+      <PageHero slot="events.hero" title="Upcoming events" tagline="Mentorship, missions, camps and worship gatherings. Register online, or add the date to your calendar." crumbs={[{ label: "Events" }]} actions={[{ label: "Register for camp", href: "/events/register" }]} />
       <Section tone="alt">
         {upcoming.length > 0 ? (
           <>

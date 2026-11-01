@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import Reveal from "@/components/Reveal";
-import Img from "@/components/Img";
+import SlotImg from "@/components/SlotImg";
 import { Button, Section } from "@/components/ui";
 import { story } from "@/content/about";
 import { site } from "@/content/site";
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <PageHero title={story.title} tagline="History, heritage and vision" image="christhoood-about" crumbs={[{ label: "About" }, { label: "Our story" }]} actions={[{ label: "Mission and faith", href: "/about/mission" }, { label: "Meet our leaders", href: "/about/leadership" }]} />
+      <PageHero slot="about.hero" title={story.title} tagline="History, heritage and vision" image="christhoood-about" crumbs={[{ label: "About" }, { label: "Our story" }]} actions={[{ label: "Mission and faith", href: "/about/mission" }, { label: "Meet our leaders", href: "/about/leadership" }]} />
 
       <Section>
         <div className="grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-24">
@@ -32,7 +32,7 @@ export default function AboutPage() {
                 </li>
               ))}
             </ol>
-            <div className="relative mt-10 aspect-[4/3] overflow-hidden bg-paper-2"><Img cover src="christhood-about-intro" alt="An open Bible during a Christhood Bible study" sizes="(min-width:1024px) 38vw, 100vw" /></div>
+            <div className="relative mt-10 aspect-[4/3] overflow-hidden bg-paper-2"><SlotImg cover slot="about.intro" fallback="christhood-about-intro" alt="An open Bible during a Christhood Bible study" sizes="(min-width:1024px) 38vw, 100vw" /></div>
           </Reveal>
         </div>
       </Section>

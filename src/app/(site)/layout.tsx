@@ -1,6 +1,7 @@
 import Header, { type MenuItem } from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileDock from "@/components/MobileDock";
+import { pageIcon } from "@/components/icons";
 import { site, nav } from "@/content/site";
 import { getAnnouncement, getMinistries, getProgrammes, getSettings } from "@/lib/content";
 
@@ -11,9 +12,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   const menu: MenuItem[] = nav.map((item) => {
     if (item.label === "Ministries")
-      return { ...item, children: ministries.map((m) => ({ label: m.title, href: `/ministries/${m.slug}`, blurb: m.audience })) };
+      return { ...item, children: ministries.map((m) => ({ label: m.title, href: `/ministries/${m.slug}`, blurb: m.audience, icon: pageIcon[m.slug] })) };
     if (item.label === "Programmes")
-      return { ...item, children: programmes.map((p) => ({ label: p.title, href: `/programmes/${p.slug}`, blurb: p.audience })) };
+      return { ...item, children: programmes.map((p) => ({ label: p.title, href: `/programmes/${p.slug}`, blurb: p.audience, icon: pageIcon[p.slug] })) };
     return item;
   });
 
@@ -36,7 +37,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main id="main">{children}</main>
       <Footer menu={menu} settings={settings} />
       <MobileDock />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(churchLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(churchLd).replace(/</g, "\\u003c") }} />
     </>
   );
 }

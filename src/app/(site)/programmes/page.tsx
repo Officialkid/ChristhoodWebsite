@@ -15,7 +15,7 @@ export default async function ProgrammesPage() {
   const programmes = await getProgrammes();
   return (
     <>
-      <PageHero title="Programmes" tagline="Mentorship for every age. Each one is rooted in the Word and built around relationships, because mentoring is not another meeting. It is a relationship." crumbs={[{ label: "Programmes" }]} actions={[{ label: "See camps and events", href: "/events" }]} />
+      <PageHero slot="programmes.hero" title="Programmes" tagline="Mentorship for every age. Each one is rooted in the Word and built around relationships, because mentoring is not another meeting. It is a relationship." crumbs={[{ label: "Programmes" }]} actions={[{ label: "See camps and events", href: "/events" }]} />
       <Section tone="alt"><Directory pages={programmes} base="/programmes" showAudience /></Section>
       <Section tone="purple" tight>
         <div className="flex flex-wrap items-center justify-between gap-6">

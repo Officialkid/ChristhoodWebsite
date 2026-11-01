@@ -30,14 +30,32 @@ const oldPages: Record<string, string> = {
   "events.html": "/events",
   "campsregistration.html": "/events/register",
   "give.html": "/give",
+  "visit.html": "/visit",
+  "prayer.html": "/prayer",
 };
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
-    // Photos are prepared ahead of time, and uploads come from the admin area's own image service.
-    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    // Photos are prepared ahead of time; pictures the team uploads may come from the photo host.
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+  },
+  async headers() {
+    const secure = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ];
+    return [
+      { source: "/:path*", headers: secure },
+      {
+        // The team area is never indexed, cached or shown inside another site.
+        source: "/123admin/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }, { key: "X-Frame-Options", value: "DENY" }],
+      },
+      { source: "/123admin", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }, { key: "X-Frame-Options", value: "DENY" }] },
+    ];
   },
   async redirects() {
     return Object.entries(oldPages).map(([from, to]) => ({

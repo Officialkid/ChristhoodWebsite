@@ -15,7 +15,7 @@ export default async function MinistriesPage() {
   const ministries = await getMinistries();
   return (
     <>
-      <PageHero title="Ministries & departments" tagline="At Christhood, we believe in the power of mentorship. Join us and let us walk with you as your spirituality grows and flourishes." crumbs={[{ label: "Ministries" }]} />
+      <PageHero slot="ministries.hero" title="Ministries & departments" tagline="At Christhood, we believe in the power of mentorship. Join us and let us walk with you as your spirituality grows and flourishes." crumbs={[{ label: "Ministries" }]} />
       <Section tone="alt"><Directory pages={ministries} base="/ministries" showAudience /></Section>
       <Section tone="purple" tight>
         <div className="flex flex-wrap items-center justify-between gap-6">

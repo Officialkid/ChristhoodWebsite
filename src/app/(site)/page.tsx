@@ -1,6 +1,11 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import Img from "@/components/Img";
+import SlotImg from "@/components/SlotImg";
+import { Icon } from "@/components/icons";
+import MotesLayer from "@/components/fx/MotesLayer";
+import VerseCard from "@/components/fx/VerseCard";
+import { SplitHeading, Stagger, Wipe } from "@/components/fx/gsap";
 import Reveal from "@/components/Reveal";
 import Directory from "@/components/Directory";
 import { Button, Section, SectionHead } from "@/components/ui";
@@ -10,15 +15,9 @@ import { EventRow } from "@/components/Cards";
 import { humanitarian } from "@/content/about";
 import { site } from "@/content/site";
 import { resolvePhoto } from "@/lib/images";
-import { getMessages, getMinistries, getProgrammes, getSettings, getStories, getUpcomingEvents } from "@/lib/content";
+import { getMessages, getMinistries, getProgrammes, getSettings, getSlot, getStories, getUpcomingEvents } from "@/lib/content";
 
 export const revalidate = 60;
-
-const welcome = [
-  "At Christhood, our vision is to be the hands and feet of Christ, moulding lives through outreach, missions, mentorship, counselling, empowerment, and theological training. We are called to serve with unwavering compassion, guiding individuals into their divine purpose while reflecting the heart of Christ in every endeavour.",
-  "In a world longing for hope, we stand as beacons of God's grace, offering healing to the broken, guidance to the lost, and restoration to the weary. Whether through community support, mentorship, evangelism, or missions, we are committed to equipping and empowering you to walk boldly in your calling.",
-  "In this house, you are seen, valued, and cherished. May Christ's rest renew you, His mercy move you, and His love lead you always.",
-];
 
 const firstSentence = (t: string) => t.split(/(?<=\.)\s/)[0];
 
@@ -26,21 +25,24 @@ export default async function Home() {
   const [settings, ministries, programmes, upcoming, stories, messages] = await Promise.all([
     getSettings(), getMinistries(), getProgrammes(), getUpcomingEvents(), getStories(), getMessages(1),
   ]);
-  const { fellowship: f, hero, giving, contact } = settings;
+  const { fellowship: f, hero, giving, contact, welcome, verse } = settings;
+  const verseHero = await getSlot("home.verse", "christhood-about-intro");
+  const versePhotos = [...new Set([verseHero.src ?? "christhood-about-intro", "prayer", "worship"])].map((n) => resolvePhoto(n).full);
   const latest = messages[0];
 
   return (
     <>
       {/* Hero: one photograph, the name, one promise, one action */}
       <section className="relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col justify-end bg-purple-deep text-on-purple">
-        <HeroMedia><Img cover priority src="fellowship" alt="" sizes="100vw" focus="50% 30%" /></HeroMedia>
+        <HeroMedia><SlotImg cover priority slot="home.hero" fallback="fellowship" alt="" sizes="100vw" focus="50% 30%" /></HeroMedia>
         <div aria-hidden className="absolute inset-0 bg-ink/55" />
-        <div className="wrap relative pb-24 pt-32 md:pb-16 md:pt-40">
+        <MotesLayer />
+        <div className="wrap relative z-[2] pb-24 pt-32 md:pb-16 md:pt-40">
           <p className="rise text-lg font-semibold">Christhood International Outfield Ministry</p>
-          <h1 className="t-hero rise mt-3 max-w-[9ch]" style={{ "--d": ".08s" } as CSSProperties}>{hero.headline}</h1>
+          <SplitHeading className="t-hero mt-3 max-w-[9ch]">{hero.headline}</SplitHeading>
           <p className="t-lead rise mt-6 max-w-xl text-on-purple" style={{ "--d": ".18s" } as CSSProperties}>{hero.sub}</p>
           <div className="rise mt-8 flex flex-wrap gap-3" style={{ "--d": ".28s" } as CSSProperties}>
-            <Button href="#visit">Plan your visit</Button>
+            <Button href="/visit">I&apos;m new: plan my visit</Button>
             <Button href="/ministries" variant="outline-light">Explore ministries</Button>
           </div>
           <p className="rise mt-8 text-[0.98rem] font-semibold" style={{ "--d": ".38s" } as CSSProperties}>{hero.kicker}</p>
@@ -59,7 +61,7 @@ export default async function Home() {
       {/* Welcome */}
       <Section>
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-24">
-          <Reveal><div className="relative aspect-[4/5] overflow-hidden bg-paper-2"><Img cover src="main-img" alt="Apostle Dennis and Mrs. Vincent smiling together at Saturday fellowship" sizes="(min-width:1024px) 40vw, 100vw" focus="35% 40%" /></div></Reveal>
+          <Wipe><div className="relative aspect-[4/5] overflow-hidden bg-paper-2"><SlotImg cover slot="home.welcome" fallback="main-img" alt="Apostle Dennis and Mrs. Vincent smiling together at Saturday fellowship" sizes="(min-width:1024px) 40vw, 100vw" focus="35% 40%" /></div></Wipe>
           <Reveal delay={0.08} className="lg:pt-6">
             <h2 className="t-h2">Welcome to Christhood</h2>
             <div className="mt-8 grid gap-5">{welcome.map((p) => <p key={p.slice(0, 20)} className="reading">{p}</p>)}</div>
@@ -67,6 +69,18 @@ export default async function Home() {
             <p className="mt-6 max-w-[52ch] text-muted">Birthed in 2009 and launched on 1 November 2015. Today: twelve ministries, five programmes and three humanitarian activities.</p>
             <div className="mt-6 flex flex-wrap gap-x-8"><Button href="/about" variant="text">Our story</Button><Button href="/about/apostle-dennis" variant="text">Meet Apostle Dennis</Button></div>
           </Reveal>
+        </div>
+      </Section>
+
+      {/* The word for the week */}
+      <Section tone="deep">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:gap-20">
+          <div>
+            <h2 className="t-h2">Word for the week</h2>
+            <p className="t-lead mt-4 max-w-md text-on-purple-muted">A verse to carry with you through the week. It changes every week.</p>
+            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2"><Button href="/prayer" variant="outline-light">Send a prayer request</Button><Button href="/give" variant="text" className="!text-gold !decoration-gold/50">Partner with us</Button></div>
+          </div>
+          <Reveal><VerseCard text={verse.text} reference={verse.ref} photos={versePhotos} /></Reveal>
         </div>
       </Section>
 
@@ -84,7 +98,7 @@ export default async function Home() {
             <p className="t-lead mt-4 text-on-purple-muted">Mentorship for every age, from the first years of school to university and beyond.</p>
             <div className="mt-8"><Button href="/programmes" variant="outline-light">All programmes</Button></div>
           </header>
-          <ul className="border-t border-on-purple/25">
+          <Stagger selector="li"><ul className="border-t border-on-purple/25">
             {programmes.map((p) => (
               <li key={p.slug} className="border-b border-on-purple/25">
                 <Link href={`/programmes/${p.slug}`} className="group grid gap-x-8 gap-y-1 py-6 sm:grid-cols-[11rem_1fr]">
@@ -93,7 +107,7 @@ export default async function Home() {
                 </Link>
               </li>
             ))}
-          </ul>
+          </ul></Stagger>
         </div>
       </Section>
 
@@ -124,7 +138,7 @@ export default async function Home() {
             </ul>
             <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-2"><Button href="/humanitarian" variant="purple">Read the full story</Button><Button href="/give" variant="text">Sponsor or donate</Button></div>
           </div>
-          <Reveal><div className="relative aspect-[4/5] overflow-hidden bg-paper"><Img cover src="humanitarian-women" alt="Women of the Baraka group sharing a meal and learning beadwork together" sizes="(min-width:1024px) 40vw, 100vw" focus="55% 50%" /></div></Reveal>
+          <Wipe><div className="relative aspect-[4/5] overflow-hidden bg-paper"><SlotImg cover slot="home.humanitarian" fallback="humanitarian-women" alt="Women of the Baraka group sharing a meal and learning beadwork together" sizes="(min-width:1024px) 40vw, 100vw" focus="55% 50%" /></div></Wipe>
         </div>
       </Section>
 
@@ -145,8 +159,35 @@ export default async function Home() {
           {latest?.youtubeId ? (
             <div><VideoCard id={latest.youtubeId} title={latest.title} /><p className="mt-3 font-semibold">{latest.title}{latest.speaker ? `, ${latest.speaker}` : ""}</p></div>
           ) : (
-            <a href={site.socials[2].href} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-purple-deep"><Img cover src="worship" alt="A worship leader at Saturday fellowship. Open our YouTube channel." sizes="(min-width:1024px) 50vw, 100vw" /><span className="absolute bottom-0 left-0 bg-gold px-5 py-3 font-bold text-ink">Our YouTube channel</span></a>
+            <a href={site.socials[2].href} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-purple-deep"><SlotImg cover slot="home.watch" fallback="worship" alt="A worship leader at Saturday fellowship. Open our YouTube channel." sizes="(min-width:1024px) 50vw, 100vw" /><span className="absolute bottom-0 left-0 bg-gold px-5 py-3 font-bold text-ink">Our YouTube channel</span></a>
           )}
+        </div>
+      </Section>
+
+      {/* Connect */}
+      <Section>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+          <header>
+            <h2 className="t-h2">New here, or need prayer?</h2>
+            <p className="t-lead mt-4 max-w-md text-muted">Tell us you are coming, ask us to pray with you, or share what God has done. Everything is kept private.</p>
+          </header>
+          <Stagger selector="li">
+            <ul className="border-t border-rule">
+              {[
+                { href: "/visit", icon: "guest", title: "I'm new: register my visit", text: "Two minutes, and our hospitality team will welcome you." },
+                { href: "/prayer", icon: "prayer", title: "Send a prayer request", text: "Confidential, and you can stay anonymous." },
+                { href: "/prayer?type=thanksgiving", icon: "heart", title: "Share a thanksgiving", text: "Tell us what God has done." },
+                { href: "/ministries/counselling", icon: "counselling", title: "Talk to a counsellor", text: "Free and confidential, in person or online." },
+              ].map((c) => (
+                <li key={c.href} className="border-b border-rule">
+                  <Link href={c.href} className="group flex items-start gap-4 py-5">
+                    <Icon name={c.icon} className="mt-1 size-6 shrink-0 text-purple" />
+                    <span className="min-w-0 flex-1"><span className="block text-xl font-extrabold leading-tight [font-variation-settings:'wdth'_86] group-hover:underline group-hover:underline-offset-4">{c.title}</span><span className="mt-1 block text-muted">{c.text}</span></span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Stagger>
         </div>
       </Section>
 
@@ -178,9 +219,9 @@ export default async function Home() {
             <dl className="mt-10 grid gap-6">
               <div><dt className="font-semibold text-muted">When</dt><dd className="mt-1 text-xl font-bold">Every {f.day}, {f.display}</dd></div>
               <div><dt className="font-semibold text-muted">Where</dt><dd className="mt-1 text-xl font-bold">{f.address}</dd></div>
-              <div><dt className="font-semibold text-muted">Questions?</dt><dd className="mt-1 flex flex-wrap gap-x-6 text-xl font-bold">{contact.phones.map((p) => <a key={p.tel} href={`tel:${p.tel}`} className="text-purple underline underline-offset-4">{p.display}</a>)}</dd><dd className="mt-1 break-all text-muted">{contact.email}</dd></div>
+              <div><dt className="font-semibold text-muted">Questions?</dt><dd className="mt-1 flex flex-wrap gap-x-6 text-xl font-bold">{contact.phones.map((p) => <a key={p.tel} href={`tel:${p.tel}`} className="inline-flex min-h-11 items-center text-purple underline underline-offset-4">{p.display}</a>)}</dd><dd className="mt-1 break-all text-muted">{contact.email}</dd></div>
             </dl>
-            <div className="mt-8 flex flex-wrap gap-3"><Button href={site.mapsLink} external variant="purple">Get directions</Button><Button href={`tel:${contact.phones[0]?.tel}`} variant="outline" arrow={false}>Call now</Button></div>
+            <div className="mt-8 flex flex-wrap gap-3"><Button href="/visit" variant="purple">Register your visit</Button><Button href={site.mapsLink} external variant="outline">Get directions</Button><Button href={`tel:${contact.phones[0]?.tel}`} variant="outline" arrow={false}>Call now</Button></div>
           </div>
           <div className="relative min-h-[22rem] bg-paper-2 lg:min-h-full"><iframe src={site.mapEmbed} title="Map showing where Christhood meets, Azuri Premier Hotel, Nairobi CBD" loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="absolute inset-0 size-full border-0" /></div>
         </div>

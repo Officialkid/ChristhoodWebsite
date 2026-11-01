@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function ApostlePage() {
   return (
     <>
-      <PageHero title={apostle.name} tagline={apostle.titles.join(" · ")} crumbs={[{ label: "About", href: "/about" }, { label: "Apostle Dennis" }]} actions={[{ label: "Get the full bio (PDF)", href: apostle.bioPdf, external: true }]} />
+      <PageHero slot="about.apostle.hero" title={apostle.name} tagline={apostle.titles.join(" · ")} crumbs={[{ label: "About", href: "/about" }, { label: "Apostle Dennis" }]} actions={[{ label: "Get the full bio (PDF)", href: apostle.bioPdf, external: true }]} />
 
       <Section>
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-24">

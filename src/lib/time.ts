@@ -27,7 +27,7 @@ export function splitDuration(ms: number) {
   return { days: Math.floor(total / 86400), hours: Math.floor((total % 86400) / 3600), minutes: Math.floor((total % 3600) / 60), seconds: total % 60 };
 }
 
-const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-KE", { timeZone: "Africa/Nairobi", ...opts });
+export const fmt = (opts: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-KE", { timeZone: "Africa/Nairobi", ...opts });
 
 export function formatEventDates(startIso: string, endIso?: string) {
   const s = new Date(startIso);
@@ -49,3 +49,18 @@ export function googleCalendarUrl(e: { title: string; start: string; end?: strin
   const q = new URLSearchParams({ action: "TEMPLATE", text: e.title, dates: `${stamp(e.start)}/${stamp(end)}`, details: e.details ?? "Christhood Ministries", location: e.location ?? "" });
   return `https://calendar.google.com/calendar/render?${q.toString()}`;
 }
+
+/** For a "date and time" input: the stored moment as Nairobi wall-clock time, like 2026-11-22T09:00. */
+export function toNairobiInput(iso?: string): string {
+  if (!iso) return "";
+  const d = new Date(new Date(iso).getTime() + NAIROBI_OFFSET_MS);
+  return Number.isNaN(d.getTime()) ? "" : d.toISOString().slice(0, 16);
+}
+
+/** The reverse: what the person typed (Nairobi time) back to a stored moment. */
+export function fromNairobiInput(value: string): string | undefined {
+  if (!/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2})?$/.test(value)) return undefined;
+  return `${value.length === 10 ? `${value}T00:00` : value}:00+03:00`;
+}
+
+export const formatStamp = (iso: string) => fmt({ day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(iso));

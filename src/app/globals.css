@@ -17,6 +17,10 @@
   --color-on-purple-muted: oklch(0.84 0.045 300);
   --color-gold: oklch(0.86 0.16 92);
   --color-gold-hover: oklch(0.91 0.15 92);
+  --color-danger: oklch(0.46 0.18 27);
+  --color-danger-tint: oklch(0.96 0.03 27);
+  --color-ok: oklch(0.42 0.11 155);
+  --color-ok-tint: oklch(0.95 0.04 155);
 
   --font-display: var(--font-archivo), "Arial Narrow", Arial, sans-serif;
   --font-sans: var(--font-archivo), Arial, sans-serif;
@@ -32,6 +36,13 @@
   h3, h4 { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.005em; line-height: 1.22; text-wrap: balance; }
   p { text-wrap: pretty; }
   img { max-width: 100%; }
+  /* Boxes may shrink below the width of their contents, so nothing can push a small screen wider than itself. */
+  fieldset { min-width: 0; }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  /* Foldables with two screens: keep content clear of the hinge. */
+  @media (horizontal-viewport-segments: 2) {
+    .wrap, .wrap-narrow { width: min(100% - 2.5rem, 46rem); }
+  }
 }
 
 @layer components {
@@ -45,12 +56,34 @@
   .t-lead { font-family: var(--font-serif); font-size: clamp(1.2rem, 1.7vw, 1.45rem); line-height: 1.5; }
   .reading { font-family: var(--font-serif); font-size: 1.0625rem; line-height: 1.75; max-width: 66ch; }
   .label { font-size: 0.9rem; font-weight: 650; color: var(--color-purple); }
+  /* Forms: one look for the public forms and the admin area */
+  .f-label { display: block; font-size: 0.95rem; font-weight: 650; line-height: 1.3; }
+  .f-hint { margin-top: 0.25rem; font-size: 0.875rem; line-height: 1.45; color: var(--color-muted); }
+  .f-error { margin-top: 0.4rem; font-size: 0.9rem; font-weight: 600; color: var(--color-danger); }
+  .f-input { display: block; width: 100%; min-height: 3rem; margin-top: 0.4rem; border: 1px solid color-mix(in oklab, var(--color-ink) 38%, transparent); border-radius: 0.25rem; background: var(--color-paper); padding: 0.65rem 0.9rem; font: inherit; color: var(--color-ink); }
+  textarea.f-input { min-height: 7.5rem; resize: vertical; line-height: 1.55; }
+  .f-input::placeholder { color: color-mix(in oklab, var(--color-muted) 80%, transparent); }
+  .f-input:hover { border-color: var(--color-ink); }
+  .f-input:focus-visible { outline: 3px solid var(--color-purple); outline-offset: 1px; border-color: var(--color-purple); }
+  .f-input[aria-invalid="true"] { border-color: var(--color-danger); background: var(--color-danger-tint); }
+  .f-input:disabled { background: var(--color-paper-2); color: var(--color-muted); cursor: not-allowed; }
+  .f-choice { display: flex; min-height: 3rem; align-items: center; gap: 0.75rem; border: 1px solid color-mix(in oklab, var(--color-ink) 25%, transparent); border-radius: 0.25rem; padding: 0.5rem 0.9rem; cursor: pointer; background: var(--color-paper); }
+  .f-choice:hover { border-color: var(--color-ink); }
+  .f-choice:has(input:checked) { border-color: var(--color-purple); background: var(--color-purple-tint); }
+  .f-choice:has(input:focus-visible) { outline: 3px solid var(--color-purple); outline-offset: 1px; }
+  .f-choice input { width: 1.2rem; height: 1.2rem; flex: none; accent-color: var(--color-purple); }
   .rise { animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0s); }
 }
+
+/* Headline waits for its line-by-line reveal, but always shows within a moment even if scripts never run. */
+.split-hide { opacity: 0; animation: reveal-anyway 0s 2.2s forwards; }
+@keyframes reveal-anyway { to { opacity: 1; } }
+.split-line { padding-bottom: 0.08em; }
 
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   .rise { animation: none; }
+  .split-hide { opacity: 1; animation: none; }
   * { scroll-behavior: auto !important; }
 }

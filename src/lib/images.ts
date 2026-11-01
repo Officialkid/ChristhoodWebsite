@@ -17,9 +17,10 @@ export function photoSet(prefix: string): string[] {
 
 /** Resolve a photo name or full address into what the page needs to draw it. */
 export function resolvePhoto(src: string) {
-  if (/^https?:\/\//.test(src)) {
-    const sized = (w: number) => (src.includes("cdn.sanity.io") ? `${src}?w=${w}&auto=format&q=80` : src);
-    return { full: sized(1800), small: sized(720), w: 1600, h: 1000, blur: undefined as string | undefined };
+  // A picture the team uploaded: a small copy sits beside the full one with "-sm" before the extension.
+  if (/^https?:\/\//.test(src) || src.startsWith("/media/")) {
+    const small = src.replace(/\.webp$/, "-sm.webp");
+    return { full: src, small, w: 1800, h: 1200, blur: undefined as string | undefined };
   }
   if (src.startsWith("/")) return { full: src, small: src, w: 1600, h: 1000, blur: undefined as string | undefined };
   const info = images[src];
@@ -31,3 +32,6 @@ export function resolvePhoto(src: string) {
     blur: info?.blur,
   };
 }
+
+/** Names of every prepared church photo, for pickers. */
+export const photoNames = (): string[] => Object.keys(images).sort();

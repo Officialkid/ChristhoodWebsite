@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import Img from "./Img";
 import { Button } from "./ui";
+import { getSlot } from "@/lib/content";
 
 type Props = {
   title: string;
@@ -9,6 +10,8 @@ type Props = {
   /** A photo shown below the heading. Leave out for pages that mostly list things. */
   image?: string;
   focus?: string;
+  /** The place on the site this picture belongs to. The team can swap it in the admin area. */
+  slot?: string;
   badge?: string;
   crumbs?: { label: string; href?: string }[];
   actions?: { label: string; href: string; external?: boolean }[];
@@ -17,16 +20,19 @@ type Props = {
 };
 
 /** Page opening: words first, then a clean photo. No text sits on top of an image. */
-export default function PageHero({ title, tagline, image, focus, badge, crumbs = [], actions = [] }: Props) {
+export default async function PageHero({ title, tagline, image: imageProp, focus: focusProp, slot, badge, crumbs = [], actions = [] }: Props) {
+  const chosen = slot ? await getSlot(slot, imageProp) : { src: imageProp, focus: undefined };
+  const image = chosen.src;
+  const focus = chosen.focus ?? focusProp;
   return (
     <header className="bg-paper">
       <div className="wrap pb-10 pt-10 md:pb-14 md:pt-14">
         {crumbs.length > 0 && (
           <nav aria-label="Breadcrumb">
             <ol className="flex flex-wrap items-center gap-x-2 text-[0.9rem] text-muted">
-              <li><Link href="/" className="underline-offset-4 hover:text-purple hover:underline">Home</Link></li>
+              <li><Link href="/" className="inline-flex min-h-11 items-center underline-offset-4 hover:text-purple hover:underline">Home</Link></li>
               {crumbs.map((c) => (
-                <li key={c.label} className="flex items-center gap-2"><span aria-hidden>/</span>{c.href ? <Link href={c.href} className="underline-offset-4 hover:text-purple hover:underline">{c.label}</Link> : <span aria-current="page" className="text-ink">{c.label}</span>}</li>
+                <li key={c.label} className="flex items-center gap-2"><span aria-hidden>/</span>{c.href ? <Link href={c.href} className="inline-flex min-h-11 items-center underline-offset-4 hover:text-purple hover:underline">{c.label}</Link> : <span aria-current="page" className="text-ink">{c.label}</span>}</li>
               ))}
             </ol>
           </nav>

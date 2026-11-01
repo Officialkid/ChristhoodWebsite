@@ -297,7 +297,7 @@ export default function CampRegistration({ camps, numbers, depositKes, facilitat
           </div>
         )}
 
-        <div className="mt-8 flex items-center justify-between gap-3">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
           <button type="button" onClick={() => setStep((s) => Math.max(0, s - 1))} disabled={step === 0} className="inline-flex min-h-12 items-center gap-2 rounded-sm px-5 font-semibold text-purple disabled:invisible">
             <ArrowLeft className="size-4" aria-hidden /> Back
           </button>

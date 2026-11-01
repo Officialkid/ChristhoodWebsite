@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { HandHeart, HeartHandshake, MessageCircle, Mail } from "lucide-react";
 
@@ -14,15 +15,16 @@ export default function CareDesk({ whatsapp, email }: Props) {
   const [v, setV] = useState({ name: "", contact: "", topic: "", how: "In person (Nairobi CBD)", message: "" });
   const set = (k: keyof typeof v) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => setV((s) => ({ ...s, [k]: e.target.value }));
 
+  const isPrayer: boolean = mode === "prayer";
   const who = anon ? "Anonymous" : v.name.trim() || "Not given";
   const lines =
-    mode === "prayer"
+    isPrayer
       ? ["*Prayer request*", `From: ${who}`, !anon && v.contact ? `Reach me on: ${v.contact}` : "", "", v.message.trim()]
       : ["*Counselling session request*", `From: ${who}`, v.contact ? `Reach me on: ${v.contact}` : "", `Preferred way: ${v.how}`, v.topic ? `Area: ${v.topic}` : "", "", v.message.trim()];
   const body = lines.filter((l, i) => l || (i > 0 && lines[i - 1] !== "")).join("\n");
-  const subject = mode === "prayer" ? "Prayer request" : "Counselling session request";
-  const ready = v.message.trim().length > 2 && (anon || mode === "prayer" || v.contact.trim());
-  const phone = mode === "prayer" ? whatsapp.prayer : whatsapp.counselling;
+  const subject = isPrayer ? "Prayer request" : "Counselling session request";
+  const ready = v.message.trim().length > 2 && (anon || isPrayer || v.contact.trim());
+  const phone = isPrayer ? whatsapp.prayer : whatsapp.counselling;
 
   return (
     <section id="care" className="scroll-mt-24 bg-paper-2 py-20 sm:py-24">
@@ -57,6 +59,16 @@ export default function CareDesk({ whatsapp, email }: Props) {
               </button>
             ))}
           </div>
+          {isPrayer ? (
+            <div className="mt-8 grid gap-5">
+              <p className="reading">Send your request through our private form. Only the people you choose will read it, and you can stay anonymous.</p>
+              <div className="flex flex-wrap gap-3">
+                <Link href="/prayer" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-gold px-6 font-semibold text-ink hover:bg-gold-hover"><HandHeart className="size-4" aria-hidden /> Open the prayer form</Link>
+                <Link href="/prayer?type=thanksgiving" className="inline-flex min-h-12 items-center justify-center rounded-sm border border-ink/35 px-6 font-semibold hover:bg-ink hover:text-paper">Share a thanksgiving</Link>
+              </div>
+              <p className="text-sm text-muted">Prefer WhatsApp? <a className="font-semibold text-purple underline underline-offset-4" href={`https://wa.me/${whatsapp.prayer}`} target="_blank" rel="noopener noreferrer">Message us directly</a>.</p>
+            </div>
+          ) : (
           <form className="mt-6 grid gap-5" onSubmit={(e) => e.preventDefault()}>
             <label className="flex items-center gap-3 text-sm font-semibold text-ink">
               <input type="checkbox" checked={anon} onChange={(e) => setAnon(e.target.checked)} className="size-5 accent-purple" /> Keep my name private
@@ -68,12 +80,12 @@ export default function CareDesk({ whatsapp, email }: Props) {
                   <input className={field} value={v.name} onChange={set("name")} autoComplete="name" placeholder="Optional" />
                 </label>
                 <label className="text-sm font-semibold text-ink">
-                  Phone or email{mode === "counselling" ? " *" : ""}
-                  <input className={field} value={v.contact} onChange={set("contact")} placeholder={mode === "counselling" ? "So we can reach you" : "Optional"} />
+                  Phone or email{!isPrayer ? " *" : ""}
+                  <input className={field} value={v.contact} onChange={set("contact")} placeholder={!isPrayer ? "So we can reach you" : "Optional"} />
                 </label>
               </>
             )}
-            {mode === "counselling" && (
+            {!isPrayer && (
               <>
                 <label className="text-sm font-semibold text-ink">
                   How would you like to meet?
@@ -98,7 +110,7 @@ export default function CareDesk({ whatsapp, email }: Props) {
               </>
             )}
             <label className="text-sm font-semibold text-ink">
-              {mode === "prayer" ? "Your prayer request or praise report *" : "A few words about what you are facing *"}
+              {isPrayer ? "Your prayer request or praise report *" : "A few words about what you are facing *"}
               <textarea className={`${field} min-h-32`} value={v.message} onChange={set("message")} placeholder="Write here" />
             </label>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -121,6 +133,7 @@ export default function CareDesk({ whatsapp, email }: Props) {
             </div>
             <p className="text-xs text-muted">Pressing send opens WhatsApp or your email app with your message ready. We do not keep anything you type here.</p>
           </form>
+          )}
         </div>
       </div>
     </section>

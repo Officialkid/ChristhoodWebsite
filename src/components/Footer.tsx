@@ -6,7 +6,7 @@ import type { MenuItem } from "./Header";
 
 export default function Footer({ menu, settings }: { menu: MenuItem[]; settings: SiteSettings }) {
   const col = (label: string) => menu.find((m) => m.label === label);
-  const link = "block py-1.5 text-on-purple-muted underline-offset-4 hover:text-on-purple hover:underline";
+  const link = "block py-2.5 text-on-purple-muted underline-offset-4 hover:text-on-purple hover:underline";
   const head = "mb-3 text-[0.9rem] font-bold text-on-purple";
   return (
     <footer className="bg-purple-deep pb-24 pt-16 text-on-purple md:pb-12">
@@ -31,6 +31,10 @@ export default function Footer({ menu, settings }: { menu: MenuItem[]; settings:
               <h3 className={`${head} mt-7`}>About</h3>
               {col("About")?.children?.map((c) => <Link key={c.href} href={c.href} className={link}>{c.label}</Link>)}
               <Link href="/humanitarian" className={link}>Humanitarian</Link>
+              <h3 className={`${head} mt-7`}>Connect</h3>
+              <Link href="/visit" className={link}>I&apos;m new: register a visit</Link>
+              <Link href="/prayer" className={link}>Send a prayer request</Link>
+              <Link href="/prayer?type=thanksgiving" className={link}>Share a thanksgiving</Link>
               <Link href="/events" className={link}>Events</Link>
               <Link href="/give" className={link}>Give</Link>
             </nav>
@@ -41,7 +45,7 @@ export default function Footer({ menu, settings }: { menu: MenuItem[]; settings:
               <p className="mt-4">{settings.contact.phones.map((p) => <a key={p.tel} href={`tel:${p.tel}`} className={link}>{p.display}</a>)}</p>
               <a href={`mailto:${settings.contact.email}`} className={`${link} break-all`}>{settings.contact.email}</a>
               <h3 className={`${head} mt-7`}>Follow</h3>
-              <ul>{site.socials.map((s) => <li key={s.name}><a href={s.href} target="_blank" rel="noopener noreferrer" className={link}>{s.name}</a></li>)}</ul>
+              <ul>{site.socials.map((s) => <li key={s.name}><a href={s.href} target="_blank" rel="noopener noreferrer" className={`${link} min-w-11`}>{s.name}</a></li>)}</ul>
             </address>
           </div>
         </div>

@@ -15,7 +15,7 @@ export default function MissionPage() {
   const { sections, standards, commitments } = mission;
   return (
     <>
-      <PageHero title={mission.title} tagline={mission.sub} crumbs={[{ label: "About", href: "/about" }, { label: "Mission and faith" }]} />
+      <PageHero slot="about.mission.hero" title={mission.title} tagline={mission.sub} crumbs={[{ label: "About", href: "/about" }, { label: "Mission and faith" }]} />
 
       <Section tone="alt">
         <ol className="border-t border-rule">

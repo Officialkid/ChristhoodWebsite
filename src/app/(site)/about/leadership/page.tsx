@@ -18,7 +18,7 @@ export default async function LeadershipPage() {
   const [leaders, stories] = await Promise.all([getLeaders(), getStories()]);
   return (
     <>
-      <PageHero title="Our servant leaders" tagline="Meet our servant leaders and ministry directors, in their own words." crumbs={[{ label: "About", href: "/about" }, { label: "Leadership" }]} />
+      <PageHero slot="about.leadership.hero" title="Our servant leaders" tagline="Meet our servant leaders and ministry directors, in their own words." crumbs={[{ label: "About", href: "/about" }, { label: "Leadership" }]} />
 
       <Section>
         <ul className="grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">

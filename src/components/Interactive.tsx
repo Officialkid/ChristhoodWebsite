@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, Copy, Play, X } from "lucide-react";
+import { ArrowUpRight, Check, Copy, Play } from "lucide-react";
+import Lightbox from "yet-another-react-lightbox";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Counter from "yet-another-react-lightbox/plugins/counter";
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "yet-another-react-lightbox/plugins/counter.css";
+import { Icon } from "./icons";
 
 /** One tap copies text, and says so. */
 export function CopyButton({ value, label, tone = "dark" }: { value: string; label: string; tone?: "dark" | "light" }) {
@@ -40,29 +48,9 @@ export function HeroMedia({ children }: { children: React.ReactNode }) {
 
 export type GalleryPhoto = { full: string; small: string; w: number; h: number; blur?: string };
 
-/** A row of photos. Tap one to see it large, then move through with the arrows or keys. */
+/** A row of photos. Tap one to see it large, then swipe, zoom or move through with the arrows or keys. */
 export function Gallery({ title, photos }: { title: string; photos: GalleryPhoto[] }) {
-  const [open, setOpen] = useState<number | null>(null);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const step = (d: number) => setOpen((i) => (i === null ? i : (i + d + photos.length) % photos.length));
-
-  useEffect(() => {
-    const el = dialog.current;
-    if (!el) return;
-    if (open !== null && !el.open) el.showModal();
-    if (open === null && el.open) el.close();
-  }, [open]);
-
-  useEffect(() => {
-    if (open === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") step(1);
-      if (e.key === "ArrowLeft") step(-1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  });
-
+  const [open, setOpen] = useState(-1);
   if (!photos.length) return null;
   return (
     <>
@@ -74,18 +62,17 @@ export function Gallery({ title, photos }: { title: string; photos: GalleryPhoto
           </button>
         ))}
       </div>
-      <dialog ref={dialog} onClose={() => setOpen(null)} onClick={(e) => e.target === dialog.current && setOpen(null)} aria-label={`${title}, large photo`} className="m-auto max-h-[94svh] w-[min(96vw,72rem)] overflow-visible bg-transparent p-0 backdrop:bg-ink/90">
-        {open !== null && (
-          <div className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photos[open].full} alt="" className="mx-auto max-h-[84svh] w-auto max-w-full object-contain" />
-            <p className="mt-3 text-center text-sm text-on-purple-muted">{title} · {open + 1} / {photos.length}</p>
-            <button type="button" onClick={() => setOpen(null)} aria-label="Close" className="absolute right-0 top-0 inline-flex size-11 items-center justify-center bg-gold text-ink"><X className="size-5" /></button>
-            <button type="button" onClick={() => step(-1)} aria-label="Previous photo" className="absolute left-0 top-1/2 inline-flex size-12 -translate-y-1/2 items-center justify-center bg-ink/80 text-on-purple"><ArrowLeft className="size-5" /></button>
-            <button type="button" onClick={() => step(1)} aria-label="Next photo" className="absolute right-0 top-1/2 inline-flex size-12 -translate-y-1/2 items-center justify-center bg-ink/80 text-on-purple"><ArrowRight className="size-5" /></button>
-          </div>
-        )}
-      </dialog>
+      <Lightbox
+        open={open >= 0}
+        index={open}
+        close={() => setOpen(-1)}
+        slides={photos.map((p) => ({ src: p.full, width: p.w, height: p.h, alt: "" }))}
+        plugins={[Zoom, Thumbnails, Counter]}
+        carousel={{ finite: false }}
+        controller={{ closeOnBackdropClick: true }}
+        styles={{ container: { backgroundColor: "rgba(20, 8, 40, 0.94)" } }}
+        labels={{ Close: "Close", Previous: "Previous photo", Next: "Next photo" }}
+      />
     </>
   );
 }
@@ -108,7 +95,7 @@ export function VideoCard({ id, title }: { id: string; title: string }) {
   );
 }
 
-export type DirItem = { href: string; title: string; meta?: string; summary: string; photo: GalleryPhoto };
+export type DirItem = { href: string; title: string; meta?: string; summary: string; photo: GalleryPhoto; icon?: string };
 
 /** A list of links where hovering or focusing a row shows its photo beside it. On phones the photo is left out. */
 export function DirectoryView({ items }: { items: DirItem[] }) {
@@ -121,7 +108,7 @@ export function DirectoryView({ items }: { items: DirItem[] }) {
             <Link href={it.href} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)} className="group grid grid-cols-[1fr_auto] items-start gap-x-6 py-6">
               <span>
                 {it.meta && <span className="mb-1 block text-[0.9rem] font-semibold text-muted">{it.meta}</span>}
-                <span className={`block text-[clamp(1.5rem,2.7vw,2.25rem)] font-extrabold leading-[1.08] [font-variation-settings:'wdth'_86] transition-colors ${active === i ? "text-purple" : ""}`}>{it.title}</span>
+                <span className={`flex items-center gap-3 text-[clamp(1.5rem,2.7vw,2.25rem)] font-extrabold leading-[1.08] [font-variation-settings:'wdth'_86] transition-colors ${active === i ? "text-purple" : ""}`}><Icon name={it.icon} className="size-[0.8em] shrink-0 text-purple" /><span>{it.title}</span></span>
                 <span className="reading mt-2 block text-muted">{it.summary}</span>
               </span>
               <ArrowUpRight aria-hidden className={`mt-1 size-7 transition-all ${active === i ? "text-purple" : "text-muted"} group-hover:translate-x-0.5 group-hover:-translate-y-0.5`} />
