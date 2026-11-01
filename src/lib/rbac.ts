@@ -22,6 +22,8 @@ const shared: Department[] = [
   { id: "web", name: "Web & Communications", blurb: "Home page words, announcements, events, messages, leaders and stories.", perms: ["home", "banner", "messages", "people", "images", "events:all"] },
   { id: "media", name: "Media Team", blurb: "The photo library, page pictures, messages, and the Media Ministry page.", perms: ["media", "images", "messages", "page:ministry/media"] },
   { id: "pastoral", name: "Pastoral Team", blurb: "Follow up new members and answer prayer requests.", perms: ["visitors", "prayers"] },
+  // The team that runs camps for the whole ministry: every application, the returning-campers register, camp events and both camp pages.
+  { id: "camps", name: "Camps Department", blurb: "Camp applications for every camp, the returning campers register, camp events and the Jewels and Teen Life pages.", perms: ["camps:all", "events:jewels", "events:teen-life", "page:programme/jewels", "page:programme/teen-life"] },
 ];
 
 const extra: Record<string, Perm[]> = {
@@ -92,9 +94,9 @@ export function canReadPrayer(user: Actor, prayer: { type?: string; whoMaySee?: 
   return prayer.whoMaySee.toLowerCase().includes("intercessory");
 }
 
-/** Which camp applications this person may open: "all" for administrators, or just their programmes. */
+/** Which camp applications this person may open: "all" for administrators and the Camps Department, or just their programmes. */
 export function campScope(user: Actor): "all" | ("jewels" | "teen-life")[] {
-  if (user.role === "admin") return "all";
+  if (user.role === "admin" || permsOf(user).has("camps:all")) return "all";
   return (["jewels", "teen-life"] as const).filter((c) => can(user, `camps:${c}`));
 }
 

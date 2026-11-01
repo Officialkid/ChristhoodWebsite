@@ -22,7 +22,7 @@ Merge `overramp` into `main` (this replaces the old static site), or point the V
 ## 4. First sign-in
 Open `https://www.christhoodministries.org/123admin`. Create the first administrator with the setup key. Then **Team and access → Add a person** for each department head. Each gets a temporary password to share privately and must choose their own.
 
-Give the **Protocol** department to whoever registers new members (only they can). Give **Jewels** and **Teen Life** to the camp heads (each sees only their own applications). **Web & Communications**, **Media** and **Pastoral** are the shared teams.
+Give the **Protocol** department to whoever registers new members (only they can). Give the **Camps Department** to the people who run camps: they see every camp application and the returning campers register, can import the register, and manage the camp events and the Jewels and Teen Life pages. Give **Jewels** or **Teen Life** on its own to a programme head who should see only that programme's applications. Every other ministry and programme (Institute of Apologetics, iAct, Branch, Impact and so on) is a department too. **Web & Communications**, **Media** and **Pastoral** are the shared teams.
 
 ## 5. Load last year's camper register (optional)
 It is a private CSV (not in this repository). Sign in as an administrator → **Camp applications → Returning campers → Import returning campers**, and choose the file. Columns: `id, name, camp, year, age, guardian, location, contact`.

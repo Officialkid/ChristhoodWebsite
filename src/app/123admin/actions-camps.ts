@@ -1,7 +1,7 @@
 "use server";
 
 import { requireUser, log } from "@/lib/auth";
-import { mayOpenCamp } from "@/lib/rbac";
+import { campScope, mayOpenCamp } from "@/lib/rbac";
 import { collection, StorageUnavailable } from "@/lib/store";
 import { camperRows } from "@/lib/camper-csv";
 import { seal, sealingReady } from "@/lib/crypto";
@@ -52,10 +52,10 @@ export async function deleteApplication(fd: FormData): Promise<Result> {
   });
 }
 
-/** Administrators only: add returning campers from a spreadsheet saved as CSV (id, name, camp, year, age, guardian, location, contact). */
+/** Administrators and the Camps Department: add returning campers from a spreadsheet saved as CSV (id, name, camp, year, age, guardian, location, contact). */
 export async function importCampers(_prev: Result, fd: FormData): Promise<Result> {
   const user = await requireUser();
-  if (user.role !== "admin") return bad("Only an administrator can import campers.");
+  if (campScope(user) !== "all") return bad("Only an administrator or the Camps Department can import campers.");
   return guard(async () => {
     if (!(await sealingReady())) return bad("The registration key is not set, so private details cannot be kept yet. See System status.");
     const { rows, skipped } = camperRows(text(fd, "csv", 2_000_000));

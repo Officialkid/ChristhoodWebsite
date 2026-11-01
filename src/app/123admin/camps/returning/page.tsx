@@ -43,7 +43,7 @@ export default async function ReturningCampersPage() {
         {!store.writable && <Notice tone="warn" title="Saving is not switched on yet">The list cannot be kept until the database is connected.</Notice>}
         {failed > 0 && <Notice tone="bad" title="Some private details could not be opened">The registration key may have changed. Names are still shown.</Notice>}
         <Notice>Ages and attendance come from the 2025 register and have not been verified. Phone numbers were not in the register: add them by importing an updated file.</Notice>
-        {user.role === "admin" && <CamperImport />}
+        {scope === "all" && <CamperImport />}
         <CamperList campers={campers} />
       </div>
     </>

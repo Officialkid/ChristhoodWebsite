@@ -17,7 +17,7 @@ export default async function TeamMember({ params }: { params: Promise<{ id: str
   const m = new Set(ministries.map((x) => x.slug));
   const p = new Set(programmes.map((x) => x.slug));
   const groups = [
-    { title: "Shared teams", items: departments.filter((d) => ["web", "media", "pastoral"].includes(d.id)) },
+    { title: "Shared teams", items: departments.filter((d) => d.id === "media" || !(m.has(d.id) || p.has(d.id))) },
     { title: "Ministries", items: departments.filter((d) => m.has(d.id) && d.id !== "media") },
     { title: "Programmes", items: departments.filter((d) => p.has(d.id)) },
   ];
