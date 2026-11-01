@@ -45,7 +45,7 @@ function Inbox({ items, statuses, update, remove, canDelete, noun }: { items: It
       </div>
 
       {shown.length === 0 ? (
-        <Empty icon="guest" title={items.length ? "Nothing matches" : `No ${noun} yet`}>{items.length ? "Try a different filter or search." : "They will appear here as soon as someone sends the form."}</Empty>
+        <Empty icon="guest" title={items.length ? "Nothing matches" : `No ${noun} yet`}>{items.length ? "Try a different filter or search." : "They appear here as soon as someone registers them or sends the form."}</Empty>
       ) : (
         <ul className="border-t border-rule">
           {shown.map((i) => {
@@ -66,6 +66,7 @@ function Inbox({ items, statuses, update, remove, canDelete, noun }: { items: It
                   <div className="grid gap-6 px-1 pb-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
                     <div className="grid gap-4">{i.body}</div>
                     <form
+                      key={`${i.id}:${i.status}:${i.notes ?? ""}`}
                       className="grid content-start gap-4"
                       action={(fd) => start(async () => { const r = await update(fd); (r.ok ? toast.success : toast.error)(r.message ?? ""); if (r.ok) router.refresh(); })}
                     >
@@ -130,7 +131,7 @@ export function GuestInbox({ guests, canDelete }: { guests: Visitor[]; canDelete
       </dl>
     ),
   }));
-  return <Inbox items={items} update={updateGuest} remove={deleteGuest} canDelete={canDelete} noun="new guests" statuses={[{ value: "new", label: "New" }, { value: "contacted", label: "Contacted" }, { value: "settled", label: "Settled in" }]} />;
+  return <Inbox items={items} update={updateGuest} remove={deleteGuest} canDelete={canDelete} noun="new members" statuses={[{ value: "new", label: "New" }, { value: "contacted", label: "Contacted" }, { value: "settled", label: "Settled in" }]} />;
 }
 
 export function PrayerInbox({ prayers }: { prayers: Prayer[] }) {

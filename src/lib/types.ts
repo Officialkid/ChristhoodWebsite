@@ -136,6 +136,8 @@ export type Visitor = {
   prayerRequest?: string;
   status: "new" | "contacted" | "settled";
   followedUpBy?: string;
+  /** The protocol team member who registered them. */
+  registeredBy?: string;
   notes?: string;
 };
 
@@ -157,3 +159,71 @@ export type Prayer = {
 };
 
 export type Activity = { id: string; at: string; by: string; action: string; target?: string };
+
+/* ---------- camp applications ---------- */
+
+export type CampAppStatus = "Pending review" | "Approved" | "Needs correction" | "Declined";
+
+/** The children's details kept sealed (see src/lib/crypto.ts). */
+export type CampSealed = {
+  dob: string;
+  nickname?: string;
+  gender?: string;
+  school?: string;
+  grade?: string;
+  guardianId?: string;
+  residence?: string;
+  house?: string;
+  doctor?: string;
+  hospital?: string;
+  doctorPhone?: string;
+  blood?: string;
+  insurer?: string;
+  policy?: string;
+  conditions?: string;
+  allergies?: string;
+  disabilities?: string;
+  otherConditions?: string;
+  medication?: string;
+  specialNeeds?: string;
+  swimming?: string;
+  emergencies: { name: string; relationship?: string; gender?: string; email?: string; phone: string }[];
+  mediaConsent: "Yes" | "No";
+  signature: string;
+  consentVersion: string;
+  consentAt: string;
+  paymentType?: string;
+  amount: number;
+  paymentDate?: string;
+  paymentMode?: string;
+  paymentReference?: string;
+  balanceDate?: string;
+  pocketMoney: number;
+};
+
+export type CampApplication = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  eventId: string;
+  eventTitle: string;
+  /** Which programme it belongs to: decides which department head sees it. */
+  camp: "jewels" | "teen-life" | "other";
+  childName: string;
+  guardian: string;
+  phone: string;
+  email?: string;
+  ageAtCamp: number;
+  /** Outside the programme's usual age range: the team looks at it by hand. */
+  ageReview: boolean;
+  status: CampAppStatus;
+  paymentVerified: boolean;
+  reviewNote?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  sealed: string;
+};
+
+/** A child who came to a camp before, kept so the programme can invite the family back. Personal details are sealed. */
+export type Camper = { id: string; camp: "jewels" | "teen-life"; name: string; year: number; sealed: string };
+export type CamperSealed = { age?: number; guardian?: string; location?: string; contact?: string };

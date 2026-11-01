@@ -743,6 +743,12 @@
   "blur": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwAgCdASoQAAwAA4BaJbACdAEUStFhRj4h+AD+2qlfhdgwMHMJW78cfdRtzaEvFVoEIr/74uBIXSj8bl/e4OD/kUiCAZwGd+jlcmow5BLs5EwT88sJXoXlXgRMCtqRKgewwAAA",
   "from": "jewels-about-page.jpg"
  },
+ "jewels-camp-memory": {
+  "w": 1800,
+  "h": 1336,
+  "blur": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAABQAgCdASoQAAwAA4BaJbACdDiAAVqG6676GwAA/u0YAgtlSPryMha7heBBnPg0ewllShpN/NlECrvmL79NwERX8h6CyVwx+NAWLTKHoWdulm0PR7nvd53CC96+bn/1RHJEW+RcPiq3hbXsYXfn/LOhXEvXgo/FmzxGeMfpfM9sHPXBH4XAAA==",
+  "from": "jewels-camp-memory.webp"
+ },
  "jewels-crazy-olympics-1": {
   "w": 1800,
   "h": 1200,
@@ -1198,6 +1204,12 @@
   "h": 1800,
   "blur": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAAAwAgCdASoQABAAA4BaJYgAFEB7WoSIDYjuMAD+1iYb8CK6Nn/eyWjqKrL4waRAR36xuhkPfGz0W5arvd9W3Qet+6qZ+9VyuUrGgKcW8GYJ561bPCGN0BJftPFfeASTD2zj4d18Cu9939wrcUdr+oQuPIbgAA==",
   "from": "Teen Life.jpg"
+ },
+ "teen-life-camp-activities": {
+  "w": 1800,
+  "h": 1800,
+  "blur": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAACwAgCdASoQABAAA4BaJZACdAdwLfD3AAbgnXCxjgAA/jRwqRvy5949gLkHMKH39wrvS75/h64dkUmyLyVP6rEgpx/SOsHw3Wv9QxTd5hIGfEQUzqvAegqLNU+OUJWN3VHlf65PnXMmCP5y6FRrag8Q2lg2uYkoTmURJOFvF5FgOAAA",
+  "from": "teen-life-camp-activities.webp"
  },
  "teenlife-mentorship-program-bio": {
   "w": 1800,

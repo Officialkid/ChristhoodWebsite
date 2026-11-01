@@ -30,6 +30,12 @@ export default async function StatusPage() {
       how: s.setupKey ? undefined : "Add an environment variable named ADMIN_SETUP_KEY with any secret phrase. You will type it once when creating the first administrator.",
     },
     {
+      state: s.sealing ? "ok" : "todo",
+      title: "Registration key (children's private details)",
+      now: s.sealing ? "Set. Health and family details in camp applications are encrypted before they are saved." : "Missing. Online camp applications stay closed (parents are asked to WhatsApp the camp office) until it is added.",
+      how: s.sealing ? undefined : "Add an environment variable named REGISTRATION_KEY with a long random value (32+ characters), and keep a copy somewhere safe. Without it the private details cannot be read again. Then redeploy.",
+    },
+    {
       state: "optional",
       title: "Photo storage",
       now: photoHost === "blob" ? "A photo host is connected. Uploaded photos are kept there." : photoHost === "database" ? "Uploaded photos are kept in the database. This is fine for a few hundred photos." : "Uploaded photos are kept on this computer.",

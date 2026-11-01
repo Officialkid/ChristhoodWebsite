@@ -11,8 +11,9 @@ import type { StoredUser } from "./types";
  * Administrators can do everything, including adding people.
  */
 export type Perm =
-  | "home" | "banner" | "messages" | "people" | "media" | "images" | "visitors" | "prayers" | "settings" | "users" | "system"
+  | "home" | "banner" | "messages" | "people" | "media" | "images" | "visitors" | "members" | "prayers" | "settings" | "users" | "system"
   | `events:${string}`
+  | `camps:${string}`
   | `page:${string}`;
 
 export type Department = { id: string; name: string; blurb: string; perms: Perm[] };
@@ -20,11 +21,15 @@ export type Department = { id: string; name: string; blurb: string; perms: Perm[
 const shared: Department[] = [
   { id: "web", name: "Web & Communications", blurb: "Home page words, announcements, events, messages, leaders and stories.", perms: ["home", "banner", "messages", "people", "images", "events:all"] },
   { id: "media", name: "Media Team", blurb: "The photo library, page pictures, messages, and the Media Ministry page.", perms: ["media", "images", "messages", "page:ministry/media"] },
-  { id: "pastoral", name: "Pastoral Team", blurb: "New guests and prayer requests.", perms: ["visitors", "prayers"] },
+  { id: "pastoral", name: "Pastoral Team", blurb: "Follow up new members and answer prayer requests.", perms: ["visitors", "prayers"] },
 ];
 
 const extra: Record<string, Perm[]> = {
-  protocol: ["visitors"],
+  // Only the Protocol team may register a new member. Others may read and follow up.
+  protocol: ["visitors", "members"],
+  // Camp applications belong to the programme that runs the camp.
+  jewels: ["camps:jewels"],
+  "teen-life": ["camps:teen-life"],
   "international-faith-chapel": ["prayers"],
   counselling: ["prayers"],
 };
@@ -85,4 +90,15 @@ export function canReadPrayer(user: Actor, prayer: { type?: string; whoMaySee?: 
   if (user.role === "admin" || user.departments.includes("pastoral")) return true;
   if (prayer.type === "thanksgiving" || !prayer.whoMaySee) return true;
   return prayer.whoMaySee.toLowerCase().includes("intercessory");
+}
+
+/** Which camp applications this person may open: "all" for administrators, or just their programmes. */
+export function campScope(user: Actor): "all" | ("jewels" | "teen-life")[] {
+  if (user.role === "admin") return "all";
+  return (["jewels", "teen-life"] as const).filter((c) => can(user, `camps:${c}`));
+}
+
+export function mayOpenCamp(user: Actor, app: { camp: "jewels" | "teen-life" | "other" }): boolean {
+  const scope = campScope(user);
+  return scope === "all" || (app.camp !== "other" && scope.includes(app.camp));
 }

@@ -11,6 +11,8 @@ type Props = {
   numbers: Record<Role, string>;
   depositKes: number;
   facilitatorRoles: string[];
+  /** Which kinds of sign-up to offer. Camper applications now have their own full form. */
+  roles?: Role[];
 };
 
 const ROLES: { id: Role; title: string; text: string }[] = [
@@ -24,9 +26,10 @@ const label = "block text-sm font-semibold text-ink";
 const kes = (n: number) => `KES ${n.toLocaleString("en-KE")}`;
 const cleanPhone = (p: string) => p.replace(/[^\d+]/g, "");
 
-export default function CampRegistration({ camps, numbers, depositKes, facilitatorRoles }: Props) {
+export default function CampRegistration({ camps, numbers, depositKes, facilitatorRoles, roles }: Props) {
+  const offered = roles ? ROLES.filter((r) => roles.includes(r.id)) : ROLES;
   const [step, setStep] = useState(0);
-  const [role, setRole] = useState<Role>("camper");
+  const [role, setRole] = useState<Role>(offered[0].id);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [who, setWho] = useState<"parent" | "camper">("parent");
@@ -139,7 +142,7 @@ export default function CampRegistration({ camps, numbers, depositKes, facilitat
         {step === 0 && (
           <fieldset className="grid gap-3">
             <legend className="mb-3 text-3xl font-extrabold text-ink">How would you like to take part?</legend>
-            {ROLES.map((r) => (
+            {offered.map((r) => (
               <label key={r.id} className={`flex cursor-pointer gap-4 rounded-sm border-2 p-5 transition ${role === r.id ? "border-purple bg-paper-2" : "border-rule hover:border-purple"}`}>
                 <input
                   type="radio"

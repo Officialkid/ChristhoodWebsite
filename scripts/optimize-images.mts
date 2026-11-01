@@ -5,7 +5,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { preparePhoto } from "../src/lib/enhance";
 
-const SRC = path.resolve("legacy/image");
+const SOURCES = [path.resolve("legacy/image"), path.resolve("assets/photos")];
 const OUT = path.resolve("public/img");
 const MANIFEST = path.resolve("src/content/images.json");
 
@@ -23,9 +23,15 @@ const isGraphic = (file: string) => /\.png$/i.test(file) || /(program|breakfast|
 await fs.mkdir(OUT, { recursive: true });
 await fs.mkdir(path.dirname(MANIFEST), { recursive: true });
 
-const files = (await fs.readdir(SRC)).filter((f) => /\.(jpe?g|png)$/i.test(f)).sort();
+const only = process.env.ONLY_NEW === "1";
+const existing: Record<string, { w: number; h: number; blur: string; from: string }> = only ? JSON.parse(await fs.readFile(MANIFEST, "utf8").catch(() => "{}")) : {};
+const found: { file: string; dir: string }[] = [];
+for (const dir of SOURCES) for (const f of await fs.readdir(dir).catch(() => [])) if (/\.(jpe?g|png|webp)$/i.test(f)) found.push({ file: f, dir });
+found.sort((a, b) => a.file.localeCompare(b.file));
+const files = found.map((f) => f.file);
+const dirOf = new Map(found.map((f) => [f.file, f.dir]));
 const used = new Map<string, number>();
-const manifest: Record<string, { w: number; h: number; blur: string; from: string }> = {};
+const manifest: Record<string, { w: number; h: number; blur: string; from: string }> = { ...existing };
 const level = (process.env.LEVEL as "off" | "natural" | "strong") || "natural";
 
 async function one(file: string) {
@@ -34,7 +40,8 @@ async function one(file: string) {
   used.set(slug, n);
   if (n > 1) slug = `${slug}-${n}`;
 
-  const p = await preparePhoto(path.join(SRC, file), level, { graphic: isGraphic(file), maxBytes: 400_000 });
+  if (only && manifest[slug]) return;
+  const p = await preparePhoto(path.join(dirOf.get(file)!, file), level, { graphic: isGraphic(file), maxBytes: 400_000 });
   await fs.writeFile(path.join(OUT, `${slug}.webp`), p.full);
   await fs.writeFile(path.join(OUT, `${slug}-md.webp`), p.medium);
   await fs.writeFile(path.join(OUT, `${slug}-sm.webp`), p.small);

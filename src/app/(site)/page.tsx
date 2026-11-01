@@ -43,7 +43,7 @@ export default async function Home() {
           <WordReveal className="t-hero mt-3 max-w-[9ch]">{hero.headline}</WordReveal>
           <p className="t-lead rise mt-6 max-w-xl text-on-purple" style={{ "--d": ".18s" } as CSSProperties}>{hero.sub}</p>
           <div className="rise mt-8 flex flex-wrap gap-3" style={{ "--d": ".28s" } as CSSProperties}>
-            <Button href="/visit">I&apos;m new: plan my visit</Button>
+            <Button href="/visit">New here? Plan your visit</Button>
             <Button href="/ministries" variant="outline-light">Explore ministries</Button>
           </div>
           <p className="rise mt-8 text-[0.98rem] font-semibold" style={{ "--d": ".38s" } as CSSProperties}>{hero.kicker}</p>
@@ -170,12 +170,12 @@ export default async function Home() {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
           <header>
             <h2 className="t-h2">New here, or need prayer?</h2>
-            <p className="t-lead mt-4 max-w-md text-muted">Tell us you are coming, ask us to pray with you, or share what God has done. Everything is kept private.</p>
+            <p className="t-lead mt-4 max-w-md text-muted">Meet the people who will welcome you, ask us to pray with you, or share what God has done. Everything is kept private.</p>
           </header>
           <Stagger selector="li">
             <ul className="border-t border-rule">
               {[
-                { href: "/visit", icon: "guest", title: "I'm new: register my visit", text: "Two minutes, and our hospitality team will welcome you." },
+                { href: "/visit", icon: "guest", title: "New here? Plan your visit", text: "What to expect, and the protocol team who will welcome and register you." },
                 { href: "/prayer", icon: "prayer", title: "Send a prayer request", text: "Confidential, and you can stay anonymous." },
                 { href: "/prayer?type=thanksgiving", icon: "heart", title: "Share a thanksgiving", text: "Tell us what God has done." },
                 { href: "/ministries/counselling", icon: "counselling", title: "Talk to a counsellor", text: "Free and confidential, in person or online." },
@@ -222,7 +222,7 @@ export default async function Home() {
               <div><dt className="font-semibold text-muted">Where</dt><dd className="mt-1 text-xl font-bold">{f.address}</dd></div>
               <div><dt className="font-semibold text-muted">Questions?</dt><dd className="mt-1 flex flex-wrap gap-x-6 text-xl font-bold">{contact.phones.map((p) => <a key={p.tel} href={`tel:${p.tel}`} className="inline-flex min-h-11 items-center text-purple underline underline-offset-4">{p.display}</a>)}</dd><dd className="mt-1 break-all text-muted">{contact.email}</dd></div>
             </dl>
-            <div className="mt-8 flex flex-wrap gap-3"><Button href="/visit" variant="purple">Register your visit</Button><Button href={site.mapsLink} external variant="outline">Get directions</Button><Button href={`tel:${contact.phones[0]?.tel}`} variant="outline" arrow={false}>Call now</Button></div>
+            <div className="mt-8 flex flex-wrap gap-3"><Button href="/visit" variant="purple">Plan your visit</Button><Button href={site.mapsLink} external variant="outline">Get directions</Button><Button href={`tel:${contact.phones[0]?.tel}`} variant="outline" arrow={false}>Call now</Button></div>
           </div>
           <div className="relative min-h-[22rem] bg-paper-2 lg:min-h-full"><iframe src={site.mapEmbed} title="Map showing where Christhood meets, Azuri Premier Hotel, Nairobi CBD" loading="lazy" referrerPolicy="no-referrer-when-downgrade" className="absolute inset-0 size-full border-0" /></div>
         </div>

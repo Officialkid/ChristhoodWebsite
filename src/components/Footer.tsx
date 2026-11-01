@@ -32,7 +32,8 @@ export default function Footer({ menu, settings }: { menu: MenuItem[]; settings:
               {col("About")?.children?.map((c) => <Link key={c.href} href={c.href} className={link}>{c.label}</Link>)}
               <Link href="/humanitarian" className={link}>Humanitarian</Link>
               <h3 className={`${head} mt-7`}>Connect</h3>
-              <Link href="/visit" className={link}>I&apos;m new: register a visit</Link>
+              <Link href="/visit" className={link}>Plan your visit</Link>
+              <Link href="/ministries/protocol" className={link}>Meet the protocol team</Link>
               <Link href="/prayer" className={link}>Send a prayer request</Link>
               <Link href="/prayer?type=thanksgiving" className={link}>Share a thanksgiving</Link>
               <Link href="/events" className={link}>Events</Link>

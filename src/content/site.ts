@@ -81,7 +81,8 @@ export const nav: { label: string; href: string; icon?: string; children?: NavIt
     href: "/visit",
     icon: "guest",
     children: [
-      { label: "I'm new: plan my visit", href: "/visit", icon: "guest", blurb: "Tell us you are coming and we will welcome you" },
+      { label: "Plan your visit", href: "/visit", icon: "guest", blurb: "What to expect on a Saturday" },
+      { label: "Meet the protocol team", href: "/ministries/protocol", icon: "door", blurb: "They welcome and register every new member" },
       { label: "Send a prayer request", href: "/prayer", icon: "prayer", blurb: "Private, and you can stay anonymous" },
       { label: "Share a thanksgiving", href: "/prayer?type=thanksgiving", icon: "heart", blurb: "Tell us what God has done" },
       { label: "Counselling", href: "/ministries/counselling", icon: "counselling", blurb: "Free and confidential" },

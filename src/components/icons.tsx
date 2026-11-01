@@ -2,7 +2,7 @@ import {
   Activity, BookOpen, Building2, CalendarDays, CalendarHeart, Church, ClipboardList, Clapperboard, Compass, DoorOpen, Flower2, Gem, Globe2,
   HandCoins, HandHeart, HeartHandshake, History, Home, ImagePlus, Images, Info, KeyRound, LayoutDashboard, Mail, Megaphone, MessageCircleQuestion,
   Music2, Palette, PlayCircle, QrCode, Quote, Rocket, ScrollText, Settings, ShieldCheck, Sprout, Target, UserPlus, UsersRound, Waypoints, Newspaper,
-  HelpingHand, MapPin, Heart, Sparkles, type LucideIcon,
+  HelpingHand, MapPin, Heart, Sparkles, Tent, type LucideIcon,
 } from "lucide-react";
 
 /** Icon names the menus and the admin area use. Names are plain strings so server code can pass them to client components. */
@@ -12,7 +12,7 @@ const map: Record<string, LucideIcon> = {
   prayer: HandHeart, counselling: HeartHandshake, history: History, home: Home, "image-plus": ImagePlus, images: Images, key: KeyRound, dashboard: LayoutDashboard,
   mail: Mail, megaphone: Megaphone, question: MessageCircleQuestion, music: Music2, palette: Palette, play: PlayCircle, qr: QrCode, quote: Quote, rocket: Rocket,
   script: ScrollText, settings: Settings, shield: ShieldCheck, sprout: Sprout, target: Target, guest: UserPlus, users: UsersRound, path: Waypoints, news: Newspaper,
-  helping: HelpingHand, map: MapPin, heart: Heart, sparkles: Sparkles,
+  helping: HelpingHand, map: MapPin, heart: Heart, sparkles: Sparkles, tent: Tent,
 };
 
 export function Icon({ name, className = "size-4", ...rest }: { name?: string; className?: string } & React.SVGAttributes<SVGElement>) {

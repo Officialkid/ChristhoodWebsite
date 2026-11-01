@@ -6,11 +6,11 @@ import { ADMIN_PATH, getUser, needsSetup, recentActivity, systemStatus } from "@
 import { store } from "@/lib/store";
 import { collection } from "@/lib/store";
 import { buildNav } from "@/lib/admin-nav";
-import { can, canReadPrayer } from "@/lib/rbac";
+import { campScope, can, canReadPrayer, mayOpenCamp } from "@/lib/rbac";
 import { formatStamp } from "@/lib/time";
 import { FirstSetup, SignIn } from "@/components/admin/LoginForm";
 import { Notice, PageTitle, Row } from "@/components/admin/ui";
-import type { Prayer, StoredUser, Visitor } from "@/lib/types";
+import type { CampApplication, Prayer, StoredUser, Visitor } from "@/lib/types";
 
 export default async function AdminHome() {
   const user = await getUser();
@@ -56,29 +56,33 @@ async function LoginScreen() {
 const hours = () => Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hour12: false, timeZone: "Africa/Nairobi" }).format(new Date()));
 
 async function Overview({ user }: { user: StoredUser }) {
-  const [guests, prayers, status, activity] = await Promise.all([
+  const scope = campScope(user);
+  const [guests, prayers, camps, status, activity] = await Promise.all([
     can(user, "visitors") ? collection<Visitor>("visitors").list().catch(() => []) : [],
     can(user, "prayers") ? collection<Prayer>("prayers").list().catch(() => []) : [],
+    scope === "all" || scope.length ? collection<CampApplication>("camp-applications").list().catch(() => []) : [],
     user.role === "admin" ? systemStatus() : null,
     user.role === "admin" ? recentActivity(8) : [],
   ]);
   const newGuests = guests.filter((g) => g.status === "new").length;
   const newPrayers = prayers.filter((p) => p.status === "new" && canReadPrayer(user, p)).length;
+  const newCamps = camps.filter((a) => a.status === "Pending review" && mayOpenCamp(user, a)).length;
   const h = hours();
   const greeting = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
-  const links = buildNav(user, { guests: newGuests, prayers: newPrayers })
+  const links = buildNav(user, { guests: newGuests, prayers: newPrayers, camps: newCamps })
     .flatMap((g) => g.items)
     .filter((i) => i.href !== ADMIN_PATH && i.href !== `${ADMIN_PATH}/account`);
   const blurbs: Record<string, string> = {
     "/123admin/home": "The words and verse at the top of the home page.",
     "/123admin/pages": "Wording and pictures for your ministry or programme page.",
     "/123admin/events": "Camps, mentorship seasons and gatherings.",
+    "/123admin/camps": "Parents' applications for the Jewels and Teen Life camps.",
     "/123admin/banner": "A short message across the top of every page.",
     "/123admin/messages": "Add a sermon video for people to watch.",
     "/123admin/people": "Leaders' words and members' stories.",
     "/123admin/pictures": "Change the main picture on any page.",
     "/123admin/media": "Upload, brighten and keep the church's photos.",
-    "/123admin/guests": "People who registered a visit. Follow them up.",
+    "/123admin/guests": "New members the protocol team registered. Follow them up.",
     "/123admin/prayers": "Requests and thanksgivings people sent.",
     "/123admin/share": "Print a QR code for the entrance and the bulletin.",
     "/123admin/settings": "Service times, address, phone numbers and giving details.",
@@ -96,11 +100,12 @@ async function Overview({ user }: { user: StoredUser }) {
           <Notice tone="warn" title="Finish setting up before the team starts">Saving is not switched on for the live site yet. <Link href="/123admin/status" className="font-semibold underline underline-offset-4">See what is missing</Link>.</Notice>
         )}
 
-        {(newGuests > 0 || newPrayers > 0) && (
+        {(newGuests > 0 || newPrayers > 0 || newCamps > 0) && (
           <section aria-labelledby="attention">
             <h2 id="attention" className="text-xl">Waiting for you</h2>
             <div className="mt-3 border-t border-rule">
-              {newGuests > 0 && <Row href="/123admin/guests" icon="guest" title={`${newGuests} new ${newGuests === 1 ? "guest" : "guests"} to follow up`} meta="Call or WhatsApp them this week." aside={<ArrowRight className="size-4" aria-hidden />} />}
+              {newGuests > 0 && <Row href="/123admin/guests" icon="guest" title={`${newGuests} new ${newGuests === 1 ? "member" : "members"} to follow up`} meta="Call or WhatsApp them this week." aside={<ArrowRight className="size-4" aria-hidden />} />}
+              {newCamps > 0 && <Row href="/123admin/camps" icon="tent" title={`${newCamps} camp ${newCamps === 1 ? "application" : "applications"} to review`} meta="Check the details and the payment, then approve." aside={<ArrowRight className="size-4" aria-hidden />} />}
               {newPrayers > 0 && <Row href="/123admin/prayers" icon="prayer" title={`${newPrayers} new ${newPrayers === 1 ? "prayer request" : "prayer requests"}`} meta="Handled in confidence." aside={<ArrowRight className="size-4" aria-hidden />} />}
             </div>
           </section>

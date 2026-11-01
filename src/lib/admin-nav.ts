@@ -1,10 +1,10 @@
 import type { AdminNavGroup } from "@/components/admin/Shell";
 import { pageIcon } from "@/components/icons";
-import { can, editablePages, permsOf } from "./rbac";
+import { campScope, can, editablePages, permsOf } from "./rbac";
 import type { StoredUser } from "./types";
 
 /** The menu each person sees: only the screens their departments allow. */
-export function buildNav(user: StoredUser, counts: { guests: number; prayers: number }): AdminNavGroup[] {
+export function buildNav(user: StoredUser, counts: { guests: number; prayers: number; camps?: number }): AdminNavGroup[] {
   const A = "/123admin";
   const groups: AdminNavGroup[] = [{ title: "Start", items: [{ href: A, label: "Overview", icon: "dashboard" }] }];
 
@@ -21,6 +21,8 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
   }
   const hasEvents = user.role === "admin" || [...permsOf(user)].some((p) => p.startsWith("events:"));
   if (hasEvents) website.push({ href: `${A}/events`, label: "Events", icon: "calendar" });
+  const camps = campScope(user);
+  if (camps === "all" || camps.length) website.push({ href: `${A}/camps`, label: "Camp applications", icon: "tent", badge: counts.camps, children: [{ href: `${A}/camps/returning`, label: "Returning campers", icon: "users" }] });
   if (can(user, "banner")) website.push({ href: `${A}/banner`, label: "Announcement bar", icon: "megaphone" });
   if (can(user, "messages")) website.push({ href: `${A}/messages`, label: "Messages to watch", icon: "play" });
   if (can(user, "people")) website.push({ href: `${A}/people`, label: "Leaders and stories", icon: "users" });
@@ -32,7 +34,7 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
   if (pictures.length) groups.push({ title: "Pictures", items: pictures });
 
   const care: AdminNavGroup["items"] = [];
-  if (can(user, "visitors")) care.push({ href: `${A}/guests`, label: "New guests", icon: "guest", badge: counts.guests });
+  if (can(user, "visitors")) care.push({ href: `${A}/guests`, label: "New members", icon: "guest", badge: counts.guests });
   if (can(user, "prayers")) care.push({ href: `${A}/prayers`, label: "Prayer requests", icon: "prayer", badge: counts.prayers });
   if (care.length) groups.push({ title: "Care", items: care });
 

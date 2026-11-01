@@ -26,7 +26,7 @@ export const events: EventDoc[] = [
     category: "camp",
     image: "jewels-about-page",
     registrationOpen: true,
-    registerHref: "/events/register",
+    registerHref: "/events/apply",
   },
   {
     id: "teen-life-camp-2026",
@@ -39,7 +39,7 @@ export const events: EventDoc[] = [
     category: "camp",
     image: "tlm-about-section",
     registrationOpen: true,
-    registerHref: "/events/register",
+    registerHref: "/events/apply",
   },
 ];
 

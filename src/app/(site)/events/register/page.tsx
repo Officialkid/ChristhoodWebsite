@@ -7,7 +7,7 @@ import { LifeBuoy } from "lucide-react";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
-  title: "Camp registration",
+  title: "Volunteer or sponsor for camp",
   description: "Register for the Jewels Kids Camp and Teen Life Mentorship Camp, apply to facilitate, or sponsor a camper.",
   alternates: { canonical: "/events/register" },
 };
@@ -25,11 +25,11 @@ export default async function CampRegistrationPage() {
 
   return (
     <>
-      <PageHero title="Camp registration" tagline="Register a camper, apply to facilitate, or sponsor a child. It takes about two minutes." crumbs={[{ label: "Events", href: "/events" }, { label: "Camp registration" }]} />
+      <PageHero title="Volunteer or sponsor for camp" actions={[{ label: "Apply for your child", href: "/events/apply" }]} tagline="Serve at camp as a facilitator, or sponsor a child. To register your own child, use the full camp application." crumbs={[{ label: "Events", href: "/events" }, { label: "Volunteer or sponsor" }]} />
       <section className="bg-paper-2 py-12 sm:py-20">
         <div className="wrap">
           {camps.length > 0 ? (
-            <CampRegistration camps={camps} numbers={numbers} depositKes={2000} facilitatorRoles={facilitatorRoles} />
+            <CampRegistration camps={camps} numbers={numbers} depositKes={2000} facilitatorRoles={facilitatorRoles} roles={["facilitator", "sponsor"]} />
           ) : (
             <p className="mx-auto max-w-xl border border-rule bg-paper p-10 text-center text-lg text-muted">Camp registration is not open right now. New camps are announced on the events page.</p>
           )}

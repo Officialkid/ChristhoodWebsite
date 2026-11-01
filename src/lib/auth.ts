@@ -74,6 +74,7 @@ export async function systemStatus() {
     signIn: Boolean(await secretKey()),
     setupKey: Boolean(process.env.ADMIN_SETUP_KEY) || !process.env.VERCEL,
     photoHost: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+    sealing: Boolean(process.env.REGISTRATION_KEY) || !process.env.VERCEL,
     email: Boolean(process.env.SMTP_HOST && process.env.NOTIFY_EMAILS),
     sheet: Boolean(process.env.GOOGLE_SHEET_WEBHOOK),
   };
