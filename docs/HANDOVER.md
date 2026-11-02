@@ -34,3 +34,9 @@ It is a private CSV (not in this repository). Sign in as an administrator → **
 - The camp consent wording (Part D) still names "Nawiri Africa": confirm it before public rollout.
 - Who follows up new members and how soon, and who may read prayer requests.
 - The Jewels logo (`legacy/image/Jewels Logo.png`) uses Disney characters and is not used on the site.
+
+## The camps address (waiting on the domain holder)
+- Official short address: `camp.christhoodministries.org`. It is already added to the project and the site already answers to it, but Vercel will not serve it until the holder of `christhoodministries.org` proves ownership.
+- The domain is registered at NameSilo (expires 25 Feb 2027) and its DNS lives in a Vercel account we cannot see. The holder adds ONE record in that account's DNS (Domains, christhoodministries.org, DNS Records): type TXT, name `_vercel`, value `vc-domain-verify=camp.christhoodministries.org,df36c916c46ba99f635f`.
+- Then: verify with `vercel api -X POST /v9/projects/prj_i663jmN8rebC6mBGcwOb4dekrCDm/domains/camp.christhoodministries.org/verify`, check it opens the Camps page, and turn the old `camp.instituteofapologetics.org` into a permanent forward (`vercel api -X PATCH /v9/projects/prj_i663jmN8rebC6mBGcwOb4dekrCDm/domains/camp.instituteofapologetics.org -F redirect=camp.christhoodministries.org -F redirectStatusCode=308`).
+- The main addresses (`www.christhoodministries.org` and the bare one) move to the new site only when the whole new church site is launched. That is a separate decision.
