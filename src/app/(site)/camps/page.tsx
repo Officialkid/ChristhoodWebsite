@@ -157,7 +157,6 @@ export default async function CampsPage() {
             <p><strong className="text-ink">Questions about camp?</strong> Call or WhatsApp the camp office on <a className="font-semibold text-purple underline underline-offset-4" href={`https://wa.me/${site.whatsapp.camps}`}>{call}</a>.</p>
             <p className="mt-2">You can also call {contact.phones.map((p, i) => <span key={p.tel}>{i > 0 && " or "}<a className="font-semibold text-purple underline underline-offset-4" href={`tel:${p.tel}`}>{p.display}</a></span>)}, or write to <a className="font-semibold text-purple underline underline-offset-4 [overflow-wrap:anywhere]" href={`mailto:${contact.email}`}>{contact.email}</a>.</p>
             <p className="mt-2">Already applied, or came before? <Link href="/family" className="font-semibold text-purple underline underline-offset-4">Open your family page</Link>.</p>
-            <p className="mt-2">Part of the camp team? <Link href="/123admin" className="font-semibold text-purple underline underline-offset-4">Sign in to the team area</Link>.</p>
           </div>
         </div>
       </Section>

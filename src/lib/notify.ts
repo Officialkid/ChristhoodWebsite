@@ -23,6 +23,23 @@ export async function notifyTeam(kind: "visitor" | "prayer" | "thanksgiving" | "
   }
 }
 
+/** Tells the administrators someone asked for team access. No name or address goes into the email. */
+export async function notifyAccessRequest() {
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, NOTIFY_EMAILS } = process.env;
+  if (!SMTP_HOST || !NOTIFY_EMAILS) return;
+  try {
+    const transport = nodemailer.createTransport({ host: SMTP_HOST, port: Number(SMTP_PORT ?? 587), secure: Number(SMTP_PORT) === 465, auth: SMTP_USER ? { user: SMTP_USER, pass: SMTP_PASS } : undefined });
+    await transport.sendMail({
+      from: SMTP_FROM ?? SMTP_USER,
+      to: NOTIFY_EMAILS,
+      subject: "Someone asked for team access",
+      text: "Someone signed in with Google and asked for access to the team area.\n\nOpen the team area and choose Team and access, then Access requests, to approve or decline.\n\nFor privacy, the details are kept only in the team area, not in this email.",
+    });
+  } catch (error) {
+    console.error("Access request email failed", error);
+  }
+}
+
 /** Also adds the entry to the church's private Google Sheet, for teams that like to work there. */
 export async function mirrorToSheet(fields: Record<string, string>): Promise<boolean> {
   const url = process.env.GOOGLE_SHEET_WEBHOOK;

@@ -85,7 +85,12 @@ export type StoredUser = {
   mustChange?: boolean;
   createdAt: string;
   lastLogin?: string;
+  /** Google's own id for this person, saved the first time they sign in with Google. */
+  googleSub?: string;
 };
+
+/** Someone who signed in with Google but is not on the team yet. An administrator approves or declines. */
+export type AccessRequest = { id: string; email: string; name: string; sub: string; status: "pending" | "declined"; createdAt: string; lastTriedAt: string; tries: number };
 
 /** What a department head changed on a ministry or programme page. Anything left out keeps the shipped wording. */
 export type PageOverride = {

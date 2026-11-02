@@ -1,6 +1,7 @@
 import Header, { type MenuItem } from "@/components/Header";
 import Footer from "@/components/Footer";
 import MobileDock from "@/components/MobileDock";
+import TeamDoor from "@/components/TeamDoor";
 import { pageIcon } from "@/components/icons";
 import { site, nav } from "@/content/site";
 import { getAnnouncement, getMinistries, getProgrammes, getSettings } from "@/lib/content";
@@ -37,6 +38,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main id="main">{children}</main>
       <Footer menu={menu} settings={settings} />
       <MobileDock />
+      <TeamDoor />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(churchLd).replace(/</g, "\\u003c") }} />
     </>
   );

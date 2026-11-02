@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, LogIn, ShieldPlus } from "lucide-react";
 import { login, setupFirstAdmin } from "@/app/123admin/auth-actions";
+import GoogleSignIn from "./GoogleSignIn";
 import { TextField, useSave } from "./forms";
 import { btnClass } from "./ui";
 
@@ -24,9 +25,16 @@ function Password({ name, label, error, autoComplete, hint }: { name: string; la
   );
 }
 
-export function SignIn() {
+export function SignIn({ googleClientId }: { googleClientId?: string }) {
   const { run, formRef, pending, state } = useSave(login);
   return (
+    <div className="grid gap-8">
+    {googleClientId && (
+      <div className="grid gap-5">
+        <GoogleSignIn clientId={googleClientId} />
+        <p className="flex items-center gap-4 text-[0.92rem] text-muted"><span className="h-px flex-1 bg-rule" aria-hidden /> or use your password <span className="h-px flex-1 bg-rule" aria-hidden /></p>
+      </div>
+    )}
     <form ref={formRef} action={run} className="grid gap-6" noValidate>
       <TextField name="email" label="Email" type="email" autoComplete="username" required autoFocus />
       <Password name="password" label="Password" autoComplete="current-password" />
@@ -36,6 +44,7 @@ export function SignIn() {
         {pending ? "Signing in…" : "Sign in"}
       </button>
     </form>
+    </div>
   );
 }
 

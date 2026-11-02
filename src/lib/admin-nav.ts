@@ -4,7 +4,7 @@ import { campScope, can, editablePages, permsOf } from "./rbac";
 import type { StoredUser } from "./types";
 
 /** The menu each person sees: only the screens their departments allow. */
-export function buildNav(user: StoredUser, counts: { guests: number; prayers: number; camps?: number }): AdminNavGroup[] {
+export function buildNav(user: StoredUser, counts: { guests: number; prayers: number; camps?: number; requests?: number }): AdminNavGroup[] {
   const A = "/123admin";
   const groups: AdminNavGroup[] = [{ title: "Start", items: [{ href: A, label: "Overview", icon: "dashboard" }] }];
 
@@ -45,7 +45,7 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
 
   const site: AdminNavGroup["items"] = [{ href: `${A}/share`, label: "Share links and QR codes", icon: "qr" }];
   if (can(user, "settings")) site.push({ href: `${A}/settings`, label: "Church details", icon: "settings" });
-  if (can(user, "users")) site.push({ href: `${A}/team`, label: "Team and access", icon: "shield" });
+  if (can(user, "users")) site.push({ href: `${A}/team`, label: "Team and access", icon: "shield", badge: counts.requests, children: [{ href: `${A}/team/requests`, label: "Access requests", icon: "guest" }, { href: `${A}/team/door`, label: "Team door", icon: "key" }] });
   if (can(user, "system")) {
     site.push({ href: `${A}/status`, label: "System status", icon: "activity" });
     site.push({ href: `${A}/activity`, label: "Activity log", icon: "history" });
