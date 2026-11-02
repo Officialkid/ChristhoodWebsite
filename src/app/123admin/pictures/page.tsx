@@ -19,8 +19,8 @@ export default async function PicturesPage() {
       <PageTitle title="Page pictures" icon="image-plus" lead="Pick a page, choose a new picture, and it changes on the website straight away. Pictures from the photo library or the church's own photos both work." />
       <div className="mt-8 grid gap-12">
         {!store.writable && <Notice tone="warn" title="Saving is not switched on yet">You can look around, but changes cannot be saved until the database is connected.</Notice>}
-        <nav aria-label="Jump to a group" className="flex flex-wrap gap-2">
-          {slotGroups.map((g) => <a key={g.id} href={`#${g.id}`} className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-rule px-3.5 text-[0.95rem] font-semibold hover:border-ink"><Icon name={groupIcon[g.id]} className="size-4 text-purple" />{g.title}</a>)}
+        <nav aria-label="Jump to a group" className="a-tabs">
+          {slotGroups.map((g) => <a key={g.id} href={`#${g.id}`} className="a-tab"><Icon name={groupIcon[g.id]} className="size-4 text-purple" />{g.title}</a>)}
         </nav>
         {slotGroups.map((g) => (
           <section key={g.id} id={g.id} aria-labelledby={`${g.id}-h`} className="scroll-mt-20">

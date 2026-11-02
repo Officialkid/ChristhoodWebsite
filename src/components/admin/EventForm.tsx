@@ -50,7 +50,7 @@ export default function EventForm({ event, departments, startValue, endValue, ca
         <Toggle name="registrationOpen" label="People can register" hint="Shows the Register button." defaultChecked={event?.registrationOpen ?? true} />
         <TextField name="registerHref" label="Where Register goes" optional defaultValue={event?.registerHref} error={errors.registerHref} hint="/events/register for camps, /programmes/branch/register for Branch, or a full https:// link." />
       </div>
-      <div className="flex flex-wrap items-center gap-3 border-t border-rule pt-6">
+      <div className="a-bar">
         <SaveButton>{event ? "Save event" : "Add event"}</SaveButton>
         <LinkButton href="/123admin/events" variant="ghost">Cancel</LinkButton>
         {event && <span className="ml-auto"><DeleteButton action={async (fd) => { const r = await deleteEvent(fd); if (r.ok) router.push("/123admin/events"); return r; }} fields={{ id: event.id }} label="Delete event" /></span>}

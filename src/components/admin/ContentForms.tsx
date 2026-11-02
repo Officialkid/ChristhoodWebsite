@@ -8,7 +8,7 @@ import { LinkButton } from "./ui";
 import type { BannerDoc, LeaderRec, MessageRec, StoryRec } from "@/lib/content";
 import type { SiteSettings } from "@/lib/types";
 
-const actionsRow = "flex flex-wrap items-center gap-3 border-t border-rule pt-6";
+const actionsRow = "a-bar";
 
 /* ---------- announcement bar ---------- */
 export function BannerForm({ banner }: { banner: BannerDoc | null }) {

@@ -17,7 +17,7 @@ export default async function EventsPage() {
   const now = Date.now();
   return (
     <>
-      <PageTitle title="Events" icon="calendar" lead="Camps, mentorship seasons and gatherings. What you save here appears on the website straight away." actions={<LinkButton href="/123admin/events/new" variant="primary"><Plus className="size-4" aria-hidden /> Add an event</LinkButton>} />
+      <PageTitle title="Events" lead="Camps, mentorship seasons and gatherings. What you save here appears on the website straight away." actions={<LinkButton href="/123admin/events/new" variant="primary"><Plus className="size-4" aria-hidden /> Add an event</LinkButton>} />
       <div className="mt-8 grid gap-6">
         {!store.writable && <Notice tone="warn" title="Saving is not switched on yet">You can see the events below, but changes cannot be saved until the database is connected.</Notice>}
         {events.length === 0 ? (
@@ -34,7 +34,7 @@ export default async function EventsPage() {
                   icon="calendar"
                   title={e.title}
                   meta={<>{formatEventDates(e.start, e.end)}{e.location ? ` · ${e.location}` : ""}{typeof e.fee === "number" ? ` · ${formatMoney(e.fee)}` : ""}{e.department ? ` · ${departmentName(e.department)}` : ""}</>}
-                  aside={<span className="flex flex-wrap justify-end gap-1.5">{!editable && <Chip>View only</Chip>}{past ? <Chip>Finished</Chip> : <Chip tone="ok">Coming up</Chip>}{e.registrationOpen && !past && <Chip tone="new">Registration open</Chip>}</span>}
+                  aside={<span className="flex flex-wrap justify-end gap-1.5">{!editable && <Chip>View only</Chip>}{past ? <Chip>Finished</Chip> : e.registrationOpen ? <Chip tone="new">Registration open</Chip> : <Chip tone="ok">Coming up</Chip>}</span>}
                 />
               );
             })}

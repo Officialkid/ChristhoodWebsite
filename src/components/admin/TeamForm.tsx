@@ -81,7 +81,7 @@ export default function TeamForm({ user, groups, selfId }: { user?: StoredUser; 
 
         {user && <Toggle name="active" label="Account is active" hint="Switch off to stop them signing in without deleting their account." defaultChecked={user.active} />}
 
-        <div className="flex flex-wrap items-center gap-3 border-t border-rule pt-6">
+        <div className="a-bar">
           <SaveButton>{user ? "Save changes" : "Add and create password"}</SaveButton>
           <LinkButton href="/123admin/team" variant="ghost">Cancel</LinkButton>
         </div>

@@ -6,19 +6,19 @@ import { Loader2, MessageCircle, Phone, Search } from "lucide-react";
 import { toast } from "sonner";
 import { deleteGuest, deletePrayer, updateGuest, updatePrayer } from "@/app/123admin/actions-care";
 import { DeleteButton } from "./forms";
-import { btnClass, Chip, Empty } from "./ui";
+import { btnClass, Empty, Status } from "./ui";
 import { formatStamp } from "@/lib/time";
 import type { Prayer, Visitor } from "@/lib/types";
 
-type Item = { id: string; createdAt: string; status: string; title: string; summary: string; body: React.ReactNode; notes?: string; handledBy?: string; phone?: string; searchable: string };
+type Item = { id: string; createdAt: string; status: string; /** Set when this one has waited too long. */ flag?: string; title: string; summary: string; body: React.ReactNode; notes?: string; handledBy?: string; phone?: string; searchable: string };
 
 const waLink = (phone: string) => `https://wa.me/${phone.replace(/\D/g, "").replace(/^0/, "254")}`;
 
-function Inbox({ items, statuses, update, remove, canDelete, noun }: { items: Item[]; statuses: { value: string; label: string }[]; update: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; remove: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; canDelete: boolean; noun: string }) {
+function Inbox({ items, statuses, update, remove, canDelete, noun, initialOpen }: { initialOpen?: string; items: Item[]; statuses: { value: string; label: string }[]; update: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; remove: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; canDelete: boolean; noun: string }) {
   const router = useRouter();
   const [filter, setFilter] = useState("all");
   const [q, setQ] = useState("");
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>(initialOpen ?? null);
   const [pending, start] = useTransition();
 
   const shown = useMemo(
@@ -29,41 +29,39 @@ function Inbox({ items, statuses, update, remove, canDelete, noun }: { items: It
 
   return (
     <div className="grid gap-5">
-      <div className="flex flex-wrap items-center gap-3">
-        <div role="group" aria-label="Filter by status" className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap items-end gap-x-6 gap-y-3 border-b border-rule">
+        <div role="group" aria-label="Filter by status" className="a-tabs min-w-0 flex-1 border-b-0">
           {[{ value: "all", label: "All" }, ...statuses].map((s) => (
-            <button key={s.value} type="button" aria-pressed={filter === s.value} onClick={() => setFilter(s.value)} className={`min-h-11 px-4 text-[0.95rem] font-semibold ${filter === s.value ? "bg-purple text-on-purple" : "border border-rule hover:border-ink"}`}>
-              {s.label} <span className="opacity-75">{s.value === "all" ? items.length : count(s.value)}</span>
+            <button key={s.value} type="button" aria-pressed={filter === s.value} onClick={() => setFilter(s.value)} className="a-tab">
+              {s.label} <span className="n">{s.value === "all" ? items.length : count(s.value)}</span>
             </button>
           ))}
         </div>
-        <label className="relative ml-auto flex w-full items-center sm:w-72">
+        <label className="relative flex w-full items-center sm:w-72">
           <span className="sr-only">Search</span>
           <Search className="pointer-events-none absolute left-3 size-4 text-muted" aria-hidden />
-          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search" className="f-input !mt-0 !min-h-11 pl-9" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search" className="f-input !mt-0 !min-h-10 pl-9" />
         </label>
       </div>
 
       {shown.length === 0 ? (
         <Empty icon="guest" title={items.length ? "Nothing matches" : `No ${noun} yet`}>{items.length ? "Try a different filter or search." : "They appear here as soon as someone registers them or sends the form."}</Empty>
       ) : (
-        <ul className="border-t border-rule">
+        <div>
+          <p aria-hidden className="hidden gap-x-4 border-b border-ink/30 px-1 pb-2 text-[0.84rem] font-semibold text-muted md:grid md:grid-cols-[minmax(0,1.3fr)_minmax(0,1.7fr)_9rem_9.5rem]"><span>Name</span><span>Details</span><span>Status</span><span className="text-right">Received</span></p>
+        <ul>
           {shown.map((i) => {
             const isOpen = open === i.id;
             return (
-              <li key={i.id} className="border-b border-rule">
-                <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : i.id)} className="flex w-full items-start gap-3 px-1 py-4 text-left hover:bg-paper-2">
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-bold leading-snug">{i.title}</span>
-                    <span className="mt-0.5 block truncate text-[0.92rem] text-muted">{i.summary}</span>
-                  </span>
-                  <span className="flex shrink-0 flex-col items-end gap-1 text-[0.85rem] text-muted">
-                    <Chip tone={i.status === "new" ? "new" : i.status === "settled" || i.status === "done" ? "ok" : "warn"}>{statuses.find((s) => s.value === i.status)?.label ?? i.status}</Chip>
-                    <time dateTime={i.createdAt}>{formatStamp(i.createdAt)}</time>
-                  </span>
+              <li key={i.id} className="border-b border-rule" id={i.id}>
+                <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : i.id)} className={`grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-0.5 px-1 py-3 text-left transition-colors hover:bg-paper-2 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1.7fr)_9rem_9.5rem] ${isOpen ? "bg-paper-2" : ""}`}>
+                  <span className="col-start-1 font-bold leading-snug">{i.title}</span>
+                  <span className="col-start-1 row-start-2 truncate text-[0.92rem] text-muted md:col-start-2 md:row-start-1">{i.summary}</span>
+                  <span className="col-start-2 row-start-1 justify-self-end md:col-start-3 md:justify-self-start"><Status tone={i.flag ? "bad" : i.status === "new" ? "new" : i.status === "settled" || i.status === "done" ? "ok" : "warn"}>{i.flag ?? statuses.find((s) => s.value === i.status)?.label ?? i.status}</Status></span>
+                  <time dateTime={i.createdAt} className="col-start-2 row-start-2 text-[0.85rem] text-muted md:col-start-4 md:row-start-1 md:text-right">{formatStamp(i.createdAt)}</time>
                 </button>
                 {isOpen && (
-                  <div className="grid gap-6 px-1 pb-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+                  <div id={`row-${i.id}`} className="grid gap-6 bg-paper-2 px-3 pb-6 pt-2 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
                     <div className="grid gap-4">{i.body}</div>
                     <form
                       key={`${i.id}:${i.status}:${i.notes ?? ""}`}
@@ -97,6 +95,7 @@ function Inbox({ items, statuses, update, remove, canDelete, noun }: { items: It
             );
           })}
         </ul>
+        </div>
       )}
     </div>
   );
@@ -104,8 +103,10 @@ function Inbox({ items, statuses, update, remove, canDelete, noun }: { items: It
 
 const Fact = ({ label, value }: { label: string; value?: React.ReactNode }) => (value ? <div><dt className="text-[0.85rem] font-semibold text-muted">{label}</dt><dd className="mt-0.5 whitespace-pre-wrap break-words">{value}</dd></div> : null);
 
-export function GuestInbox({ guests, canDelete }: { guests: Visitor[]; canDelete: boolean }) {
+export function GuestInbox({ guests, canDelete, initialOpen }: { guests: Visitor[]; canDelete: boolean; initialOpen?: string }) {
+  const days = (iso: string) => Math.floor((Date.now() - Date.parse(iso)) / 864e5);
   const items: Item[] = guests.map((g) => ({
+    flag: g.status === "new" && days(g.createdAt) >= 3 ? `Waiting ${days(g.createdAt)} days` : undefined,
     id: g.id,
     createdAt: g.createdAt,
     status: g.status,
@@ -131,7 +132,7 @@ export function GuestInbox({ guests, canDelete }: { guests: Visitor[]; canDelete
       </dl>
     ),
   }));
-  return <Inbox items={items} update={updateGuest} remove={deleteGuest} canDelete={canDelete} noun="new members" statuses={[{ value: "new", label: "New" }, { value: "contacted", label: "Contacted" }, { value: "settled", label: "Settled in" }]} />;
+  return <Inbox initialOpen={initialOpen} items={items} update={updateGuest} remove={deleteGuest} canDelete={canDelete} noun="new members" statuses={[{ value: "new", label: "New" }, { value: "contacted", label: "Contacted" }, { value: "settled", label: "Settled in" }]} />;
 }
 
 export function PrayerInbox({ prayers }: { prayers: Prayer[] }) {

@@ -76,12 +76,62 @@
   .f-choice:has(input:focus-visible) { outline: 3px solid var(--color-purple); outline-offset: 1px; }
   .f-choice input { width: 1.2rem; height: 1.2rem; flex: none; accent-color: var(--color-purple); }
   .rise { animation: rise 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: var(--d, 0s); }
+
+  /* ---- Team area: one working vocabulary for lists, filters and status ---- */
+  .admin { font-variant-numeric: tabular-nums; scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--color-ink) 28%, transparent) transparent; }
+  .a-side { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--color-on-purple) 30%, transparent) transparent; }
+
+  /* Filters: an underline marks the one in use, so a row of them reads as a row of choices and not a row of buttons. */
+  .a-tabs { display: flex; flex-wrap: wrap; gap: 0 1.6rem; border-bottom: 1px solid var(--color-rule); }
+  .a-tab { display: inline-flex; min-height: 2.75rem; align-items: center; gap: 0.5rem; margin-bottom: -1px; border-bottom: 3px solid transparent; font-weight: 600; color: var(--color-muted); transition: color 0.15s, border-color 0.15s; }
+  .a-tab:hover { color: var(--color-ink); border-bottom-color: var(--color-rule); }
+  .a-tab[aria-current="page"], .a-tab[aria-pressed="true"] { color: var(--color-ink); border-bottom-color: var(--color-purple); }
+  .a-tab .n { font-size: 0.85rem; font-weight: 600; color: var(--color-muted); }
+
+  /* Status: a small mark and a word, never a coloured block, so a long list stays calm and the exceptions stand out. */
+  .a-status { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.9rem; font-weight: 600; white-space: nowrap; }
+  .a-status::before { content: ""; width: 0.55rem; height: 0.55rem; flex: none; border-radius: 50%; background: var(--dot, var(--color-muted)); }
+  .a-status[data-tone="new"] { --dot: var(--color-purple); }
+  .a-status[data-tone="ok"] { --dot: var(--color-ok); }
+  .a-status[data-tone="warn"] { --dot: color-mix(in oklab, var(--color-gold) 62%, var(--color-ink)); }
+  .a-status[data-tone="bad"] { --dot: var(--color-danger); }
+  .a-status[data-tone="quiet"]::before { background: transparent; box-shadow: inset 0 0 0 2px var(--color-muted); }
+
+  /* Tables: real tables on a wide screen; on a phone each row stacks into a short entry. */
+  .a-table { width: 100%; border-collapse: collapse; }
+  .a-table th { position: sticky; top: 3.5rem; z-index: 1; background: var(--color-paper); padding: 0.55rem 0.75rem; text-align: left; font-size: 0.84rem; font-weight: 650; color: var(--color-muted); border-bottom: 1px solid color-mix(in oklab, var(--color-ink) 30%, transparent); }
+  .a-table td { padding: 0.8rem 0.75rem; vertical-align: middle; border-bottom: 1px solid var(--color-rule); }
+  .a-table th:first-child, .a-table td:first-child { padding-left: 0.25rem; }
+  .a-table th:last-child, .a-table td:last-child { padding-right: 0.25rem; }
+  .a-table tbody tr { position: relative; transition: background-color 0.12s; }
+  .a-table tbody tr:hover { background: var(--color-paper-2); }
+  .a-table .a-go::after { content: ""; position: absolute; inset: 0; }
+  .a-table .a-go:focus-visible { outline-offset: -3px; }
+  .a-table .r { text-align: right; }
+  @media (max-width: 47.99rem) {
+    .a-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .a-table, .a-table tbody { display: block; }
+    .a-table tr { display: flex; flex-wrap: wrap; align-items: center; gap: 0.15rem 0.9rem; padding: 0.85rem 0.25rem; border-bottom: 1px solid var(--color-rule); }
+    .a-table td { display: block; padding: 0; border: 0; font-size: 0.92rem; color: var(--color-muted); }
+    /* Line one: the name and, on the right, the cell marked "k" (usually the decision). Line two: everything else. */
+    .a-table tr::before { content: ""; order: -1; flex-basis: 100%; height: 0; }
+    .a-table td:first-child { order: -3; flex: 1 1 8rem; min-width: 0; font-size: 1rem; color: var(--color-ink); }
+    .a-table td.k { order: -2; flex: none; }
+    .a-table .r { text-align: left; }
+  }
 }
 
 /* Headline words rise into place. Painted at once; only the movement is decorative. */
 .word-mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.1em; margin-bottom: -0.1em; }
 .word-rise { display: inline-block; animation: word-rise 0.95s cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--i, 0) * 0.11s + 0.05s); }
 @keyframes word-rise { from { transform: translateY(105%); } to { transform: none; } }
+
+/* Team area forms. Unlayered on purpose: these must win over the utility classes the form files already carry. */
+.admin .f-input { min-height: 2.75rem; padding: 0.55rem 0.8rem; }
+.admin fieldset { border: 0; padding: 0; margin: 0; }
+.admin fieldset > legend { margin-bottom: 0.25rem; font-family: var(--font-display); font-size: 1.15rem; font-weight: 800; font-variation-settings: "wdth" 86; letter-spacing: -0.01em; line-height: 1.2; }
+/* The save button stays in view on a long form, so nobody scrolls to the bottom to find it. */
+.a-bar { position: sticky; bottom: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; padding: 0.8rem 0 calc(0.8rem + env(safe-area-inset-bottom)); background: var(--color-paper); border-top: 1px solid color-mix(in oklab, var(--color-ink) 22%, transparent); }
 
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 

@@ -40,7 +40,7 @@ export default function PageForm({ page, publicHref, focus }: { page: PageDoc; p
         <BlockEditor name="blocks" initial={page.blocks} />
       </fieldset>
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-rule pt-6">
+      <div className="a-bar">
         <SaveButton>Save page</SaveButton>
         <a href={publicHref} target="_blank" rel="noopener noreferrer" className={btnClass.ghost}>View the page <ExternalLink className="size-4" aria-hidden /></a>
         <span className="ml-auto">
