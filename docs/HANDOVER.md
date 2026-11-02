@@ -40,3 +40,8 @@ It is a private CSV (not in this repository). Sign in as an administrator → **
 - The domain is registered at NameSilo (expires 25 Feb 2027) and its DNS lives in a Vercel account we cannot see. The holder adds ONE record in that account's DNS (Domains, christhoodministries.org, DNS Records): type TXT, name `_vercel`, value `vc-domain-verify=camp.christhoodministries.org,df36c916c46ba99f635f`.
 - Then: verify with `vercel api -X POST /v9/projects/prj_i663jmN8rebC6mBGcwOb4dekrCDm/domains/camp.christhoodministries.org/verify`, check it opens the Camps page, and turn the old `camp.instituteofapologetics.org` into a permanent forward (`vercel api -X PATCH /v9/projects/prj_i663jmN8rebC6mBGcwOb4dekrCDm/domains/camp.instituteofapologetics.org -F redirect=camp.christhoodministries.org -F redirectStatusCode=308`).
 - The main addresses (`www.christhoodministries.org` and the bare one) move to the new site only when the whole new church site is launched. That is a separate decision.
+
+## Parents' family page and the camp office
+- Parents make a family page at `/family` (phone number and password). It keeps their children and applications, fills next year's application in from saved details, and shows updates from the camp team. They do not need an account to apply.
+- The camp office (Camps Department or administrators) works from **Camp applications**: **Returning campers** (make a one-time family code after checking someone is the parent, then read it out), **Updates to families**, and **Family accounts** (give a temporary password to a parent who forgot theirs).
+- Health details stay sealed with `REGISTRATION_KEY`; consent and payment are asked again every year.
