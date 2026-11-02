@@ -34,6 +34,9 @@ const oldPages: Record<string, string> = {
   "prayer.html": "/prayer",
 };
 
+/** The camps address from the old camp site. It opens the Camps page; every other page works under it too. */
+const campsHost = "camp.instituteofapologetics.org";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -48,9 +51,10 @@ const nextConfig: NextConfig = {
       { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
     ];
     // A test copy of the site (NOINDEX=1) is kept out of search results so it never competes with the real one.
-    if (process.env.NOINDEX === "1") secure.push({ key: "X-Robots-Tag", value: "noindex, nofollow" });
+    const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
     return [
       { source: "/:path*", headers: secure },
+      ...(process.env.NOINDEX === "1" ? [{ source: "/:path*", missing: [{ type: "host" as const, value: campsHost }], headers: noindex }] : []),
       {
         // The team area is never indexed, cached or shown inside another site.
         source: "/123admin/:path*",
@@ -58,6 +62,9 @@ const nextConfig: NextConfig = {
       },
       { source: "/123admin", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }, { key: "X-Frame-Options", value: "DENY" }] },
     ];
+  },
+  async rewrites() {
+    return { beforeFiles: [{ source: "/", has: [{ type: "host", value: campsHost }], destination: "/camps" }] };
   },
   async redirects() {
     return Object.entries(oldPages).map(([from, to]) => ({
