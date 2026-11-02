@@ -106,6 +106,10 @@ export type SlotValue = { id: string; src: string; focus?: string; updatedAt: st
 
 export type MediaItem = {
   id: string;
+  /** Cloudinary assets imported from the church's Immich photo archive. */
+  storage?: "cloudinary";
+  providerId?: string;
+  sourceAssetId?: string;
   /** Address of the full-size picture. */
   url: string;
   /** Address of the small picture used on phones. */
@@ -255,3 +259,17 @@ export type FamilyChild = { id: string; familyId: string; name: string; camp?: "
 
 /** A message from the camp team that families can read. */
 export type CampUpdate = { id: string; createdAt: string; by: string; camp: "all" | "jewels" | "teen-life"; title: string; body: string };
+
+/* ---------- camp days ---------- */
+
+/** One line of a camp's timetable. `date` is the Nairobi day, `start` and `end` are 24-hour times like 09:30. */
+export type CampSession = { id: string; eventId: string; date: string; start: string; end?: string; title: string; place?: string; lead?: string; note?: string; updatedBy: string; updatedAt: string };
+
+/** Which facilitator looks after an approved camper. The id is the application's id. */
+export type CampAssignment = { id: string; eventId: string; userId: string; userName: string; by: string; at: string };
+
+/** Whether a camper was at camp on one day. The id is "<application id>~<date>". */
+export type CampAttendance = { id: string; applicationId: string; eventId: string; date: string; status: "present" | "absent"; by: string; at: string };
+
+/** A note about a camper. The words are sealed; `shared` notes also show on the family's page. */
+export type CampNote = { id: string; applicationId: string; eventId: string; byId: string; by: string; createdAt: string; shared: boolean; sealed: string };

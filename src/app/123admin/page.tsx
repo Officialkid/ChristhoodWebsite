@@ -77,6 +77,7 @@ async function Overview({ user }: { user: StoredUser }) {
     "/123admin/pages": "Wording and pictures for your ministry or programme page.",
     "/123admin/events": "Camps, mentorship seasons and gatherings.",
     "/123admin/camps": "Parents' applications for the Jewels and Teen Life camps.",
+    "/123admin/camps/day": "On camp days: the timetable, who is here, and notes for the children you look after.",
     "/123admin/banner": "A short message across the top of every page.",
     "/123admin/messages": "Add a sermon video for people to watch.",
     "/123admin/people": "Leaders' words and members' stories.",

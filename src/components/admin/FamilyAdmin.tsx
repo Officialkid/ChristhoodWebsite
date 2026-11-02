@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, KeyRound, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { deleteUpdate, issueFamilyCode, postUpdate, resetFamilyPassword } from "@/app/123admin/actions-family";
+import { deleteUpdate, issueFamilyCode, linkApplicationToFamily, postUpdate, resetFamilyPassword } from "@/app/123admin/actions-family";
 import { DeleteButton, SaveButton, SelectField, TextArea, TextField, useSave } from "./forms";
 import { btnClass, Notice } from "./ui";
 
@@ -101,4 +101,17 @@ export function UpdateForm({ groups }: { groups: { value: string; label: string 
 
 export function RemoveUpdate({ id }: { id: string }) {
   return <DeleteButton action={deleteUpdate} fields={{ id }} label="Remove" confirmText="Yes, remove it" />;
+}
+
+/** The camp office puts an application made without a family page onto the parent's family page. */
+export function LinkFamilyForm({ id, childName }: { id: string; childName: string }) {
+  const router = useRouter();
+  const { run, formRef, errors } = useSave(linkApplicationToFamily, () => router.refresh());
+  return (
+    <form ref={formRef} action={run} className="grid max-w-md gap-4" noValidate>
+      <input type="hidden" name="id" value={id} />
+      <TextField name="phone" label="Phone number on the parent's family page" type="tel" inputMode="tel" autoComplete="off" error={errors.phone} hint={`Check that this person really is ${childName}'s parent first. Then the application, the status and any notes shared with the family show on their page.`} />
+      <div><SaveButton>Put on the family page</SaveButton></div>
+    </form>
+  );
 }

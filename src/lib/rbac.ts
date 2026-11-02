@@ -23,7 +23,10 @@ const shared: Department[] = [
   { id: "media", name: "Media Team", blurb: "The photo library, page pictures, messages, and the Media Ministry page.", perms: ["media", "images", "messages", "page:ministry/media"] },
   { id: "pastoral", name: "Pastoral Team", blurb: "Follow up new members and answer prayer requests.", perms: ["visitors", "prayers"] },
   // The team that runs camps for the whole ministry: every application, the returning-campers register, camp events and both camp pages.
-  { id: "camps", name: "Camps Department", blurb: "Camp applications for every camp, the returning campers register, camp events and the Jewels and Teen Life pages.", perms: ["camps:all", "events:jewels", "events:teen-life", "page:programme/jewels", "page:programme/teen-life"] },
+  { id: "camps", name: "Camps Department", blurb: "Camp applications for every camp, the returning campers register, camp events and the Jewels and Teen Life pages.", perms: ["camps:all", "camps:day", "camps:roster", "events:jewels", "events:teen-life", "page:programme/jewels", "page:programme/teen-life"] },
+  // On the days of camp. Facilitators care for the campers they are given. Head facilitators keep the expected list and the timetable and never see health details.
+  { id: "facilitators", name: "Camp facilitators", blurb: "On camp days: the timetable, attendance and notes for the campers they look after, with those campers' care details.", perms: ["camps:day", "camps:care"] },
+  { id: "head-facilitators", name: "Head facilitators", blurb: "On camp days: the expected list, the timetable, who looks after whom, and attendance. No health details.", perms: ["camps:day", "camps:roster"] },
 ];
 
 const extra: Record<string, Perm[]> = {
@@ -93,6 +96,15 @@ export function canReadPrayer(user: Actor, prayer: { type?: string; whoMaySee?: 
   if (prayer.type === "thanksgiving" || !prayer.whoMaySee) return true;
   return prayer.whoMaySee.toLowerCase().includes("intercessory");
 }
+
+/** May this person use the camp-day screens: the timetable, and attendance for the campers they may mark? */
+export const mayRunCampDay = (user: Actor) => can(user, "camps:day");
+
+/** May this person keep the expected list, the timetable and the facilitators' groups, and mark anyone's attendance? */
+export const mayKeepRoster = (user: Actor) => can(user, "camps:roster");
+
+/** Can this person be given campers to look after? */
+export const mayCareForCampers = (user: Actor) => permsOf(user).has("camps:care");
 
 /** Which camp applications this person may open: "all" for administrators and the Camps Department, or just their programmes. */
 export function campScope(user: Actor): "all" | ("jewels" | "teen-life")[] {

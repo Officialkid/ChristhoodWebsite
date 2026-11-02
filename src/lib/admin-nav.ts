@@ -27,6 +27,7 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
       { href: `${A}/camps/updates`, label: "Updates to families", icon: "megaphone" },
       ...(camps === "all" ? [{ href: `${A}/camps/families`, label: "Family accounts", icon: "key" }] : []),
     ] });
+  if (can(user, "camps:day")) website.push({ href: `${A}/camps/day`, label: "Camp days", icon: "clipboard" });
   if (can(user, "banner")) website.push({ href: `${A}/banner`, label: "Announcement bar", icon: "megaphone" });
   if (can(user, "messages")) website.push({ href: `${A}/messages`, label: "Messages to watch", icon: "play" });
   if (can(user, "people")) website.push({ href: `${A}/people`, label: "Leaders and stories", icon: "users" });

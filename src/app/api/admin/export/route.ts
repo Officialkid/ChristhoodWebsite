@@ -2,6 +2,7 @@ import { getUser } from "@/lib/auth";
 import { can, canReadPrayer, mayOpenCamp } from "@/lib/rbac";
 import { unseal } from "@/lib/crypto";
 import { collection } from "@/lib/store";
+import { approvedFor, campAssignments, campAttendance, dateOk, photoRule } from "@/lib/camp-day";
 import type { CampApplication, CampSealed, Camper, CamperSealed, Prayer, Visitor } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -63,6 +64,20 @@ export async function GET(req: Request) {
       body.push([c.id, c.name, c.camp === "jewels" ? "Jewels" : "Teen Life", String(c.year), String(d.age ?? ""), d.guardian ?? "", d.location ?? "", d.contact ?? ""]);
     }
     rows = [["id", "name", "camp", "year", "age", "guardian", "location", "contact"], ...body];
+  } else if (kind === "register") {
+    // The day's expected list for head facilitators: names, ages, phone numbers and the photo rule. No health details.
+    if (!can(user, "camps:roster")) return new Response("No access.", { status: 403 });
+    const q = new URL(req.url).searchParams;
+    const eventId = q.get("event") ?? "";
+    const date = q.get("date") ?? "";
+    if (!eventId || !dateOk(date)) return new Response("Choose a camp and a day.", { status: 400 });
+    const [apps, given, marks] = await Promise.all([approvedFor(eventId), campAssignments.list(), campAttendance.list()]);
+    const body: string[][] = [];
+    for (const a of apps) {
+      const m = marks.find((x) => x.applicationId === a.id && x.date === date)?.status;
+      body.push([a.childName, String(a.ageAtCamp), a.camp === "jewels" ? "Jewels" : a.camp === "teen-life" ? "Teen Life" : "Camp", a.guardian, a.phone, (await photoRule(a)) === "No" ? "No photos" : "", given.find((g) => g.id === a.id)?.userName ?? "", m === "present" ? "Here" : m === "absent" ? "Away" : ""]);
+    }
+    rows = [["Child", "Age", "Camp", "Parent or guardian", "Phone", "Photos", "Looked after by", `Here on ${date}`], ...body];
   } else return new Response("Unknown list.", { status: 400 });
 
   const csv = "﻿" + rows.map((r) => r.map(cell).join(",")).join("\r\n");

@@ -2,10 +2,12 @@ import { notFound, redirect } from "next/navigation";
 import { MessageCircle, Phone } from "lucide-react";
 import { ADMIN_PATH, requireUser } from "@/lib/auth";
 import { unseal } from "@/lib/crypto";
-import { mayOpenCamp } from "@/lib/rbac";
+import { families } from "@/lib/family";
+import { campScope, mayOpenCamp } from "@/lib/rbac";
 import { collection } from "@/lib/store";
 import { formatStamp } from "@/lib/time";
 import CampReviewForm from "@/components/admin/CampReviewForm";
+import { LinkFamilyForm } from "@/components/admin/FamilyAdmin";
 import { btnClass, Chip, Notice, PageTitle } from "@/components/admin/ui";
 import type { CampApplication, CampSealed } from "@/lib/types";
 
@@ -28,6 +30,8 @@ export default async function CampApplicationPage({ params }: { params: Promise<
   } catch {
     d = null;
   }
+  const onFamily = app.familyId ? await families.get(app.familyId).catch(() => null) : null;
+  const canLink = campScope(user) === "all";
   return (
     <>
       <PageTitle title={app.childName} icon="tent" lead={`${app.eventTitle} · received ${formatStamp(app.createdAt)}`} crumbs={[{ label: "Camp applications", href: "/123admin/camps" }, { label: app.childName }]} actions={<><Chip tone={app.status === "Approved" ? "ok" : app.status === "Pending review" ? "new" : "warn"}>{app.status}</Chip>{app.paymentVerified && <Chip tone="ok">Payment checked</Chip>}</>} />
@@ -109,6 +113,19 @@ export default async function CampApplicationPage({ params }: { params: Promise<
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <h2 className="text-xl">Your decision</h2>
           <div className="mt-4"><CampReviewForm app={app} canDelete={user.role === "admin"} /></div>
+          {(onFamily || canLink) && (
+            <div className="mt-12 border-t border-rule pt-8">
+              <h2 className="text-xl">Family page</h2>
+              {onFamily ? (
+                <p className="mt-3 text-muted">On the family page of <span className="font-semibold text-ink">{onFamily.name}</span> ({onFamily.phone}). They see the status, the timetable and any notes you share.</p>
+              ) : (
+                <>
+                  <p className="mt-3 text-muted">This application was made without a family page, so the parent cannot see notes or the timetable yet.</p>
+                  <div className="mt-5"><LinkFamilyForm id={app.id} childName={app.childName} /></div>
+                </>
+              )}
+            </div>
+          )}
         </aside>
       </div>
     </>

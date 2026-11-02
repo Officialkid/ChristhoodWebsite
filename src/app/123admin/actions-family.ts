@@ -2,11 +2,13 @@
 
 import { randomInt } from "node:crypto";
 import { hashPassword, log, newId, requireUser } from "@/lib/auth";
-import { CODE_DAYS, campers, campUpdates, codeHash, families, newCode } from "@/lib/family";
+import { unseal } from "@/lib/crypto";
+import { CODE_DAYS, campers, campUpdates, codeHash, familyByPhone, families, newCode, profileOf, saveChild } from "@/lib/family";
+import { normalisePhone, phoneOk } from "@/lib/phone";
 import { campScope } from "@/lib/rbac";
-import { StorageUnavailable } from "@/lib/store";
+import { collection, StorageUnavailable } from "@/lib/store";
 import type { Result } from "@/components/admin/forms";
-import type { CampUpdate } from "@/lib/types";
+import type { CampApplication, CampSealed, CampUpdate } from "@/lib/types";
 
 const text = (fd: FormData, k: string, max = 200) => String(fd.get(k) ?? "").trim().slice(0, max);
 const ok = (message: string, extra: Partial<Result> = {}): Result => ({ ok: true, message, stamp: Date.now(), ...extra });
@@ -87,5 +89,35 @@ export async function resetFamilyPassword(fd: FormData): Promise<Result> {
     await families.put({ ...family, hash: await hashPassword(password), mustChange: true });
     await log(user, "Reset a family password", family.name);
     return ok(`New temporary password for ${family.name}.`, { secret: password });
+  });
+}
+
+/**
+ * A parent who applied before they had a family page: the camp office, having checked the person really is the parent,
+ * puts the application (and the child's saved details) on the family page that uses the parent's phone number.
+ * This is why it is done by the office and never automatically by phone number: anyone could type someone else's number.
+ */
+export async function linkApplicationToFamily(_prev: Result, fd: FormData): Promise<Result> {
+  const user = await requireUser();
+  if (campScope(user) !== "all") return bad("Only an administrator or the Camps Department can put an application on a family page.");
+  return guard(async () => {
+    const applications = collection<CampApplication>("camp-applications");
+    const app = await applications.get(text(fd, "id", 60));
+    if (!app) return bad("That application is not available.");
+    if (app.familyId) return bad(`${app.childName} is already on a family page.`);
+    const raw = text(fd, "phone", 30);
+    if (!phoneOk(raw)) return bad("Type the phone number the parent signs in with.", { phone: "Type the phone number the parent signs in with." });
+    const family = await familyByPhone(normalisePhone(raw));
+    if (!family || !family.active) return bad("No family page uses that number yet. Ask the parent to make one at the Family page first.", { phone: "No family page uses that number." });
+    let profile = null;
+    try {
+      profile = profileOf(await unseal<CampSealed>(app.sealed));
+    } catch {
+      return bad("The child's private details could not be opened, so they cannot be moved. Check the registration key.");
+    }
+    const childId = await saveChild(family, "", app.childName, app.camp === "other" ? undefined : app.camp, profile);
+    await applications.put({ ...app, familyId: family.id, childId, updatedAt: new Date().toISOString() });
+    await log(user, "Put an application on a family page", `${app.childName} → ${family.name}`);
+    return ok(`${app.childName} is now on ${family.name}'s family page.`);
   });
 }
