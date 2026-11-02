@@ -36,6 +36,8 @@ export default function Footer({ menu, settings }: { menu: MenuItem[]; settings:
               <Link href="/ministries/protocol" className={link}>Meet the protocol team</Link>
               <Link href="/prayer" className={link}>Send a prayer request</Link>
               <Link href="/prayer?type=thanksgiving" className={link}>Share a thanksgiving</Link>
+              <Link href="/camps" className={link}>Camps</Link>
+              <Link href="/events/apply" className={link}>Apply for camp</Link>
               <Link href="/events" className={link}>Events</Link>
               <Link href="/give" className={link}>Give</Link>
             </nav>

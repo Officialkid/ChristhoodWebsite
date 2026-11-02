@@ -34,7 +34,7 @@ export default async function CampApplyPage({ searchParams }: { searchParams: Pr
         image="jewels-camp-memory"
         focus="50% 35%"
         tagline="Apply for a place for your child. It takes about ten minutes, and you can stop and talk to the camp office at any time."
-        crumbs={[{ label: "Events", href: "/events" }, { label: "Camp application" }]}
+        crumbs={[{ label: "Camps", href: "/camps" }, { label: "Camp application" }]}
       />
       <Section>
         <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)] lg:gap-24">

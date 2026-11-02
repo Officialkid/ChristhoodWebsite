@@ -13,6 +13,7 @@ import { Button, Section, SectionHead } from "@/components/ui";
 import { GatheringStatus } from "@/components/Countdown";
 import { CopyButton, HeroMedia, QuoteSwitcher, VideoCard } from "@/components/Interactive";
 import { EventRow } from "@/components/Cards";
+import { formatEventDates } from "@/lib/time";
 import { humanitarian } from "@/content/about";
 import { site } from "@/content/site";
 import { resolvePhoto } from "@/lib/images";
@@ -126,6 +127,19 @@ export default async function Home() {
           )}
         </div>
       </Section>
+
+      {/* Camps: only while at least one camp is taking applications */}
+      {upcoming.some((e) => e.category === "camp" && e.registrationOpen) && (
+        <Section tone="purple" tight>
+          <div className="flex flex-wrap items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <h2 className="text-3xl">Camp applications are open</h2>
+              <p className="mt-2 text-on-purple-muted">{upcoming.filter((e) => e.category === "camp" && e.registrationOpen).map((e) => `${e.title}, ${formatEventDates(e.start, e.end)}`).join(". ")}.</p>
+            </div>
+            <div className="flex flex-wrap gap-4"><Button href="/events/apply">Apply for your child</Button><Button href="/camps" variant="outline-light">About the camps</Button></div>
+          </div>
+        </Section>
+      )}
 
       {/* Humanitarian */}
       <Section tone="alt">

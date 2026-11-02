@@ -25,7 +25,7 @@ export default async function CampRegistrationPage() {
 
   return (
     <>
-      <PageHero title="Volunteer or sponsor for camp" actions={[{ label: "Apply for your child", href: "/events/apply" }]} tagline="Serve at camp as a facilitator, or sponsor a child. To register your own child, use the full camp application." crumbs={[{ label: "Events", href: "/events" }, { label: "Volunteer or sponsor" }]} />
+      <PageHero title="Volunteer or sponsor for camp" actions={[{ label: "Apply for your child", href: "/events/apply" }]} tagline="Serve at camp as a facilitator, or sponsor a child. To register your own child, use the full camp application." crumbs={[{ label: "Camps", href: "/camps" }, { label: "Volunteer or sponsor" }]} />
       <section className="bg-paper-2 py-12 sm:py-20">
         <div className="wrap">
           {camps.length > 0 ? (

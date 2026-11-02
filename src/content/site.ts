@@ -75,6 +75,16 @@ export const nav: { label: string; href: string; icon?: string; children?: NavIt
   },
   { label: "Ministries", href: "/ministries", icon: "church" },
   { label: "Programmes", href: "/programmes", icon: "sprout" },
+  {
+    label: "Camps",
+    href: "/camps",
+    icon: "tent",
+    children: [
+      { label: "Camps and dates", href: "/camps", icon: "tent", blurb: "Jewels Kids Camp and Teen Life Mentorship Camp" },
+      { label: "Apply for your child", href: "/events/apply", icon: "clipboard", blurb: "About ten minutes, and health details stay private" },
+      { label: "Serve or sponsor", href: "/events/register", icon: "heart", blurb: "Facilitate at camp or sponsor a camper" },
+    ],
+  },
   { label: "Events", href: "/events", icon: "calendar" },
   {
     label: "Connect",
