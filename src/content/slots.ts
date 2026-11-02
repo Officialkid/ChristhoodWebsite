@@ -49,7 +49,6 @@ export const slotGroups: SlotGroup[] = [
       { key: "visit.hero", label: "New guest form: top picture" },
       { key: "prayer.hero", label: "Prayer form: top picture" },
       { key: "camps.hero", label: "Camps page: top picture", fallback: "jewels-camp-memory", focus: "50% 35%" },
-      { key: "camps.apply.hero", label: "Camp application: top picture", fallback: "jewels-camp-memory", focus: "50% 35%" },
     ],
   },
   {

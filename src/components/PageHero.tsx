@@ -15,18 +15,18 @@ type Props = {
   badge?: string;
   crumbs?: { label: string; href?: string }[];
   actions?: { label: string; href: string; external?: boolean }[];
-  /** Kept so older pages still compile; the layout no longer needs it. */
+  /** For pages where the job below matters more than the heading, such as a form: tighter space and a smaller title. */
   compact?: boolean;
 };
 
 /** Page opening: words first, then a clean photo. No text sits on top of an image. */
-export default async function PageHero({ title, tagline, image: imageProp, focus: focusProp, slot, badge, crumbs = [], actions = [] }: Props) {
+export default async function PageHero({ title, tagline, image: imageProp, focus: focusProp, slot, badge, crumbs = [], actions = [], compact = false }: Props) {
   const chosen = slot ? await getSlot(slot, imageProp) : { src: imageProp, focus: undefined };
   const image = chosen.src;
   const focus = chosen.focus ?? focusProp;
   return (
     <header className="bg-paper">
-      <div className="wrap pb-10 pt-10 md:pb-14 md:pt-14">
+      <div className={`wrap ${compact ? "pb-6 pt-4 md:pb-8 md:pt-6" : "pb-10 pt-10 md:pb-14 md:pt-14"}`}>
         {crumbs.length > 0 && (
           <nav aria-label="Breadcrumb">
             <ol className="flex flex-wrap items-center gap-x-2 text-[0.9rem] text-muted">
@@ -38,10 +38,10 @@ export default async function PageHero({ title, tagline, image: imageProp, focus
           </nav>
         )}
         {badge && <p className="label rise mt-8">{badge}</p>}
-        <h1 className={`t-h1 rise ${badge ? "mt-2" : "mt-8"} max-w-[20ch]`} style={{ "--d": ".05s" } as CSSProperties}>{title}</h1>
+        <h1 className={`${compact ? "t-h2" : "t-h1"} rise ${badge ? "mt-2" : compact ? "mt-3" : "mt-8"} ${compact ? "max-w-[28ch]" : "max-w-[20ch]"}`} style={{ "--d": ".05s" } as CSSProperties}>{title}</h1>
         {(tagline || actions.length > 0) && (
-          <div className="rise mt-7 grid gap-6 md:grid-cols-[minmax(0,40rem)_auto] md:items-end md:justify-start md:gap-x-16" style={{ "--d": ".15s" } as CSSProperties}>
-            {tagline ? <p className="t-lead text-muted">{tagline}</p> : <span />}
+          <div className={`rise ${compact ? "mt-3" : "mt-7"} grid gap-6 md:grid-cols-[minmax(0,40rem)_auto] md:items-end md:justify-start md:gap-x-16`} style={{ "--d": ".15s" } as CSSProperties}>
+            {tagline ? <p className={compact ? "reading text-lg text-muted" : "t-lead text-muted"}>{tagline}</p> : <span />}
             {actions.length > 0 && <div className="flex flex-wrap gap-3">{actions.map((a, i) => <Button key={a.label} href={a.href} external={a.external} variant={i === 0 ? "gold" : "outline"}>{a.label}</Button>)}</div>}
           </div>
         )}
