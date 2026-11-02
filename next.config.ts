@@ -34,8 +34,8 @@ const oldPages: Record<string, string> = {
   "prayer.html": "/prayer",
 };
 
-/** The camps address from the old camp site. It opens the Camps page; every other page works under it too. */
-const campsHost = "camp.instituteofapologetics.org";
+/** The camps addresses: the Christhood one, and the old camp-site one until it forwards. Each opens the Camps page; every other page works under them too. */
+const campsHosts = ["camp.christhoodministries.org", "camp.instituteofapologetics.org"];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
     const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
     return [
       { source: "/:path*", headers: secure },
-      ...(process.env.NOINDEX === "1" ? [{ source: "/:path*", missing: [{ type: "host" as const, value: campsHost }], headers: noindex }] : []),
+      ...(process.env.NOINDEX === "1" ? [{ source: "/:path*", missing: campsHosts.map((value) => ({ type: "host" as const, value })), headers: noindex }] : []),
       {
         // The team area is never indexed, cached or shown inside another site.
         source: "/123admin/:path*",
@@ -64,7 +64,7 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    return { beforeFiles: [{ source: "/", has: [{ type: "host", value: campsHost }], destination: "/camps" }] };
+    return { beforeFiles: [...campsHosts.map((value) => ({ source: "/", has: [{ type: "host" as const, value }], destination: "/camps" }))] };
   },
   async redirects() {
     return Object.entries(oldPages).map(([from, to]) => ({
