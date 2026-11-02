@@ -28,7 +28,9 @@
 }
 
 @layer base {
-  html { -webkit-text-size-adjust: 100%; background: var(--color-purple-deep); scroll-padding-top: 5rem; }
+  /* Everything is sized in rem, so growing the root size above a laptop screen grows the whole page in proportion:
+     16px up to 1440 wide, about 18px at 1920 and 21px at 2560, never more than 22px. */
+  html { -webkit-text-size-adjust: 100%; background: var(--color-purple-deep); scroll-padding-top: 5rem; font-size: clamp(16px, calc(16px + (100vw - 1440px) * 0.0045), 22px); }
   body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); font-size: 1rem; line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
   ::selection { background: var(--color-gold); color: var(--color-ink); }
   :focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
@@ -44,6 +46,11 @@
 @layer components {
   .wrap { width: min(100% - 2.5rem, 78rem); margin-inline: auto; }
   .wrap-narrow { width: min(100% - 2.5rem, 46rem); margin-inline: auto; }
+  /* Large monitors: a wider column and wider gutters, so the content fills the screen with sensible margins. */
+  @media (min-width: 1536px) {
+    .wrap { width: min(100% - 5rem, 88rem); }
+    .wrap-narrow { width: min(100% - 5rem, 50rem); }
+  }
 
   /* Type scale: five steps, generous contrast between them */
   .t-hero { font-size: clamp(2.9rem, 8.4vw, 7.25rem); line-height: 0.95; }

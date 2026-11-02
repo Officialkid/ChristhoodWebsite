@@ -40,7 +40,7 @@ export default async function PageHero({ title, tagline, image: imageProp, focus
         {badge && <p className="label rise mt-8">{badge}</p>}
         <h1 className={`t-h1 rise ${badge ? "mt-2" : "mt-8"} max-w-[20ch]`} style={{ "--d": ".05s" } as CSSProperties}>{title}</h1>
         {(tagline || actions.length > 0) && (
-          <div className="rise mt-7 grid gap-6 md:grid-cols-[minmax(0,40rem)_auto] md:items-end md:justify-between" style={{ "--d": ".15s" } as CSSProperties}>
+          <div className="rise mt-7 grid gap-6 md:grid-cols-[minmax(0,40rem)_auto] md:items-end md:justify-start md:gap-x-16" style={{ "--d": ".15s" } as CSSProperties}>
             {tagline ? <p className="t-lead text-muted">{tagline}</p> : <span />}
             {actions.length > 0 && <div className="flex flex-wrap gap-3">{actions.map((a, i) => <Button key={a.label} href={a.href} external={a.external} variant={i === 0 ? "gold" : "outline"}>{a.label}</Button>)}</div>}
           </div>
@@ -48,7 +48,7 @@ export default async function PageHero({ title, tagline, image: imageProp, focus
       </div>
       {image && (
         <div className="wrap">
-          <div className="relative aspect-[4/3] overflow-hidden bg-paper-2 sm:aspect-[16/9] md:aspect-[2.35/1]"><Img cover priority src={image} alt="" sizes="(min-width:1280px) 1248px, 100vw" focus={focus} /></div>
+          <div className="relative aspect-[4/3] overflow-hidden bg-paper-2 sm:aspect-[16/9] md:aspect-[2.35/1]"><Img cover priority src={image} alt="" sizes="(min-width:1536px) 1900px, (min-width:1280px) 1248px, 100vw" focus={focus} /></div>
         </div>
       )}
     </header>

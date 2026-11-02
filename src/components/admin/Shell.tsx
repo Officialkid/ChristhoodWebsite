@@ -126,7 +126,7 @@ export default function Shell({ groups, user, signOut, children }: Props) {
             </button>
             <Link href="/" target="_blank" className="inline-flex min-h-10 items-center gap-2 rounded-sm px-3 text-[0.92rem] font-semibold text-purple hover:bg-purple-tint">View the website <ExternalLink className="size-4" aria-hidden /></Link>
           </div>
-          <main id="admin-main" className="mx-auto w-full max-w-[72rem] px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pt-10">{children}</main>
+          <main id="admin-main" className="mx-auto w-full max-w-[72rem] min-[1700px]:max-w-[88rem] px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pt-10">{children}</main>
         </div>
       </div>
 
