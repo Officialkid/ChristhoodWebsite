@@ -36,6 +36,8 @@ const oldPages: Record<string, string> = {
 
 /** The camps addresses: the Christhood one, and the old camp-site one until it forwards. Each opens the Camps page; every other page works under them too. */
 const campsHosts = ["camp.christhoodministries.org", "camp.instituteofapologetics.org"];
+/** The free Vercel address for the camps site while the official one waits for the domain holder. It opens the Camps page too, and stays out of search results so it never competes with the official address. */
+const campsPreviewHosts = ["camp-christhood.vercel.app"];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -64,7 +66,7 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    return { beforeFiles: [...campsHosts.map((value) => ({ source: "/", has: [{ type: "host" as const, value }], destination: "/camps" }))] };
+    return { beforeFiles: [...[...campsHosts, ...campsPreviewHosts].map((value) => ({ source: "/", has: [{ type: "host" as const, value }], destination: "/camps" }))] };
   },
   async redirects() {
     return Object.entries(oldPages).map(([from, to]) => ({
