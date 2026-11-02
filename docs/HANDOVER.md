@@ -3,7 +3,7 @@
 For whoever holds the `Officialkid/ChristhoodWebsite` Vercel project. The code is finished and tested on the `overramp` branch. A working copy is at https://christhood-team-site.vercel.app for you to look at first.
 
 ## 1. Connect a database (free)
-Vercel project → **Storage** → add **Neon** (Postgres) or **Upstash Redis** from the Marketplace and connect it to the project. Either one works; the tables are created on first use. This adds `DATABASE_URL` (Neon) or `KV_REST_API_URL` and `KV_REST_API_TOKEN` (Upstash).
+Set **`MONGODB_URI`** (Settings → Environment Variables) to the church's MongoDB connection string. In Atlas, allow connections from Vercel (Network Access → `0.0.0.0/0`, since Vercel has no fixed address) and use a database user that can read and write only this database. Collections are created on first use and all start with `ch_`. Alternatively connect **Neon** (Postgres) or **Upstash Redis** from the Vercel Marketplace; MongoDB is used first when more than one is set.
 
 ## 2. Add three settings
 Project → **Settings → Environment Variables** (Production). Make each value with: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`

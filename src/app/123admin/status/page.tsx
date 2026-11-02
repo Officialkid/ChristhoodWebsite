@@ -15,7 +15,7 @@ export default async function StatusPage() {
       state: s.storage === "none" ? "todo" : "ok",
       title: "Saving changes (database)",
       now: s.storage === "cloud" ? "Connected. Everything the team saves is kept safely online." : s.storage === "local" ? "Running on this computer. Changes are kept in a local folder." : "Not connected. The site shows its built-in content and nothing can be saved.",
-      how: s.storage === "none" ? "In the Vercel dashboard open the project, go to Storage, add a free database from the Marketplace (Neon Postgres or Upstash Redis) and connect it to the project. Then redeploy." : undefined,
+      how: s.storage === "none" ? "In the Vercel dashboard open the project, go to Settings, Environment Variables and add MONGODB_URI with the MongoDB connection string (or, under Storage, connect a free Neon Postgres or Upstash Redis database). Then redeploy." : undefined,
     },
     {
       state: s.signIn ? "ok" : "todo",
