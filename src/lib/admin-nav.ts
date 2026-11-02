@@ -22,7 +22,11 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
   const hasEvents = user.role === "admin" || [...permsOf(user)].some((p) => p.startsWith("events:"));
   if (hasEvents) website.push({ href: `${A}/events`, label: "Events", icon: "calendar" });
   const camps = campScope(user);
-  if (camps === "all" || camps.length) website.push({ href: `${A}/camps`, label: "Camp applications", icon: "tent", badge: counts.camps, children: [{ href: `${A}/camps/returning`, label: "Returning campers", icon: "users" }] });
+  if (camps === "all" || camps.length) website.push({ href: `${A}/camps`, label: "Camp applications", icon: "tent", badge: counts.camps, children: [
+      { href: `${A}/camps/returning`, label: "Returning campers", icon: "users" },
+      { href: `${A}/camps/updates`, label: "Updates to families", icon: "megaphone" },
+      ...(camps === "all" ? [{ href: `${A}/camps/families`, label: "Family accounts", icon: "key" }] : []),
+    ] });
   if (can(user, "banner")) website.push({ href: `${A}/banner`, label: "Announcement bar", icon: "megaphone" });
   if (can(user, "messages")) website.push({ href: `${A}/messages`, label: "Messages to watch", icon: "play" });
   if (can(user, "people")) website.push({ href: `${A}/people`, label: "Leaders and stories", icon: "users" });

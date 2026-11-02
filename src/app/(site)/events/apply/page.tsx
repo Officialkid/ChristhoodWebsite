@@ -6,7 +6,9 @@ import CampApplicationForm from "@/components/forms/CampApplicationForm";
 import { Button, Section } from "@/components/ui";
 import consent from "@/content/camp-consent.json";
 import { site } from "@/content/site";
-import { sealingReady } from "@/lib/crypto";
+import { sealingReady, unseal } from "@/lib/crypto";
+import { familyChildren, getFamily, prefillOf } from "@/lib/family";
+import type { ChildProfile } from "@/lib/types";
 import { getEvents } from "@/lib/content";
 import { store } from "@/lib/store";
 import { formatEventDates } from "@/lib/time";
@@ -17,14 +19,31 @@ export const metadata: Metadata = {
   alternates: { canonical: "/events/apply" },
 };
 
-export default async function CampApplyPage({ searchParams }: { searchParams: Promise<{ camp?: string }> }) {
-  const { camp } = await searchParams;
+export default async function CampApplyPage({ searchParams }: { searchParams: Promise<{ camp?: string; child?: string }> }) {
+  const { camp, child } = await searchParams;
   const now = Date.now();
   const camps = (await getEvents())
     .filter((e) => e.category === "camp" && e.registrationOpen && new Date(e.end ?? e.start).getTime() >= now)
     .map((e) => ({ id: e.id, title: e.title, subtitle: e.subtitle, fee: e.fee, dates: formatEventDates(e.start, e.end) }));
   const ready = store.writable && (await sealingReady());
   const call = `0${site.whatsapp.camps.replace(/^254/, "")}`;
+
+  // A signed-in family starts with its details filled in.
+  const family = await getFamily();
+  let prefill: Record<string, string> | undefined;
+  if (family) {
+    const found = child ? await familyChildren.get(child) : null;
+    const mine = found && found.familyId === family.id ? found : null;
+    let profile: ChildProfile | null = null;
+    if (mine?.sealed) {
+      try {
+        profile = await unseal<ChildProfile>(mine.sealed);
+      } catch {
+        profile = null;
+      }
+    }
+    prefill = prefillOf(family, mine, profile);
+  }
 
   return (
     <>
@@ -41,6 +60,7 @@ export default async function CampApplyPage({ searchParams }: { searchParams: Pr
           <aside className="grid gap-8 lg:sticky lg:top-28">
             <p className="flex gap-3"><ShieldCheck className="mt-1 size-5 shrink-0 text-purple" aria-hidden /><span><span className="block font-bold">Kept private</span><span className="text-muted">Health and family details are encrypted when saved and are seen only by the programme&apos;s leaders and the camp office.</span></span></p>
             <p className="flex gap-3"><MessageCircle className="mt-1 size-5 shrink-0 text-purple" aria-hidden /><span><span className="block font-bold">Prefer to talk?</span><span className="text-muted">WhatsApp the camp office on <a className="font-semibold text-purple underline underline-offset-4" href={`https://wa.me/${site.whatsapp.camps}`}>{call}</a>.</span></span></p>
+            <p className="border-t border-rule pt-6 text-muted">{family ? <>Signed in as {family.name}. Your details are filled in from your <Link href="/family" className="font-semibold text-purple underline underline-offset-4">family page</Link>.</> : <>Applied before? <Link href="/family" className="font-semibold text-purple underline underline-offset-4">Sign in to your family page</Link> and we will fill it in for you.</>}</p>
             <p className="border-t border-rule pt-6 text-muted">Want to serve as a facilitator, or sponsor a child? <Link href="/events/register" className="font-semibold text-purple underline underline-offset-4">Use the volunteer and sponsor form</Link>.</p>
           </aside>
           {camps.length === 0 ? (
@@ -52,7 +72,7 @@ export default async function CampApplyPage({ searchParams }: { searchParams: Pr
               <div className="mt-6"><Button href={`https://wa.me/${site.whatsapp.camps}`} external>WhatsApp {call}</Button></div>
             </div>
           ) : (
-            <CampApplicationForm camps={camps} consent={consent} selected={camps.find((c) => c.id === camp)?.id ?? camps[0].id} whatsapp={site.whatsapp.camps} />
+            <CampApplicationForm camps={camps} consent={consent} selected={camps.find((c) => c.id === camp)?.id ?? camps[0].id} whatsapp={site.whatsapp.camps} prefill={prefill} />
           )}
         </div>
       </Section>

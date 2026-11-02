@@ -5,7 +5,9 @@ import { after } from "next/server";
 import { clientKey, newId } from "@/lib/auth";
 import { getEvents } from "@/lib/content";
 import { seal, sealingReady } from "@/lib/crypto";
+import { getFamily, profileOf, saveChild } from "@/lib/family";
 import { notifyTeam } from "@/lib/notify";
+import { normalisePhone, phoneOk } from "@/lib/phone";
 import { collection, store } from "@/lib/store";
 import { site } from "@/content/site";
 import type { CampApplication, CampSealed } from "@/lib/types";
@@ -14,15 +16,6 @@ import type { FormState } from "./connect-actions";
 const applications = collection<CampApplication>("camp-applications");
 
 const clean = (v: FormDataEntryValue | null, max = 300) => String(v ?? "").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").trim().slice(0, max);
-const phoneOk = (v: string) => /^\+?[\d\s().-]{7,20}$/.test(v) && v.replace(/\D/g, "").length >= 7;
-/** 07XX and 7XX become +254 so every number is written the same way. */
-const normalisePhone = (v: string) => {
-  const d = v.replace(/[^\d+]/g, "");
-  if (d.startsWith("+")) return d;
-  if (d.startsWith("0")) return `+254${d.slice(1)}`;
-  if (d.startsWith("254")) return `+${d}`;
-  return d;
-};
 const money = (v: FormDataEntryValue | null) => {
   const n = Number(clean(v, 12) || 0);
   return Number.isFinite(n) && n >= 0 ? n : NaN;
@@ -125,6 +118,17 @@ export async function submitCampApplication(_prev: FormState, fd: FormData): Pro
     pocketMoney,
   };
 
+  // A signed-in family keeps the child's details for next year.
+  const family = await getFamily();
+  let childId: string | undefined;
+  if (family) {
+    try {
+      childId = await saveChild(family, clean(fd.get("childId"), 40), childName, camp === "other" ? undefined : camp, profileOf(sealedData));
+    } catch (error) {
+      console.error("Could not save the child's details", error);
+    }
+  }
+
   const now = new Date().toISOString();
   const app: CampApplication & { dedupe: string } = {
     id: newId(),
@@ -142,6 +146,8 @@ export async function submitCampApplication(_prev: FormState, fd: FormData): Pro
     status: "Pending review",
     paymentVerified: false,
     sealed: await seal(sealedData),
+    familyId: family?.id,
+    childId,
     dedupe,
   };
   try {
@@ -151,5 +157,5 @@ export async function submitCampApplication(_prev: FormState, fd: FormData): Pro
     return fail(`We could not save that just now, ${callUs}.`);
   }
   after(() => notifyTeam("camp", childName));
-  return { ok: true, name: childName.split(/\s+/)[0] };
+  return { ok: true, name: childName.split(/\s+/)[0], type: family ? "family" : undefined };
 }

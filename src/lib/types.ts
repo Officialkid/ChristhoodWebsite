@@ -222,8 +222,36 @@ export type CampApplication = {
   reviewedBy?: string;
   reviewedAt?: string;
   sealed: string;
+  /** Set when a signed-in family made the application. */
+  familyId?: string;
+  childId?: string;
 };
 
 /** A child who came to a camp before, kept so the programme can invite the family back. Personal details are sealed. */
-export type Camper = { id: string; camp: "jewels" | "teen-life"; name: string; year: number; sealed: string };
+export type Camper = {
+  id: string;
+  camp: "jewels" | "teen-life";
+  name: string;
+  year: number;
+  sealed: string;
+  /** A one-time code the camp office gives a parent so the child joins their family page. Only a fingerprint of it is kept. */
+  code?: { hash: string; expires: string };
+  familyId?: string;
+};
 export type CamperSealed = { age?: number; guardian?: string; location?: string; contact?: string };
+
+/* ---------- families ---------- */
+
+/** A parent's sign-in for the family page. Separate from the team's accounts. */
+export type Family = { id: string; phone: string; name: string; email?: string; hash: string; active: boolean; mustChange?: boolean; createdAt: string };
+
+/** What is kept about a child so the next application starts filled in (sealed, like the application itself). */
+export type ChildProfile = Pick<
+  CampSealed,
+  "dob" | "nickname" | "gender" | "school" | "grade" | "guardianId" | "residence" | "house" | "doctor" | "hospital" | "doctorPhone" | "blood" | "insurer" | "policy" | "conditions" | "allergies" | "disabilities" | "otherConditions" | "medication" | "specialNeeds" | "swimming" | "emergencies"
+>;
+
+export type FamilyChild = { id: string; familyId: string; name: string; camp?: "jewels" | "teen-life"; camperId?: string; sealed?: string; createdAt: string; updatedAt: string };
+
+/** A message from the camp team that families can read. */
+export type CampUpdate = { id: string; createdAt: string; by: string; camp: "all" | "jewels" | "teen-life"; title: string; body: string };

@@ -65,7 +65,7 @@ async function loadSecret(): Promise<Uint8Array | null> {
 }
 // Share one pending promise so two requests arriving together can never make two different secrets.
 let secretPromise: Promise<Uint8Array | null> | undefined;
-const secretKey = () => (secretPromise ??= loadSecret());
+export const secretKey = () => (secretPromise ??= loadSecret());
 
 /** What is and is not switched on. Shown on the System status page. */
 export async function systemStatus() {

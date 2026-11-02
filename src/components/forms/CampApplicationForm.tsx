@@ -15,7 +15,8 @@ const area = "grid gap-6";
 const heading = "mb-2 text-2xl font-extrabold [font-variation-settings:'wdth'_86]";
 const kes = (n: number) => `KES ${n.toLocaleString("en-KE")}`;
 
-function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCamp[]; consent: string[]; selected: string; whatsapp: string; onReset: () => void }) {
+function Inner({ camps, consent, selected, whatsapp, prefill, onReset }: { camps: OpenCamp[]; consent: string[]; selected: string; whatsapp: string; prefill?: Record<string, string>; onReset: () => void }) {
+  const d = prefill ?? {};
   const [state, action, , formRef] = useActionStateKeep(submitCampApplication, initial);
   const [eventId, setEventId] = useState(selected);
   const doneRef = useRef<HTMLHeadingElement>(null);
@@ -33,9 +34,14 @@ function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCam
         <h2 ref={doneRef} tabIndex={-1} className="t-h2 mt-4 outline-none">Thank you. {state.name}&apos;s application has been received.</h2>
         <p className="reading mt-4 text-muted">The camp office will review it and contact you. If anything needs correcting we will tell you. Nothing is charged on this site, and your payment is confirmed by the office.</p>
         <div className="mt-8 flex flex-wrap gap-3">
-          <button type="button" onClick={onReset} className="inline-flex min-h-12 items-center rounded-sm border border-ink/35 px-6 font-semibold hover:bg-ink hover:text-paper">Apply for another child</button>
+          {state.type === "family" ? (
+            <Link href="/family" className="inline-flex min-h-12 items-center rounded-sm bg-gold px-6 font-semibold text-ink hover:bg-gold-hover">Go to my family page</Link>
+          ) : (
+            <button type="button" onClick={onReset} className="inline-flex min-h-12 items-center rounded-sm border border-ink/35 px-6 font-semibold hover:bg-ink hover:text-paper">Apply for another child</button>
+          )}
           <Link href="/events" className="inline-flex min-h-12 items-center px-2 font-semibold text-purple underline underline-offset-[6px]">Back to events</Link>
         </div>
+        {state.type !== "family" && <p className="mt-6 max-w-xl text-muted">Next year, skip the typing: <Link href="/family" className="font-semibold text-purple underline underline-offset-4">make a family page</Link> and your child&apos;s details are kept for you.</p>}
         <p className="mt-6 text-muted">Questions? WhatsApp <a className="font-semibold text-purple underline underline-offset-4" href={`https://wa.me/${whatsapp}`}>0{whatsapp.replace(/^254/, "")}</a>.</p>
       </div>
     );
@@ -44,6 +50,7 @@ function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCam
   return (
     <form ref={formRef} action={action} noValidate className="relative grid gap-14">
       <BotTraps />
+      <input type="hidden" name="childId" value={d.childId ?? ""} readOnly />
       {state.message && !state.ok && <p role="alert" className="border border-danger bg-danger-tint px-4 py-3 font-semibold text-danger">{state.message}</p>}
 
       <fieldset className={area}>
@@ -53,30 +60,30 @@ function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCam
 
       <fieldset className={area}>
         <legend className={heading}><span className="mr-3 text-purple">2</span>The child</legend>
-        <Field label="Child's full name" error={err.name}>{(p) => <input {...p} name="name" className="f-input" autoComplete="off" maxLength={120} required />}</Field>
+        <Field label="Child's full name" error={err.name}>{(p) => <input {...p} name="name" defaultValue={d.name} className="f-input" autoComplete="off" maxLength={120} required />}</Field>
         <div className="grid gap-6 sm:grid-cols-2">
-          <Field label="Date of birth" error={err.dob}>{(p) => <input {...p} name="dob" type="date" className="f-input" required />}</Field>
-          <Field label="Preferred name or nickname" optional>{(p) => <input {...p} name="nickname" className="f-input" maxLength={60} />}</Field>
+          <Field label="Date of birth" error={err.dob}>{(p) => <input {...p} name="dob" defaultValue={d.dob} type="date" className="f-input" required />}</Field>
+          <Field label="Preferred name or nickname" optional>{(p) => <input {...p} name="nickname" defaultValue={d.nickname} className="f-input" maxLength={60} />}</Field>
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
-          <Field label="Gender" optional>{(p) => <select {...p} name="gender" className="f-input" defaultValue=""><option value="">Choose…</option><option>Female</option><option>Male</option></select>}</Field>
-          <Field label="School" optional>{(p) => <input {...p} name="school" className="f-input" maxLength={120} />}</Field>
-          <Field label="Class or grade" optional>{(p) => <input {...p} name="grade" className="f-input" maxLength={40} />}</Field>
+          <Field label="Gender" optional>{(p) => <select {...p} name="gender" className="f-input" defaultValue={d.gender ?? ""}><option value="">Choose…</option><option>Female</option><option>Male</option></select>}</Field>
+          <Field label="School" optional>{(p) => <input {...p} name="school" defaultValue={d.school} className="f-input" maxLength={120} />}</Field>
+          <Field label="Class or grade" optional>{(p) => <input {...p} name="grade" defaultValue={d.grade} className="f-input" maxLength={40} />}</Field>
         </div>
         {camp && <p className="text-muted">Ages are checked against the camp&apos;s age range. If your child is outside it, the office will look at the application and talk to you. It is not refused automatically.</p>}
       </fieldset>
 
       <fieldset className={area}>
         <legend className={heading}><span className="mr-3 text-purple">3</span>Parent or guardian</legend>
-        <Field label="Parent or guardian's full name" error={err.guardian}>{(p) => <input {...p} name="guardian" className="f-input" autoComplete="name" maxLength={120} required />}</Field>
+        <Field label="Parent or guardian's full name" error={err.guardian}>{(p) => <input {...p} name="guardian" defaultValue={d.guardian} className="f-input" autoComplete="name" maxLength={120} required />}</Field>
         <div className="grid gap-6 sm:grid-cols-2">
-          <Field label="Mobile phone" error={err.phone}>{(p) => <input {...p} name="phone" type="tel" inputMode="tel" autoComplete="tel" className="f-input" placeholder="07XX XXX XXX" maxLength={20} required />}</Field>
-          <Field label="Email" optional error={err.email}>{(p) => <input {...p} name="email" type="email" autoComplete="email" className="f-input" maxLength={120} />}</Field>
+          <Field label="Mobile phone" error={err.phone}>{(p) => <input {...p} name="phone" defaultValue={d.phone} type="tel" inputMode="tel" autoComplete="tel" className="f-input" placeholder="07XX XXX XXX" maxLength={20} required />}</Field>
+          <Field label="Email" optional error={err.email}>{(p) => <input {...p} name="email" defaultValue={d.email} type="email" autoComplete="email" className="f-input" maxLength={120} />}</Field>
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
-          <Field label="Guardian ID number" optional>{(p) => <input {...p} name="guardianId" className="f-input" maxLength={30} />}</Field>
-          <Field label="Residence" optional>{(p) => <input {...p} name="residence" className="f-input" autoComplete="address-level2" maxLength={120} />}</Field>
-          <Field label="House number" optional>{(p) => <input {...p} name="house" className="f-input" maxLength={60} />}</Field>
+          <Field label="Guardian ID number" optional>{(p) => <input {...p} name="guardianId" defaultValue={d.guardianId} className="f-input" maxLength={30} />}</Field>
+          <Field label="Residence" optional>{(p) => <input {...p} name="residence" defaultValue={d.residence} className="f-input" autoComplete="address-level2" maxLength={120} />}</Field>
+          <Field label="House number" optional>{(p) => <input {...p} name="house" defaultValue={d.house} className="f-input" maxLength={60} />}</Field>
         </div>
       </fieldset>
 
@@ -86,10 +93,10 @@ function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCam
         {err.em1Name && <p id="em-err" role="alert" className="f-error">{err.em1Name}</p>}
         {[1, 2, 3].map((n) => (
           <div key={n} className="grid gap-4 border-t border-rule pt-5 sm:grid-cols-2">
-            <Field label={`Contact ${n}: name`} optional={n > 1}>{(p) => <input {...p} name={`em${n}Name`} className="f-input" maxLength={120} />}</Field>
-            <Field label="Relationship" optional>{(p) => <input {...p} name={`em${n}Rel`} className="f-input" maxLength={60} />}</Field>
-            <Field label="Phone" optional={n > 1}>{(p) => <input {...p} name={`em${n}Phone`} type="tel" inputMode="tel" className="f-input" maxLength={20} />}</Field>
-            <Field label="Email" optional>{(p) => <input {...p} name={`em${n}Email`} type="email" className="f-input" maxLength={120} />}</Field>
+            <Field label={`Contact ${n}: name`} optional={n > 1}>{(p) => <input {...p} name={`em${n}Name`} defaultValue={d[`em${n}Name`]} className="f-input" maxLength={120} />}</Field>
+            <Field label="Relationship" optional>{(p) => <input {...p} name={`em${n}Rel`} defaultValue={d[`em${n}Rel`]} className="f-input" maxLength={60} />}</Field>
+            <Field label="Phone" optional={n > 1}>{(p) => <input {...p} name={`em${n}Phone`} defaultValue={d[`em${n}Phone`]} type="tel" inputMode="tel" className="f-input" maxLength={20} />}</Field>
+            <Field label="Email" optional>{(p) => <input {...p} name={`em${n}Email`} defaultValue={d[`em${n}Email`]} type="email" className="f-input" maxLength={120} />}</Field>
           </div>
         ))}
       </fieldset>
@@ -98,20 +105,20 @@ function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCam
         <legend className={heading}><span className="mr-3 text-purple">5</span>Health and care</legend>
         <p className="flex items-start gap-2 text-muted"><Lock className="mt-1 size-4 shrink-0 text-purple" aria-hidden /> Health details are encrypted when saved and are seen only by the programme&apos;s leaders and the camp office.</p>
         <div className="grid gap-6 sm:grid-cols-2">
-          <Field label="Preferred doctor" optional>{(p) => <input {...p} name="doctor" className="f-input" maxLength={120} />}</Field>
-          <Field label="Doctor's phone" optional>{(p) => <input {...p} name="doctorPhone" type="tel" className="f-input" maxLength={20} />}</Field>
-          <Field label="Preferred hospital" optional>{(p) => <input {...p} name="hospital" className="f-input" maxLength={120} />}</Field>
-          <Field label="Blood group, if known" optional>{(p) => <input {...p} name="blood" className="f-input" maxLength={10} />}</Field>
-          <Field label="Insurance provider" optional>{(p) => <input {...p} name="insurer" className="f-input" maxLength={120} />}</Field>
-          <Field label="Policy number" optional>{(p) => <input {...p} name="policy" className="f-input" maxLength={60} />}</Field>
+          <Field label="Preferred doctor" optional>{(p) => <input {...p} name="doctor" defaultValue={d.doctor} className="f-input" maxLength={120} />}</Field>
+          <Field label="Doctor's phone" optional>{(p) => <input {...p} name="doctorPhone" defaultValue={d.doctorPhone} type="tel" className="f-input" maxLength={20} />}</Field>
+          <Field label="Preferred hospital" optional>{(p) => <input {...p} name="hospital" defaultValue={d.hospital} className="f-input" maxLength={120} />}</Field>
+          <Field label="Blood group, if known" optional>{(p) => <input {...p} name="blood" defaultValue={d.blood} className="f-input" maxLength={10} />}</Field>
+          <Field label="Insurance provider" optional>{(p) => <input {...p} name="insurer" defaultValue={d.insurer} className="f-input" maxLength={120} />}</Field>
+          <Field label="Policy number" optional>{(p) => <input {...p} name="policy" defaultValue={d.policy} className="f-input" maxLength={60} />}</Field>
         </div>
-        <Field label="Existing conditions" optional hint="For example asthma, migraines, travel sickness, anaemia, blackouts, heart condition, sleepwalking.">{(p) => <textarea {...p} name="conditions" className="f-input" rows={3} maxLength={1000} />}</Field>
-        <Field label="Allergies" optional hint="For example penicillin, bee stings, lactose, pollen, peanuts, gluten.">{(p) => <textarea {...p} name="allergies" className="f-input" rows={3} maxLength={1000} />}</Field>
-        <Field label="Physical disabilities or support needs" optional>{(p) => <textarea {...p} name="disabilities" className="f-input" rows={2} maxLength={1000} />}</Field>
-        <Field label="Other pre-existing conditions" optional>{(p) => <textarea {...p} name="otherConditions" className="f-input" rows={2} maxLength={1000} />}</Field>
-        <Field label="Prescribed medication and dosage" optional>{(p) => <textarea {...p} name="medication" className="f-input" rows={2} maxLength={1000} />}</Field>
-        <Field label="Dietary and other special needs" optional>{(p) => <textarea {...p} name="specialNeeds" className="f-input" rows={2} maxLength={1000} />}</Field>
-        <Field label="Swimming ability" optional>{(p) => <select {...p} name="swimming" className="f-input" defaultValue=""><option value="">Choose…</option><option>None</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>}</Field>
+        <Field label="Existing conditions" optional hint="For example asthma, migraines, travel sickness, anaemia, blackouts, heart condition, sleepwalking.">{(p) => <textarea {...p} name="conditions" defaultValue={d.conditions} className="f-input" rows={3} maxLength={1000} />}</Field>
+        <Field label="Allergies" optional hint="For example penicillin, bee stings, lactose, pollen, peanuts, gluten.">{(p) => <textarea {...p} name="allergies" defaultValue={d.allergies} className="f-input" rows={3} maxLength={1000} />}</Field>
+        <Field label="Physical disabilities or support needs" optional>{(p) => <textarea {...p} name="disabilities" defaultValue={d.disabilities} className="f-input" rows={2} maxLength={1000} />}</Field>
+        <Field label="Other pre-existing conditions" optional>{(p) => <textarea {...p} name="otherConditions" defaultValue={d.otherConditions} className="f-input" rows={2} maxLength={1000} />}</Field>
+        <Field label="Prescribed medication and dosage" optional>{(p) => <textarea {...p} name="medication" defaultValue={d.medication} className="f-input" rows={2} maxLength={1000} />}</Field>
+        <Field label="Dietary and other special needs" optional>{(p) => <textarea {...p} name="specialNeeds" defaultValue={d.specialNeeds} className="f-input" rows={2} maxLength={1000} />}</Field>
+        <Field label="Swimming ability" optional>{(p) => <select {...p} name="swimming" className="f-input" defaultValue={d.swimming ?? ""}><option value="">Choose…</option><option>None</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>}</Field>
       </fieldset>
 
       <fieldset className={area}>
@@ -150,7 +157,7 @@ function Inner({ camps, consent, selected, whatsapp, onReset }: { camps: OpenCam
   );
 }
 
-export default function CampApplicationForm(props: { camps: OpenCamp[]; consent: string[]; selected: string; whatsapp: string }) {
+export default function CampApplicationForm(props: { camps: OpenCamp[]; consent: string[]; selected: string; whatsapp: string; prefill?: Record<string, string> }) {
   const [round, setRound] = useState(0);
   return <Inner key={round} {...props} onReset={() => { setRound((r) => r + 1); window.scrollTo({ top: 0 }); }} />;
 }

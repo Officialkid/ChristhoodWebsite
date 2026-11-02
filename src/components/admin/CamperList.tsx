@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { MessageCircle, Phone, Search, Upload } from "lucide-react";
 import { importCampers } from "@/app/123admin/actions-camps";
 import { SaveButton, useSave } from "./forms";
+import { CodeButton } from "./FamilyAdmin";
 import { btnClass, Chip, Empty } from "./ui";
 
-export type CamperView = { id: string; name: string; camp: "jewels" | "teen-life"; year: number; age?: number; guardian?: string; location?: string; contact?: string };
+export type CamperView = { id: string; name: string; camp: "jewels" | "teen-life"; year: number; age?: number; guardian?: string; location?: string; contact?: string; linked?: boolean; hasCode?: boolean };
 
 const label = (c: CamperView["camp"]) => (c === "jewels" ? "Jewels" : "Teen Life");
 
-export function CamperList({ campers }: { campers: CamperView[] }) {
+export function CamperList({ campers, canIssue = false }: { campers: CamperView[]; canIssue?: boolean }) {
   const [q, setQ] = useState("");
   const [camp, setCamp] = useState<"all" | "jewels" | "teen-life">("all");
   const shown = useMemo(
@@ -43,12 +44,14 @@ export function CamperList({ campers }: { campers: CamperView[] }) {
                 <span className="mt-0.5 block text-[0.92rem] text-muted">{[c.guardian && `Guardian: ${c.guardian}`, c.location].filter(Boolean).join(" · ")}</span>
               </span>
               <Chip>{label(c.camp)}</Chip>
+              {c.linked && <Chip tone="ok">On a family page</Chip>}
               {c.contact && (
                 <span className="flex gap-2">
                   <a href={`tel:${c.contact}`} className={btnClass.secondary}><Phone className="size-4" aria-hidden /> Call</a>
                   <a href={`https://wa.me/${c.contact.replace(/\D/g, "").replace(/^0/, "254")}`} target="_blank" rel="noopener noreferrer" className={btnClass.secondary}><MessageCircle className="size-4" aria-hidden /> WhatsApp</a>
                 </span>
               )}
+              {canIssue && !c.linked && <CodeButton id={c.id} name={c.name} active={Boolean(c.hasCode)} />}
             </li>
           ))}
         </ul>
