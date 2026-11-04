@@ -130,23 +130,89 @@ export function DirectoryView({ items }: { items: DirItem[] }) {
 
 export type Quote = { name: string; role: string; quote: string; photo?: string };
 
-/** One story at a time, large, with the names to choose from beside it. */
+/** One story at a time, large, with an auto-rotating carousel and a member count badge popup. */
 export function QuoteSwitcher({ stories }: { stories: Quote[] }) {
   const [i, setI] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Auto-rotate every 8 seconds unless hovered/interacted with
+  useEffect(() => {
+    if (stories.length <= 1 || isPaused) return;
+
+    const timer = setInterval(() => {
+      setI((prev) => (prev + 1) % stories.length);
+    }, 8000);
+
+    return () => clearInterval(timer);
+  }, [stories.length, isPaused]);
+
   const s = stories[i];
+
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-20">
+    <div 
+      className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-20"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       <figure id="story-panel" role="tabpanel" aria-live="polite">
-        <blockquote className="font-serif text-[clamp(1.3rem,2.1vw,1.7rem)] leading-[1.5]">“{s.quote}”</blockquote>
-        <figcaption className="mt-6"><span className="font-bold">{s.name}</span><span className="text-muted">, {s.role}</span></figcaption>
+        <blockquote className="font-serif text-[clamp(1.3rem,2.1vw,1.7rem)] leading-[1.5] transition-all duration-300">
+          “{s.quote}”
+        </blockquote>
+        <figcaption className="mt-6 flex items-center justify-between">
+          <div>
+            <span className="font-bold">{s.name}</span>
+            <span className="text-muted">, {s.role}</span>
+          </div>
+          {/* Popup / Badge showing total member stories */}
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-purple/10 px-3 py-1 text-xs font-semibold text-purple">
+            <span className="size-1.5 rounded-full bg-purple animate-pulse" />
+            {stories.length} Member Testimonies
+          </span>
+        </figcaption>
       </figure>
-      <div role="tablist" aria-label="Choose a story" aria-orientation="vertical" className="border-t border-rule">
-        {stories.map((x, n) => (
-          <button key={x.name} type="button" role="tab" aria-selected={n === i} aria-controls="story-panel" onClick={() => setI(n)} className={`flex min-h-14 w-full items-center gap-3 border-b border-rule py-2 text-left transition-colors ${n === i ? "text-purple" : "text-muted hover:text-ink"}`}>
-            {x.photo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={x.photo} alt="" loading="lazy" className="size-10 shrink-0 rounded-sm object-cover" /> : <span className="size-10 shrink-0 bg-paper-2" />}
-            <span><span className="block font-semibold leading-tight">{x.name}</span><span className="block text-[0.85rem] leading-tight">{x.role}</span></span>
-          </button>
-        ))}
+      
+      <div className="flex flex-col">
+        {/* Mobile / general counter badge */}
+        <div className="mb-3 flex items-center justify-between sm:hidden">
+          <span className="text-sm font-semibold text-muted">Testimony List</span>
+          <span className="rounded-full bg-purple/10 px-2.5 py-0.5 text-xs font-semibold text-purple">
+            {stories.length} stories
+          </span>
+        </div>
+
+        <div role="tablist" aria-label="Choose a story" aria-orientation="vertical" className="border-t border-rule">
+          {stories.map((x, n) => (
+            <button
+              key={x.name}
+              type="button"
+              role="tab"
+              aria-selected={n === i}
+              aria-controls="story-panel"
+              onClick={() => {
+                setI(n);
+                setIsPaused(true);
+              }}
+              className={`flex min-h-14 w-full items-center gap-3 border-b border-rule py-2 text-left transition-colors ${
+                n === i ? "text-purple font-medium" : "text-muted hover:text-ink"
+              }`}
+            >
+              {x.photo ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={x.photo} alt="" loading="lazy" className="size-10 shrink-0 rounded-sm object-cover" />
+              ) : (
+                <span className="size-10 shrink-0 bg-paper-2 flex items-center justify-center font-bold text-purple">
+                  {x.name[0]}
+                </span>
+              )}
+              <span className="min-w-0">
+                <span className={`block leading-tight truncate ${n === i ? "font-bold text-purple" : "font-semibold"}`}>
+                  {x.name}
+                </span>
+                <span className="block text-[0.85rem] leading-tight truncate text-muted">{x.role}</span>
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

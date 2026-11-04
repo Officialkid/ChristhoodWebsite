@@ -21,6 +21,7 @@ const opensLeft = (i: number, count: number) => i >= count - 3;
 export default function Header({ menu, portal, banner }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
@@ -32,6 +33,23 @@ export default function Header({ menu, portal, banner }: Props) {
       document.documentElement.style.overflow = "";
     };
   }, [open]);
+
+  // Smart hide/show scroll effect
+  useEffect(() => {
+    let lastScrollTop = 0;
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop && scrollTop > 100) {
+        setIsHeaderHidden(true);
+      } else {
+        setIsHeaderHidden(false);
+      }
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
 
@@ -46,7 +64,7 @@ export default function Header({ menu, portal, banner }: Props) {
           </div>
         </div>
       )}
-      <header className="sticky top-0 z-50 border-b border-rule bg-paper">
+      <header className={`sticky top-0 z-50 border-b border-rule bg-paper transition-transform duration-300 ease-in-out ${isHeaderHidden ? "-translate-y-full" : "translate-y-0"}`}>
         <nav aria-label="Main" className="wrap flex h-[4.5rem] items-stretch justify-between gap-6 xl:gap-10">
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <Image src="/logo-96.png" alt="" width={44} height={44} className="size-10 rounded-full" priority />
@@ -97,14 +115,22 @@ export default function Header({ menu, portal, banner }: Props) {
           <div className="flex shrink-0 items-center gap-5 self-center">
             <a href={portal.href} target="_blank" rel="noopener noreferrer" className="hidden min-h-11 items-center gap-1 whitespace-nowrap text-[0.9rem] font-semibold text-muted underline-offset-4 hover:text-purple hover:underline min-[1536px]:inline-flex">{portal.label} <ArrowUpRight className="size-3.5" aria-hidden /></a>
             <Link href="/give" className="hidden min-h-11 items-center rounded-sm bg-gold px-5 text-[0.95rem] font-semibold text-ink transition-colors hover:bg-gold-hover sm:inline-flex">Give</Link>
-            <button type="button" className="inline-flex h-11 items-center gap-2 rounded-sm border border-rule px-3 font-semibold min-[420px]:px-4 xl:hidden" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((v) => !v)}>
-              {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
-              <span className="max-[419px]:sr-only">{open ? "Close" : "Menu"}</span>
+            
+            {/* Upgraded Mobile Menu Toggle Button */}
+            <button 
+              type="button" 
+              className="inline-flex h-11 items-center gap-2 rounded-full border border-purple/20 bg-purple/5 px-4 font-semibold text-purple transition-colors hover:bg-purple/10 xl:hidden" 
+              aria-expanded={open} 
+              aria-controls="mobile-menu" 
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <X className="size-5 transition-transform duration-200 rotate-90" aria-hidden /> : <Menu className="size-5 transition-transform duration-200" aria-hidden />}
+              <span className="text-sm tracking-wide">{open ? "Close" : "Menu"}</span>
             </button>
           </div>
         </nav>
 
-        <div id="mobile-menu" hidden={!open} className="absolute inset-x-0 top-full max-h-[calc(100svh-4.5rem)] overflow-y-auto overscroll-contain border-b border-rule bg-paper px-5 pb-28 pt-2 xl:hidden">
+        <div id="mobile-menu" hidden={!open} className="absolute inset-x-0 top-full max-h-[calc(100svh-4.5rem)] overflow-y-auto overscroll-contain border-b border-rule bg-paper px-5 pb-28 pt-2 xl:hidden shadow-xl">
           <ul className="mx-auto max-w-lg">
             {menu.map((item) => (
               <li key={item.href} className="border-b border-rule">
@@ -131,9 +157,15 @@ export default function Header({ menu, portal, banner }: Props) {
                 )}
               </li>
             ))}
-            <li className="grid gap-5 py-6">
-              <Link href="/give" className="inline-flex min-h-12 items-center justify-center rounded-sm bg-gold px-6 font-semibold text-ink hover:bg-gold-hover">Give</Link>
-              <a href={portal.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 font-semibold text-purple">{portal.label} <ArrowUpRight className="size-4" aria-hidden /></a>
+            
+            {/* Upgraded Mobile Drawer Action Buttons */}
+            <li className="grid gap-3 py-8">
+              <Link href="/give" className="inline-flex min-h-13 items-center justify-center rounded-md bg-gold px-6 text-base font-bold text-ink shadow-sm transition-transform active:scale-[0.98] hover:bg-gold-hover">
+                Give Online / Tithes &amp; Offerings
+              </Link>
+              <a href={portal.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-between rounded-md border border-purple/20 bg-purple/5 px-6 font-semibold text-purple transition-colors hover:bg-purple/10">
+                <span>{portal.label}</span> <ArrowUpRight className="size-4" aria-hidden />
+              </a>
             </li>
           </ul>
         </div>

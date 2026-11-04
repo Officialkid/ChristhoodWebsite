@@ -163,18 +163,21 @@ export default async function Home() {
         <QuoteSwitcher stories={stories.map((s) => ({ name: s.name, role: s.role, quote: s.quote, photo: s.photo ? resolvePhoto(s.photo).small : undefined }))} />
       </Section>
 
-      {/* Watch */}
+     {/* Watch */}
       <Section id="watch" tone="alt">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-24">
           <div>
             <h2 className="t-h2">Watch online</h2>
-            <p className="t-lead mt-4 text-muted">{latest?.summary ?? "Can't be with us on Saturday? Messages, worship and moments from our gatherings are shared on our channels."}</p>
-            <div className="mt-8 flex flex-wrap gap-3"><Button href={site.socials[2].href} external variant="purple">Watch on YouTube</Button><Button href={site.socials[0].href} external variant="outline">Instagram</Button></div>
+            <p className="t-lead mt-4 text-muted">Catch our live broadcasts and weekly fellowship moments directly on Instagram, or catch up on past messages on YouTube.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button href={site.socials[0].href} external variant="purple">Watch live on Instagram</Button>
+              <Button href={site.socials[2].href} external variant="outline">YouTube archive</Button>
+            </div>
           </div>
           {latest?.youtubeId ? (
             <div><VideoCard id={latest.youtubeId} title={latest.title} /><p className="mt-3 font-semibold">{latest.title}{latest.speaker ? `, ${latest.speaker}` : ""}</p></div>
           ) : (
-            <a href={site.socials[2].href} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-purple-deep"><SlotImg cover slot="home.watch" fallback="worship" alt="A worship leader at Saturday fellowship. Open our YouTube channel." sizes="(min-width:1024px) 50vw, 100vw" /><span className="absolute bottom-0 left-0 bg-gold px-5 py-3 font-bold text-ink">Our YouTube channel</span></a>
+            <a href={site.socials[0].href} target="_blank" rel="noopener noreferrer" className="relative block aspect-video overflow-hidden bg-purple-deep"><SlotImg cover slot="home.watch" fallback="worship" alt="Worship at Saturday fellowship. Join our live broadcast on Instagram." sizes="(min-width:1024px) 50vw, 100vw" /><span className="absolute bottom-0 left-0 bg-gold px-5 py-3 font-bold text-ink">Join us live on Instagram</span></a>
           )}
         </div>
       </Section>
