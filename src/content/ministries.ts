@@ -29,9 +29,9 @@ export const ministries: PageDoc[] = [
         ],
       },
       {
-        type: "cards", title: "Confidential prayer & pastoral care", intro: "Connect directly with Sir Gee and our dedicated intercessory and pastoral counselling teams for confidential prayer, deliverance, and biblical direction.", items: [
-          c("Confidential prayer request", "Submit personal burdens, family needs, or thanksgiving. You have the option to keep your submission 100% anonymous.", ["Fervent intercessory coverage", "100% anonymous option available", "Direct pastoral WhatsApp & email routing"]),
-          c("Pastoral counselling intake", "Book a private biblical session for grief, emotional restoration, faith doubts, marriage and premarital advice, or life guidance. 100% free and confidential.", ["Strict biblical confidentiality", "In person (Nairobi CBD) or virtual call", "Christ-centered discipleship framework"]),
+        type: "cards", title: "Confidential prayer and support", intro: "Connect with Sir Gee and our dedicated prayer and counselling teams for confidential prayer, deliverance, and biblical guidance.", items: [
+          c("Confidential prayer request", "Submit personal burdens, family needs, or thanksgiving. You have the option to keep your submission 100% anonymous.", ["Fervent intercessory coverage", "100% anonymous option available", "Direct WhatsApp & email follow-up"]),
+          c("Private counselling", "Book a private biblical session for grief, emotional restoration, faith doubts, marriage and premarital advice, or life guidance. 100% free and confidential.", ["Strict biblical confidentiality", "In person (Nairobi CBD) or virtual call", "Christ-centered discipleship framework"]),
         ],
       },
     ],
@@ -132,7 +132,7 @@ export const ministries: PageDoc[] = [
       {
         type: "cards", title: "What we aim to do", numbered: true, items: [
           c("Provide biblical guidance", "Equip individuals with Scripture-based tools to address life's challenges and foster an authentic relationship with God."),
-          c("Encourage emotional healing", "Offer a safe, confidential space to address trauma, anxiety, and grief through prayer and pastoral counselling."),
+          c("Encourage emotional healing", "Offer a safe, confidential space to address trauma, anxiety, and grief through prayer and Christian counselling."),
           c("Foster relational restoration", "Address marital, familial, and interpersonal conflicts through Christ-centered mediation and reconciliation."),
           c("Promote discipleship growth", "Help believers establish spiritual disciplines, mind renewal (Romans 12:2), and biblical life habits."),
           c("Empower for Kingdom impact", "Equip individuals to minister comfort to others with the same comfort they received from God (2 Cor 1:3-4)."),
@@ -148,9 +148,9 @@ export const ministries: PageDoc[] = [
         ],
       },
       {
-        type: "cards", title: "Confidential pastoral care & prayer", intro: "You don't have to walk through life's storms alone. Whether you need confidential one-on-one pastoral counselling or fervent intercessory prayer, our consecrated team is here for you.", items: [
-          c("Book pastoral counselling", "100% free and confidential. Schedule a private biblical counselling session for grief, emotional healing, premarital or marriage guidance, or mentorship.", ["Strict biblical confidentiality", "Virtual, WhatsApp call, or in person (Nairobi CBD)", "Mind renewal & discipleship focus"]),
-          c("Submit a prayer request", "Send your prayer burdens or praise reports directly to Sir Gee and the consecrated Christhood intercessory team.", ["Option to submit 100% anonymously", "Dedicated weekly prayer vigils", "Direct WhatsApp & email pastoral routing"]),
+        type: "cards", title: "Confidential prayer and support", intro: "You don't have to walk through life's storms alone. Whether you need confidential one-on-one counselling or intercessory prayer, our team is here for you.", items: [
+          c("Book a counselling session", "100% free and confidential. Schedule a private biblical counselling session for grief, emotional healing, premarital or marriage guidance, or mentorship.", ["Strict biblical confidentiality", "Virtual, WhatsApp call, or in person (Nairobi CBD)", "Mind renewal & discipleship focus"]),
+          c("Submit a prayer request", "Send your prayer burdens or praise reports directly to Sir Gee and the Christhood prayer team.", ["Option to submit 100% anonymously", "Dedicated weekly prayer vigils", "Direct WhatsApp & email follow-up"]),
         ],
       },
     ],
@@ -290,7 +290,7 @@ export const ministries: PageDoc[] = [
           c("Ensure operational efficiency", "Provide structured systems that enhance workflow and ministry effectiveness."),
           c("Steward financial resources", "Maintain transparency, accurate reporting, and accountability in budgeting and stewardship."),
           c("Manage church properties & facilities", "Ensure the ministry's physical, operational, and digital assets are well maintained."),
-          c("Support church leadership & ministries", "Provide administrative assistance that allows pastoral and ministry leaders to focus on spiritual care."),
+          c("Support church leadership & ministries", "Provide administrative assistance that allows church leaders and ministry teams to focus on spiritual care."),
           c("Implement policies & governance compliance", "Ensure the ministry follows biblical and statutory best practices in governance and operational accountability."),
         ],
       },
@@ -320,7 +320,7 @@ export const ministries: PageDoc[] = [
       { type: "statement", label: "Our calling", text: "Rooted in 1 Corinthians 14:40, we serve with vigilance, warmth, and excellence so that every soul visiting Christhood feels welcomed, secure, and honored." },
       {
         type: "cards", title: "Core departments", numbered: true, items: [
-          c("Protocol department", "Coordinates the logistics, movement, and welfare of pastors, guest ministers, and special guests to ensure smooth service operations."),
+          c("Protocol department", "Coordinates the logistics, movement, and welfare of church leaders, guest ministers, and special guests to ensure smooth service operations."),
           c("Security department", "Maintains a secure, vigilant, and safe environment for the church, its leaders, and congregation through professional security measures."),
           c("Hospitality department", "Creates a welcoming and comfortable atmosphere for guests, ensuring they feel valued and cared for throughout their visit."),
         ],
@@ -329,7 +329,7 @@ export const ministries: PageDoc[] = [
         type: "cards", title: "Roles & guidelines", items: [
           c("Protocol team", "Ensure seamless movement and reception for ministers and special visitors.", ["Plan and coordinate the arrival, VIP seating, and departure of ministers and dignitaries.", "Ensure clear communication between leadership and operational departments.", "Manage guest transport, accommodations, and service itinerary logistics."]),
           c("Security team", "Maintain peace of mind and protection for all congregants.", ["Conduct pre-service safety checks of the venue and parking premises.", "Monitor entry and access points for crowd control and restricted zones.", "Handle emergency protocols and coordinate orderly movement."]),
-          c("Hospitality team", "Extend the warmth, joy, and love of Christ to every attendee.", ["Welcome first-time visitors with information packets and guidance.", "Coordinate refreshments and pastoral reception care.", "Provide ushering assistance that facilitates an uninterrupted worship atmosphere."]),
+          c("Hospitality team", "Extend the warmth, joy, and love of Christ to every attendee.", ["Welcome first-time visitors with information packets and guidance.", "Coordinate refreshments and care for ministers and guests.", "Provide ushering assistance that facilitates an uninterrupted worship atmosphere."]),
         ],
       },
     ],

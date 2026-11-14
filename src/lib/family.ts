@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import { createHash, randomBytes } from "node:crypto";
 import { clientKey, newId, secretKey } from "./auth";
-import { seal } from "./crypto";
+import { seal, unseal } from "./crypto";
 import { collection, store } from "./store";
 import type { CampSealed, Camper, CampUpdate, ChildProfile, Family, FamilyChild } from "./types";
 
@@ -26,9 +26,11 @@ const phoneKey = (phone: string) => `family-phone:${phone}`;
 
 export async function familyByPhone(phone: string): Promise<Family | null> {
   const id = await store.getDoc<string>(phoneKey(phone));
-  return id ? families.get(id) : null;
+  const family = id ? await families.get(id) : null;
+  return family?.phone === phone ? family : null;
 }
 export const claimPhone = (phone: string, id: string) => store.setDoc(phoneKey(phone), id);
+export const claimPhoneIfFree = (phone: string, id: string) => store.setDocIfAbsent(phoneKey(phone), id);
 
 /* ---------- the session ---------- */
 export async function startFamilySession(family: Family) {
@@ -98,7 +100,7 @@ export function profileOf(d: CampSealed): ChildProfile {
 
 /** A child's saved details as plain text answers, ready to fill the application form. */
 export function prefillOf(family: Family, child: FamilyChild | null, profile: ChildProfile | null): Record<string, string> {
-  const out: Record<string, string> = { guardian: family.name, phone: family.phone, ...(family.email ? { email: family.email } : {}) };
+  const out: Record<string, string> = { guardian: family.name, phone: family.phone, ...(family.email ? { email: family.email } : {}), ...(family.smsUpdates ? { smsUpdates: "yes" } : {}) };
   if (!child) return out;
   out.childId = child.id;
   out.name = child.name;
@@ -117,7 +119,21 @@ export function prefillOf(family: Family, child: FamilyChild | null, profile: Ch
 /** Remembers the child under the signed-in family (found by id, then by name) so next year's application starts filled in. Returns the child's id. */
 export async function saveChild(family: Family, wantedId: string, name: string, camp: FamilyChild["camp"], profile: ChildProfile): Promise<string> {
   const mine = (await familyChildren.list()).filter((c) => c.familyId === family.id);
-  const found = mine.find((c) => c.id === wantedId) ?? mine.find((c) => c.name.trim().toLowerCase() === name.trim().toLowerCase());
+  let found = mine.find((c) => c.id === wantedId);
+  if (!found) {
+    const sameName = mine.filter((c) => c.name.trim().toLowerCase().replace(/\s+/g, " ") === name.trim().toLowerCase().replace(/\s+/g, " "));
+    for (const candidate of sameName) {
+      if (!candidate.sealed) continue;
+      try {
+        if ((await unseal<ChildProfile>(candidate.sealed)).dob === profile.dob) {
+          found = candidate;
+          break;
+        }
+      } catch {
+        // If a saved profile cannot be opened, keep this child separate instead of guessing by name.
+      }
+    }
+  }
   const now = new Date().toISOString();
   const sealed = await seal(profile);
   const next: FamilyChild = found

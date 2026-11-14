@@ -50,7 +50,7 @@ export default async function CampApplyPage({ searchParams }: { searchParams: Pr
       <PageHero
         title="Camp application"
         compact
-        tagline="Apply for a place for your child. Six short steps, about ten minutes, and you can go back at any time."
+        tagline="Register one child or several siblings for the same camp in one form. Parent and emergency details are shared; care and consent are recorded separately for each child."
         crumbs={[{ label: "Camps", href: "/camps" }, { label: "Camp application" }]}
       />
       <Section>
@@ -58,7 +58,7 @@ export default async function CampApplyPage({ searchParams }: { searchParams: Pr
           <aside className="order-2 grid gap-8 lg:sticky lg:top-28 lg:order-1">
             <p className="flex gap-3"><ShieldCheck className="mt-1 size-5 shrink-0 text-purple" aria-hidden /><span><span className="block font-bold">Kept private</span><span className="text-muted">Health and family details are encrypted when saved and are seen only by the programme&apos;s leaders and the camp office.</span></span></p>
             <p className="flex gap-3"><MessageCircle className="mt-1 size-5 shrink-0 text-purple" aria-hidden /><span><span className="block font-bold">Prefer to talk?</span><span className="text-muted">WhatsApp the camp office on <a className="font-semibold text-purple underline underline-offset-4" href={`https://wa.me/${site.whatsapp.camps}`}>{call}</a>.</span></span></p>
-            <p className="border-t border-rule pt-6 text-muted">{family ? <>Signed in as {family.name}. Your details are filled in from your <Link href="/family" className="font-semibold text-purple underline underline-offset-4">family page</Link>.</> : <>Applied before? <Link href="/family" className="font-semibold text-purple underline underline-offset-4">Sign in to your family page</Link> and we will fill it in for you.</>}</p>
+            <p className="border-t border-rule pt-6 text-muted">{family ? <>Signed in as {family.name}. Your details are filled in from your <Link href="/family" className="font-semibold text-purple underline underline-offset-4">family page</Link>.</> : <>Your family page is set up when you submit. <Link href="/family" className="font-semibold text-purple underline underline-offset-4">Already have one? Sign in first</Link> so this application joins it.</>}</p>
             <p className="border-t border-rule pt-6 text-muted">Want to serve as a facilitator, or sponsor a child? <Link href="/events/register" className="font-semibold text-purple underline underline-offset-4">Use the volunteer and sponsor form</Link>.</p>
           </aside>
           <div className="order-1 min-w-0 lg:order-2">
@@ -67,7 +67,7 @@ export default async function CampApplyPage({ searchParams }: { searchParams: Pr
           ) : !ready ? (
             <div className="border border-rule bg-paper-2 p-8">
               <p className="text-xl font-bold">Online applications are being set up.</p>
-              <p className="reading mt-2 text-muted">Until they are open, please WhatsApp the camp office and we will register your child.</p>
+              <p className="reading mt-2 text-muted">Until they are open, please WhatsApp the camp office and we will register the children.</p>
               <div className="mt-6"><Button href={`https://wa.me/${site.whatsapp.camps}`} external>WhatsApp {call}</Button></div>
             </div>
           ) : (

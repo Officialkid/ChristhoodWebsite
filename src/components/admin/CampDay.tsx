@@ -152,7 +152,7 @@ export function NoteForm({ applicationId, onFamilyPage }: { applicationId: strin
     <form ref={formRef} action={run} className="grid max-w-2xl gap-5" noValidate>
       <input type="hidden" name="id" value={applicationId} />
       <TextArea name="text" label="Your note" rows={4} maxLength={2000} required error={errors.text} hint="What they enjoyed, what they learned, how they are getting on." />
-      <Toggle name="shared" label="Share this note with the family" hint={onFamilyPage ? "The parent reads it on their family page. Keep health details out of it." : "This family has no family page yet, so they cannot read it until the camp office puts the application on one."} />
+      <Toggle name="shared" label="Share this note with the family" hint={onFamilyPage ? "The parent reads it on their family page. If they opted in and text messages are connected, they also receive a brief alert without the note text. Keep health details out of it." : "This family has no family page yet, so they cannot read it until the camp office puts the application on one."} />
       <div><SaveButton>Save the note</SaveButton></div>
     </form>
   );

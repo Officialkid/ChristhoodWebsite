@@ -30,7 +30,7 @@ export default function CareDesk({ whatsapp, email }: Props) {
     <section id="care" className="scroll-mt-24 bg-paper-2 py-20 sm:py-24">
       <div className="wrap grid gap-12 lg:grid-cols-[1fr_1.15fr]">
         <div>
-          <p className="font-semibold text-purple">Pastoral care</p>
+          <p className="font-semibold text-purple">Prayer &amp; care</p>
           <h2 className="mt-4 text-[clamp(2.2rem,4.6vw,3.6rem)] text-ink">
             You don&apos;t have to carry it alone
           </h2>
@@ -45,13 +45,13 @@ export default function CareDesk({ whatsapp, email }: Props) {
           </ul>
         </div>
         <div className="rounded-sm bg-paper p-6  border border-rule sm:p-8">
-          <div role="tablist" aria-label="What do you need?" className="grid grid-cols-2 gap-2 rounded-sm bg-paper-2 p-1.5">
+          <div role="group" aria-label="Choose what you need" className="grid grid-cols-2 gap-2 rounded-sm bg-paper-2 p-1.5">
             {(["prayer", "counselling"] as const).map((m) => (
               <button
                 key={m}
                 type="button"
-                role="tab"
-                aria-selected={mode === m}
+                aria-pressed={mode === m}
+                aria-controls="care-panel"
                 onClick={() => setMode(m)}
                 className={`min-h-11 rounded-sm px-4 text-sm font-semibold transition ${mode === m ? "bg-purple text-on-purple shadow" : "text-purple hover:bg-paper"}`}
               >
@@ -59,6 +59,7 @@ export default function CareDesk({ whatsapp, email }: Props) {
               </button>
             ))}
           </div>
+          <div id="care-panel">
           {isPrayer ? (
             <div className="mt-8 grid gap-5">
               <p className="reading">Send your request through our private form. Only the people you choose will read it, and you can stay anonymous.</p>
@@ -134,6 +135,7 @@ export default function CareDesk({ whatsapp, email }: Props) {
             <p className="text-xs text-muted">Pressing send opens WhatsApp or your email app with your message ready. We do not keep anything you type here.</p>
           </form>
           )}
+          </div>
         </div>
       </div>
     </section>

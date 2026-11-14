@@ -111,9 +111,11 @@ export type SlotValue = { id: string; src: string; focus?: string; updatedAt: st
 
 export type MediaItem = {
   id: string;
-  /** Cloudinary assets imported from the church's Immich photo archive. */
+  /** Images delivered from Cloudinary. */
   storage?: "cloudinary";
   providerId?: string;
+  providerAssetId?: string;
+  assetFolder?: string;
   sourceAssetId?: string;
   /** Address of the full-size picture. */
   url: string;
@@ -126,6 +128,21 @@ export type MediaItem = {
   bytes: number;
   createdAt: string;
   by: string;
+};
+
+export type CloudinaryLibraryAsset = {
+  assetId: string;
+  publicId: string;
+  folder: string;
+  name: string;
+  url: string;
+  small: string;
+  bytes: number;
+  width: number;
+  height: number;
+  format: string;
+  tags: string[];
+  createdAt: string;
 };
 
 export type Visitor = {
@@ -142,6 +159,7 @@ export type Visitor = {
   invitedBy?: string;
   homeChurch?: string;
   interests: string[];
+  /** Kept only for old records; new requests are stored in the prayer inbox. */
   prayerRequest?: string;
   status: "new" | "contacted" | "settled";
   followedUpBy?: string;
@@ -152,6 +170,8 @@ export type Visitor = {
 
 export type Prayer = {
   id: string;
+  /** Set when the request was captured by Protocol during a member registration. */
+  sourceVisitorId?: string;
   createdAt: string;
   type: "prayer" | "thanksgiving";
   anonymous: boolean;
@@ -222,6 +242,7 @@ export type CampApplication = {
   guardian: string;
   phone: string;
   email?: string;
+  smsUpdates?: boolean;
   ageAtCamp: number;
   /** Outside the programme's usual age range: the team looks at it by hand. */
   ageReview: boolean;
@@ -234,6 +255,8 @@ export type CampApplication = {
   /** Set when a signed-in family made the application. */
   familyId?: string;
   childId?: string;
+  /** When a parent last changed this child's details from the family page. */
+  parentUpdatedAt?: string;
 };
 
 /** A child who came to a camp before, kept so the programme can invite the family back. Personal details are sealed. */
@@ -252,7 +275,7 @@ export type CamperSealed = { age?: number; guardian?: string; location?: string;
 /* ---------- families ---------- */
 
 /** A parent's sign-in for the family page. Separate from the team's accounts. */
-export type Family = { id: string; phone: string; name: string; email?: string; hash: string; active: boolean; mustChange?: boolean; createdAt: string };
+export type Family = { id: string; phone: string; name: string; email?: string; smsUpdates?: boolean; hash: string; active: boolean; mustChange?: boolean; createdAt: string };
 
 /** What is kept about a child so the next application starts filled in (sealed, like the application itself). */
 export type ChildProfile = Pick<
@@ -264,6 +287,9 @@ export type FamilyChild = { id: string; familyId: string; name: string; camp?: "
 
 /** A message from the camp team that families can read. */
 export type CampUpdate = { id: string; createdAt: string; by: string; camp: "all" | "jewels" | "teen-life"; title: string; body: string };
+
+/** One private, consented photo kept encrypted and linked to one child's camp application. */
+export type CampPhoto = { id: string; applicationId: string; eventId: string; caption?: string; createdAt: string; by: string; sealed: string };
 
 /* ---------- camp days ---------- */
 

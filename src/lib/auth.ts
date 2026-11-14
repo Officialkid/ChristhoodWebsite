@@ -7,6 +7,7 @@ import { randomBytes, randomUUID, scrypt, timingSafeEqual } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { collection, store } from "./store";
+import { httpSmsReady } from "./httpsms";
 import { can, eventDepartments, type Perm } from "./rbac";
 import type { Activity, StoredUser } from "./types";
 
@@ -36,10 +37,16 @@ export async function checkPassword(password: string, stored?: string): Promise<
   return stored ? want.length === got.length && timingSafeEqual(want, got) : false;
 }
 
-/** At least 10 characters with a letter and a number. */
+/** Team accounts require a letter, a number and a minimum length. */
 export function passwordProblem(password: string): string | null {
   if (password.length < 10) return "Use at least 10 characters.";
   if (!/[a-z]/i.test(password) || !/\d/.test(password)) return "Mix letters and numbers.";
+  return null;
+}
+
+/** Parents can use a memorable phrase without forced character-mix rules. */
+export function familyPasswordProblem(password: string): string | null {
+  if (password.length < 12) return "Use at least 12 characters. A memorable phrase is fine.";
   return null;
 }
 
@@ -76,6 +83,7 @@ export async function systemStatus() {
     photoHost: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
     sealing: Boolean(process.env.REGISTRATION_KEY) || !process.env.VERCEL,
     email: Boolean(process.env.SMTP_HOST && process.env.NOTIFY_EMAILS),
+    sms: httpSmsReady(),
     sheet: Boolean(process.env.GOOGLE_SHEET_WEBHOOK),
   };
 }

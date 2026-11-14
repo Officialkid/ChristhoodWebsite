@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, MessageCircle, Phone, Search } from "lucide-react";
+import { Loader2, Mail, MessageCircle, Phone, Search } from "lucide-react";
 import { toast } from "sonner";
 import { deleteGuest, deletePrayer, updateGuest, updatePrayer } from "@/app/123admin/actions-care";
 import { DeleteButton } from "./forms";
@@ -10,11 +10,11 @@ import { btnClass, Empty, Status } from "./ui";
 import { formatStamp } from "@/lib/time";
 import type { Prayer, Visitor } from "@/lib/types";
 
-type Item = { id: string; createdAt: string; status: string; /** Set when this one has waited too long. */ flag?: string; title: string; summary: string; body: React.ReactNode; notes?: string; handledBy?: string; phone?: string; searchable: string };
+type Item = { id: string; createdAt: string; status: string; /** Set when this one has waited too long. */ flag?: string; title: string; summary: string; body: React.ReactNode; notes?: string; handledBy?: string; phone?: string; email?: string; searchable: string };
 
 const waLink = (phone: string) => `https://wa.me/${phone.replace(/\D/g, "").replace(/^0/, "254")}`;
 
-function Inbox({ items, statuses, update, remove, canDelete, noun, initialOpen }: { initialOpen?: string; items: Item[]; statuses: { value: string; label: string }[]; update: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; remove: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; canDelete: boolean; noun: string }) {
+function Inbox({ items, statuses, update, remove, canDelete, noun, initialOpen, showWhatsApp = false }: { initialOpen?: string; items: Item[]; statuses: { value: string; label: string }[]; update: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; remove: (fd: FormData) => Promise<{ ok: boolean; message?: string }>; canDelete: boolean; noun: string; showWhatsApp?: boolean }) {
   const router = useRouter();
   const [filter, setFilter] = useState("all");
   const [q, setQ] = useState("");
@@ -72,9 +72,10 @@ function Inbox({ items, statuses, update, remove, canDelete, noun, initialOpen }
                       {i.phone && (
                         <div className="flex flex-wrap gap-2">
                           <a href={`tel:${i.phone}`} className={btnClass.secondary}><Phone className="size-4" aria-hidden /> Call</a>
-                          <a href={waLink(i.phone)} target="_blank" rel="noopener noreferrer" className={btnClass.secondary}><MessageCircle className="size-4" aria-hidden /> WhatsApp</a>
+                          {showWhatsApp && <a href={waLink(i.phone)} target="_blank" rel="noopener noreferrer" className={btnClass.secondary}><MessageCircle className="size-4" aria-hidden /> WhatsApp</a>}
                         </div>
                       )}
+                      {i.email && <a href={`mailto:${i.email}`} className={`${btnClass.secondary} w-fit`}><Mail className="size-4" aria-hidden /> Email</a>}
                       <div>
                         <label htmlFor={`st-${i.id}`} className="f-label">Status</label>
                         <select id={`st-${i.id}`} name="status" defaultValue={i.status} className="f-input">{statuses.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}</select>
@@ -113,12 +114,13 @@ export function GuestInbox({ guests, canDelete, initialOpen }: { guests: Visitor
     notes: g.notes,
     handledBy: g.followedUpBy,
     phone: g.phone,
+    email: g.email,
     title: g.fullName,
     summary: [g.firstVisit, g.area, g.interests[0]].filter(Boolean).join(" · "),
     searchable: [g.fullName, g.phone, g.email, g.area].join(" ").toLowerCase(),
     body: (
       <dl className="grid gap-3 sm:grid-cols-2">
-        <Fact label="Phone or WhatsApp" value={g.phone} />
+        <Fact label="Phone" value={g.phone} />
         <Fact label="Email" value={g.email} />
         <Fact label="Lives in" value={g.area} />
         <Fact label="Age group" value={g.ageGroup} />
@@ -128,7 +130,6 @@ export function GuestInbox({ guests, canDelete, initialOpen }: { guests: Visitor
         <Fact label="Invited by" value={g.invitedBy} />
         <Fact label="Home church" value={g.homeChurch} />
         <Fact label="Would like to" value={g.interests.join(", ")} />
-        <div className="sm:col-span-2"><Fact label="Prayer request" value={g.prayerRequest} /></div>
       </dl>
     ),
   }));
@@ -150,12 +151,12 @@ export function PrayerInbox({ prayers }: { prayers: Prayer[] }) {
       <dl className="grid gap-3">
         <Fact label={p.type === "thanksgiving" ? "Thanksgiving" : "Prayer request"} value={p.message} />
         <Fact label="About" value={p.category} />
-        <Fact label="Who may read it" value={p.whoMaySee} />
+        <Fact label="Who may read it" value={p.whoMaySee?.replace(/pastoral team/gi, "Prayer & Care Team")} />
         <Fact label="May we share it?" value={p.mayShare} />
         <Fact label="Asked for a call back" value={p.callBack ? "Yes" : undefined} />
         <Fact label="Phone" value={p.phone} />
       </dl>
     ),
   }));
-  return <Inbox items={items} update={updatePrayer} remove={deletePrayer} canDelete noun="prayer requests" statuses={[{ value: "new", label: "New" }, { value: "praying", label: "Praying" }, { value: "done", label: "Answered or done" }]} />;
+  return <Inbox items={items} update={updatePrayer} remove={deletePrayer} canDelete showWhatsApp noun="prayer requests" statuses={[{ value: "new", label: "New" }, { value: "praying", label: "Praying" }, { value: "done", label: "Answered or done" }]} />;
 }

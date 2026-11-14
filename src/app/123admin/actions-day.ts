@@ -1,10 +1,12 @@
 "use server";
 
+import { after } from "next/server";
 import { log, newId, requireUser, users } from "@/lib/auth";
 import { attendanceId, campApplications, campAssignments, campAttendance, campDays, campNotes, campSessions, dateOk, mayMarkFor, mayOpenCare, timeOk } from "@/lib/camp-day";
 import { getEvents } from "@/lib/content";
 import { seal } from "@/lib/crypto";
 import { mayCareForCampers, mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
+import { sendFamilyCampAlert } from "@/lib/httpsms";
 import { StorageUnavailable } from "@/lib/store";
 import type { Result } from "@/components/admin/forms";
 import type { CampSession } from "@/lib/types";
@@ -51,7 +53,9 @@ export async function markAttendance(fd: FormData): Promise<Result> {
       return ok("Mark removed.");
     }
     if (status !== "present" && status !== "absent") return bad("Choose here or away.");
+    const previous = await campAttendance.get(id);
     await campAttendance.put({ id, applicationId: app.id, eventId: app.eventId, date, status, by: user.name, at: new Date().toISOString() });
+    if (status === "absent" && previous?.status !== "absent" && app.familyId && app.smsUpdates) after(() => sendFamilyCampAlert(app.phone, "away"));
     return ok(status === "present" ? "Here." : "Away.");
   });
 }
@@ -167,8 +171,10 @@ export async function addNote(_prev: Result, fd: FormData): Promise<Result> {
     if (!mayOpenCare(user, app, await campAssignments.get(app.id))) return bad("You can write notes only about the campers you look after.");
     const words = text(fd, "text", 2000);
     if (words.length < 3) return bad("Write the note.", { text: "Write the note." });
-    await campNotes.put({ id: newId(), applicationId: app.id, eventId: app.eventId, byId: user.id, by: user.name, createdAt: new Date().toISOString(), shared: fd.get("shared") === "yes", sealed: await seal({ text: words }) });
-    return ok(fd.get("shared") === "yes" ? "Note saved and shared with the family." : "Note saved for the camp team.");
+    const shared = fd.get("shared") === "yes";
+    await campNotes.put({ id: newId(), applicationId: app.id, eventId: app.eventId, byId: user.id, by: user.name, createdAt: new Date().toISOString(), shared, sealed: await seal({ text: words }) });
+    if (shared && app.familyId && app.smsUpdates) after(() => sendFamilyCampAlert(app.phone, "shared-note"));
+    return ok(shared ? "Note saved and shared with the family." : "Note saved for the camp team.");
   });
 }
 

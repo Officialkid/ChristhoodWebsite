@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CalendarDays, Clock, DoorOpen, HandHeart, MapPin, Phone } from "lucide-react";
+import { CalendarDays, Clock, DoorOpen, HandHeart, Mail, MapPin, Phone } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import { Button, Section } from "@/components/ui";
 import Reveal from "@/components/Reveal";
 import { site } from "@/content/site";
 import { getSettings } from "@/lib/content";
+import { finalGatheringIsUpcoming } from "@/lib/gathering-schedule";
 
 export const metadata: Metadata = {
   title: "New here? Plan your visit",
@@ -16,11 +17,13 @@ export const metadata: Metadata = {
 const steps = [
   ["Meet the protocol team", "Our protocol, security and hospitality team greets everyone at the door and shows you to a seat."],
   ["They register you", "The protocol team sets you up as a new member, with your email and phone if you wish, so no one is missed. Only they can do this, so your details stay with people you can see and trust."],
-  ["We keep in touch", "Someone will call, message or email you to welcome you, answer questions and help you find a ministry."],
+  ["We keep in touch", "The protocol team will call or email to welcome you, answer questions and help you find a ministry."],
 ] as const;
 
 export default async function VisitPage() {
   const { fellowship: f, contact } = await getSettings();
+  const finalGatheringUpcoming = finalGatheringIsUpcoming(f);
+  const protocolEmail = process.env.PROTOCOL_EMAIL?.trim();
   return (
     <>
       <PageHero
@@ -35,10 +38,12 @@ export default async function VisitPage() {
           <Reveal>
             <h2 className="t-h2">When and where</h2>
             <dl className="mt-8 grid gap-6">
-              <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><CalendarDays className="size-5 shrink-0 text-purple" aria-hidden />When</dt><dd className="pl-8 text-xl font-bold">Every {f.day}</dd></div>
-              <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><Clock className="size-5 shrink-0 text-purple" aria-hidden />Time</dt><dd className="pl-8 text-xl font-bold">{f.display}</dd></div>
+              <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><CalendarDays className="size-5 shrink-0 text-purple" aria-hidden />When</dt><dd className="pl-8 text-xl font-bold">{finalGatheringUpcoming ? "This Saturday, 14 November · final gathering of 2026" : "We plan to meet again in January"}</dd></div>
+              {finalGatheringUpcoming && <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><Clock className="size-5 shrink-0 text-purple" aria-hidden />Time</dt><dd className="pl-8 text-xl font-bold">{f.display}</dd></div>}
               <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><MapPin className="size-5 shrink-0 text-purple" aria-hidden />Where</dt><dd className="pl-8 text-xl font-bold">{f.address}</dd></div>
               <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><Phone className="size-5 shrink-0 text-purple" aria-hidden />Questions</dt><dd className="flex flex-wrap gap-x-6 pl-8 text-xl font-bold">{contact.phones.map((p) => <a key={p.tel} href={`tel:${p.tel}`} className="inline-flex min-h-11 items-center text-purple underline underline-offset-4">{p.display}</a>)}</dd></div>
+              {protocolEmail && <div><dt className="flex items-center gap-3 text-[0.9rem] font-semibold text-muted"><Mail className="size-5 shrink-0 text-purple" aria-hidden />Email the Protocol team</dt><dd className="pl-8 text-xl font-bold"><a href={`mailto:${protocolEmail}`} className="inline-flex min-h-11 items-center break-all text-purple underline underline-offset-4">{protocolEmail}</a></dd></div>}
+              {!finalGatheringUpcoming && <p className="pl-8 text-muted">The exact January date will be shared when it is confirmed.</p>}
             </dl>
           </Reveal>
           <Reveal delay={0.08}>

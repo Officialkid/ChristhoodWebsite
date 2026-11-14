@@ -49,6 +49,12 @@ export default async function StatusPage() {
     },
     {
       state: "optional",
+      title: "Text messages for camp families",
+      now: s.sms ? "On. Parents who opt in can receive application receipts, shared camp updates and an alert when a check-in is marked away." : "Off. Camp applications and the family page still work; automatic text messages wait until httpSMS is connected.",
+      how: s.sms ? undefined : "Add HTTPSMS_API_KEY and HTTPSMS_FROM to Production environment variables. HTTPSMS_FROM must be the E.164 number connected to the httpSMS Android app. Add CAMP_SMS_TO as one or more E.164 office numbers, separated by commas, if the camp team should receive application alerts.",
+    },
+    {
+      state: "optional",
       title: "Copy to the church's Google Sheet",
       now: s.sheet ? "On. New guests and prayer requests are also added to the Sheet." : "Off.",
       how: s.sheet ? undefined : "Deploy integrations/google-sheet/Code.gs as a web app from the church's Google account, then add its address as GOOGLE_SHEET_WEBHOOK.",

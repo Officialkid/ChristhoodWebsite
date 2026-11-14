@@ -38,7 +38,7 @@ function Inner({ onReset, initialType }: { onReset: () => void; initialType: "pr
       <div className="border-t-4 border-purple pt-8">
         <CheckCircle2 className="size-10 text-ok" aria-hidden />
         <h2 ref={doneRef} tabIndex={-1} className="t-h2 mt-4 outline-none">{thanks ? "Thank you for sharing what God has done." : "We have received your prayer request."}</h2>
-        <p className="reading mt-4 text-muted">{thanks ? "We rejoice with you. Your thanksgiving has reached the pastoral team." : "Our team is standing with you in prayer. If you asked us to call, we will reach out soon."}</p>
+        <p className="reading mt-4 text-muted">{thanks ? "We rejoice with you. Your thanksgiving has reached the Prayer & Care Team." : "Our team is standing with you in prayer. If you asked us to call, we will reach out soon."}</p>
         <div className="mt-8 flex flex-wrap gap-3">
           <button type="button" onClick={onReset} className="inline-flex min-h-12 items-center rounded-sm border border-ink/35 px-6 font-semibold hover:bg-ink hover:text-paper">Send another</button>
           <Link href="/" className="inline-flex min-h-12 items-center px-2 font-semibold text-purple underline underline-offset-[6px]">Back to the home page</Link>
@@ -90,7 +90,7 @@ function Inner({ onReset, initialType }: { onReset: () => void; initialType: "pr
         )}
         <Field label={prayer ? "What would you like us to pray about?" : "What are you thanking God for?"} error={err.message}>{(p) => <textarea {...p} name="message" className="f-input" maxLength={3000} required />}</Field>
         {prayer ? (
-          <Choices legend="Who may read your request?" type="radio" name="whoMaySee" error={err.whoMaySee} defaultValue="Pastoral team only" options={[{ value: "Pastoral team only", label: <>Pastoral team only <span className="text-muted">(confidential)</span></> }, { value: "Pastoral team and intercessory prayer team", label: "Pastoral team and the intercessory prayer team" }]} />
+          <Choices legend="Who may read your request?" type="radio" name="whoMaySee" error={err.whoMaySee} defaultValue="Prayer & Care Team only" options={[{ value: "Prayer & Care Team only", label: <>Prayer &amp; Care Team only <span className="text-muted">(confidential)</span></> }, { value: "Prayer & Care Team and intercessory prayer team", label: "Prayer & Care Team and the intercessory prayer team" }]} />
         ) : (
           <Choices legend="May we share your thanksgiving in the fellowship?" type="radio" name="mayShare" columns={2} error={err.mayShare} options={[{ value: "Yes, it may be shared", label: "Yes, you may share it" }, { value: "Keep it private", label: "Please keep it private" }]} />
         )}
@@ -105,7 +105,7 @@ function Inner({ onReset, initialType }: { onReset: () => void; initialType: "pr
         <Choices legend="Your permission" type="checkbox" name="consent" error={err.consent} options={[{ value: "Yes", label: "I agree that Christhood Ministries may keep this message securely. Only the people I chose above will read it." }]} />
         <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
           <SubmitButton>{prayer ? "Send my prayer request" : "Send my thanksgiving"}</SubmitButton>
-          <p className="flex items-center gap-2 text-[0.9rem] text-muted"><Lock className="size-4" aria-hidden /> Saved privately for the pastoral team only.</p>
+          <p className="flex items-center gap-2 text-[0.9rem] text-muted"><Lock className="size-4" aria-hidden /> Saved privately for the Prayer &amp; Care Team only.</p>
         </div>
       </div>
     </form>

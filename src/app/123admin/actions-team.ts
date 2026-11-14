@@ -1,8 +1,9 @@
 "use server";
 
 import { randomInt } from "node:crypto";
+import { revalidatePath } from "next/cache";
 import { hashPassword, log, newId, requirePerm, users } from "@/lib/auth";
-import { departments } from "@/lib/rbac";
+import { departments, departmentName } from "@/lib/rbac";
 import { StorageUnavailable } from "@/lib/store";
 import type { Result } from "@/components/admin/forms";
 import type { Role, StoredUser } from "@/lib/types";
@@ -29,6 +30,9 @@ async function guard(fn: () => Promise<Result>): Promise<Result> {
 }
 
 const validDepartments = (fd: FormData) => fd.getAll("departments").map(String).filter((d) => departments.some((x) => x.id === d));
+const campDepartments = ["camps", "jewels", "teen-life"] as const;
+type CampDepartment = (typeof campDepartments)[number];
+const isCampDepartment = (value: string): value is CampDepartment => campDepartments.includes(value as CampDepartment);
 
 export async function saveUser(_p: Result, fd: FormData): Promise<Result> {
   const admin = await requirePerm("users");
@@ -63,6 +67,53 @@ export async function saveUser(_p: Result, fd: FormData): Promise<Result> {
     await users.put(user);
     await log(admin, "Added a team member", name);
     return ok(`${name} can now sign in.`, { id: user.id, secret: password });
+  });
+}
+
+/** Add an existing, active department head to one camp team without changing their other access. */
+export async function addCampDepartment(fd: FormData): Promise<Result> {
+  const admin = await requirePerm("users");
+  return guard(async () => {
+    const user = await users.get(text(fd, "userId", 40));
+    const department = text(fd, "department", 40);
+    if (!isCampDepartment(department)) return bad("Choose Camps Department, Jewels or Teen Life.");
+    if (!user) return bad("That team member could not be found. Refresh the page and try again.");
+    if (user.role !== "head") return bad("Administrators already have access to every camp.");
+    if (!user.active) return bad("Switch this team account on before assigning camp access.");
+    if (fd.get("departmentHeadApproved") !== "yes") return bad("Confirm that the relevant department head approved this access.");
+    if (user.departments.includes(department)) return bad("That person already has this camp access.");
+    if (department !== "camps" && user.departments.includes("camps")) {
+      return bad("This person already has access to every camp through Camps Department.");
+    }
+
+    await users.put({ ...user, departments: [...new Set([...user.departments, department])] });
+    await log(admin, "Granted camp team access", `${user.name} (${departmentName(department)})`);
+    revalidatePath("/123admin/team");
+    revalidatePath("/123admin/team/camps");
+    return ok(`${user.name} can now access ${departmentName(department)}.`);
+  });
+}
+
+/** Remove one camp department while leaving the person's other team access intact. */
+export async function removeCampDepartment(fd: FormData): Promise<Result> {
+  const admin = await requirePerm("users");
+  return guard(async () => {
+    const user = await users.get(text(fd, "userId", 40));
+    const department = text(fd, "department", 40);
+    if (!isCampDepartment(department)) return bad("Choose Camps Department, Jewels or Teen Life.");
+    if (!user) return bad("That team member could not be found. Refresh the page and try again.");
+    if (user.role !== "head") return bad("Administrator access is managed from the team member's account.");
+    if (!user.departments.includes(department)) return bad("That person no longer has this camp access.");
+    const remaining = user.departments.filter((id) => id !== department);
+    if (remaining.length === 0) {
+      return bad("This is their only department. Give them another department before removing it, or switch off their account to stop sign-in.");
+    }
+
+    await users.put({ ...user, departments: remaining });
+    await log(admin, "Removed camp team access", `${user.name} (${departmentName(department)})`);
+    revalidatePath("/123admin/team");
+    revalidatePath("/123admin/team/camps");
+    return ok(`${user.name} no longer has ${departmentName(department)} access.`);
   });
 }
 

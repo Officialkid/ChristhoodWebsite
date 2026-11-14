@@ -1,19 +1,19 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
 import Img from "@/components/Img";
 import SlotImg from "@/components/SlotImg";
 import { Icon } from "@/components/icons";
-import MotesLayer from "@/components/fx/MotesLayer";
 import { Stagger, Wipe } from "@/components/fx/gsap";
-import WordReveal from "@/components/WordReveal";
 import VerseSlot from "@/components/fx/VerseSlot";
 import Reveal from "@/components/Reveal";
 import Directory from "@/components/Directory";
 import { Button, Section, SectionHead } from "@/components/ui";
-import { GatheringStatus } from "@/components/Countdown";
-import { CopyButton, HeroMedia, QuoteSwitcher, VideoCard } from "@/components/Interactive";
+import { Until } from "@/components/Countdown";
+import { CopyButton, QuoteSwitcher, VideoCard } from "@/components/Interactive";
 import { EventRow } from "@/components/Cards";
 import { formatEventDates } from "@/lib/time";
+import { finalGatheringIsUpcoming, finalGatheringStartAt } from "@/lib/gathering-schedule";
+import { sealingReady } from "@/lib/crypto";
+import { store } from "@/lib/store";
 import { humanitarian } from "@/content/about";
 import { site } from "@/content/site";
 import { resolvePhoto } from "@/lib/images";
@@ -31,32 +31,48 @@ export default async function Home() {
   const verseHero = await getSlot("home.verse", "christhood-about-intro");
   const versePhotos = [...new Set([verseHero.src ?? "christhood-about-intro", "prayer", "worship"])].map((n) => resolvePhoto(n).full);
   const latest = messages[0];
+  const now = Date.now();
+  const openCamps = upcoming.filter((e) => e.category === "camp" && e.registrationOpen);
+  const campRegistrationReady = openCamps.length > 0 && store.writable && await sealingReady();
+  const scheduleKicker = finalGatheringIsUpcoming(f, now)
+    ? `Final gathering · Saturday, 14 November · ${f.venue} · ${f.area}`
+    : "Regular gatherings pause until January";
 
   return (
     <>
       {/* Hero: one photograph, the name, one promise, one action */}
-      <section className="relative isolate flex min-h-[calc(100svh-4.5rem)] flex-col justify-end bg-purple-deep text-on-purple">
-        <HeroMedia><SlotImg cover priority slot="home.hero" fallback="fellowship" alt="" sizes="100vw" focus="50% 30%" /></HeroMedia>
-        <div aria-hidden className="absolute inset-0 bg-ink/55" />
-        <MotesLayer />
-        <div className="wrap relative z-[2] pb-24 pt-32 md:pb-16 md:pt-40">
-          <p className="rise text-lg font-semibold">Christhood International Outfield Ministry</p>
-          <WordReveal className="t-hero mt-3 max-w-[9ch]">{hero.headline}</WordReveal>
-          <p className="t-lead rise mt-6 max-w-xl text-on-purple" style={{ "--d": ".18s" } as CSSProperties}>{hero.sub}</p>
-          <div className="rise mt-8 flex flex-wrap gap-3" style={{ "--d": ".28s" } as CSSProperties}>
+      <section className="grid bg-paper lg:min-h-[min(52rem,calc(100svh-4.5rem))] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+        <div className="wrap flex flex-col justify-center py-12 sm:py-16 lg:py-12">
+          <p className="text-lg font-semibold text-purple">Christhood International Outfield Ministry</p>
+          <h1 className="t-hero mt-3 max-w-[10ch] text-ink">{hero.headline}</h1>
+          <p className="t-lead mt-6 max-w-xl text-muted">{hero.sub}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button href="/visit">New here? Plan your visit</Button>
-            <Button href="/ministries" variant="outline-light">Explore ministries</Button>
+            <Button href="/ministries" variant="outline">Explore ministries</Button>
           </div>
-          <p className="rise mt-8 text-[0.98rem] font-semibold" style={{ "--d": ".38s" } as CSSProperties}>{hero.kicker}</p>
+          <p className="mt-7 max-w-[42ch] text-[0.95rem] font-semibold text-purple">{scheduleKicker}</p>
+        </div>
+        <div className="relative min-h-[38svh] bg-paper-2 lg:min-h-full">
+          <SlotImg cover priority slot="home.hero" fallback="fellowship" alt="" sizes="(min-width: 1024px) 54vw, 100vw" focus="50% 30%" />
         </div>
       </section>
 
-      {/* The next Saturday, in plain words */}
+      {/* This Saturday's gathering and the year-end pause */}
       <section className="border-b border-rule bg-paper-2">
         <dl className="wrap grid py-2 md:grid-cols-3 md:divide-x md:divide-rule">
-          <div className="py-5 md:pr-8"><dt className="text-[0.9rem] font-semibold text-muted">Saturday fellowship</dt><dd className="mt-1 text-xl font-bold">Every {f.day}, {f.display}</dd></div>
-          <div className="border-t border-rule py-5 md:border-t-0 md:px-8"><dt className="text-[0.9rem] font-semibold text-muted">Where</dt><dd className="mt-1 text-xl font-bold">{f.venue}, {f.area}</dd></div>
-          <div className="border-t border-rule py-5 md:border-t-0 md:pl-8"><dt className="text-[0.9rem] font-semibold text-muted">Next gathering</dt><dd className="mt-1 text-xl font-bold text-purple"><GatheringStatus day={f.day} start={f.start} end={f.end} /></dd></div>
+          {finalGatheringIsUpcoming(f, now) ? (
+              <>
+                <div className="py-5 md:pr-8"><dt className="text-[0.9rem] font-semibold text-muted">This Saturday · final gathering of 2026</dt><dd className="mt-1 text-xl font-bold">14 November, {f.display}</dd><dd className="mt-1 font-semibold text-purple"><Until to={finalGatheringStartAt(f)} /></dd></div>
+                <div className="border-t border-rule py-5 md:border-t-0 md:px-8"><dt className="text-[0.9rem] font-semibold text-muted">Where</dt><dd className="mt-1 text-xl font-bold">{f.venue}, {f.area}</dd></div>
+                <div className="border-t border-rule py-5 md:border-t-0 md:pl-8"><dt className="text-[0.9rem] font-semibold text-muted">After Saturday</dt><dd className="mt-1 text-xl font-bold text-purple">We plan to meet again in January as we prepare for camps.</dd><dd className="mt-1 text-muted">Further information will be shared when available.</dd></div>
+              </>
+          ) : (
+            <>
+              <div className="py-5 md:pr-8"><dt className="text-[0.9rem] font-semibold text-muted">Gatherings</dt><dd className="mt-1 text-xl font-bold">We are pausing regular gatherings as we prepare for camps.</dd></div>
+              <div className="border-t border-rule py-5 md:border-t-0 md:px-8"><dt className="text-[0.9rem] font-semibold text-muted">Next gathering</dt><dd className="mt-1 text-xl font-bold text-purple">We plan to meet again in January.</dd></div>
+              <div className="border-t border-rule py-5 md:border-t-0 md:pl-8"><dt className="text-[0.9rem] font-semibold text-muted">Updates</dt><dd className="mt-1 text-muted">Further information will be shared when available.</dd></div>
+            </>
+          )}
         </dl>
       </section>
 
@@ -93,19 +109,19 @@ export default async function Home() {
       </Section>
 
       {/* Programmes */}
-      <Section tone="purple">
+      <Section tone="paper">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
           <header className="lg:sticky lg:top-28 lg:self-start">
             <h2 className="t-h2">Programmes</h2>
-            <p className="t-lead mt-4 text-on-purple-muted">Mentorship for every age, from the first years of school to university and beyond.</p>
-            <div className="mt-8"><Button href="/programmes" variant="outline-light">All programmes</Button></div>
+            <p className="t-lead mt-4 text-muted">Mentorship for every age, from the first years of school to university and beyond.</p>
+            <div className="mt-8"><Button href="/programmes" variant="outline">All programmes</Button></div>
           </header>
-          <Stagger selector="li"><ul className="border-t border-on-purple/25">
+          <Stagger selector="li"><ul className="border-t border-rule">
             {programmes.map((p) => (
-              <li key={p.slug} className="border-b border-on-purple/25">
+              <li key={p.slug} className="border-b border-rule">
                 <Link href={`/programmes/${p.slug}`} className="group grid gap-x-8 gap-y-1 py-6 sm:grid-cols-[11rem_1fr]">
-                  <span className="font-semibold text-gold">{p.audience}</span>
-                  <span><span className="block text-2xl font-extrabold leading-tight [font-variation-settings:'wdth'_86] group-hover:underline group-hover:underline-offset-4">{p.title}</span><span className="reading mt-1 block text-on-purple-muted">{p.summary}</span></span>
+                  <span className="font-semibold text-purple">{p.audience}</span>
+                  <span><span className="block text-2xl font-extrabold leading-tight [font-variation-settings:'wdth'_86] group-hover:underline group-hover:underline-offset-4">{p.title}</span><span className="reading mt-1 block text-muted">{p.summary}</span></span>
                 </Link>
               </li>
             ))}
@@ -123,20 +139,20 @@ export default async function Home() {
           {upcoming.length > 0 ? (
             upcoming.slice(0, 3).map((e, i) => <EventRow key={e.id} event={e} showCountdown={i === 0} />)
           ) : (
-            <p className="reading border-b border-rule py-8 text-muted">New dates are announced here as soon as they are set. Until then, join us every {f.day}.</p>
+            <p className="reading border-b border-rule py-8 text-muted">{finalGatheringIsUpcoming(f, now) ? `Our final gathering of 2026 is Saturday, 14 November, ${f.display}. We plan to meet again in January as we prepare for camps.` : "Regular gatherings are paused as we prepare for camps. We plan to meet again in January, and will share the date when it is confirmed."}</p>
           )}
         </div>
       </Section>
 
       {/* Camps: only while at least one camp is taking applications */}
-      {upcoming.some((e) => e.category === "camp" && e.registrationOpen) && (
+      {openCamps.length > 0 && (
         <Section tone="purple" tight>
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div className="max-w-2xl">
-              <h2 className="text-3xl">Camp applications are open</h2>
-              <p className="mt-2 text-on-purple-muted">{upcoming.filter((e) => e.category === "camp" && e.registrationOpen).map((e) => `${e.title}, ${formatEventDates(e.start, e.end)}`).join(". ")}.</p>
+              <h2 className="text-3xl">{campRegistrationReady ? "Camp applications are open" : "Camp applications are being set up"}</h2>
+              <p className="mt-2 text-on-purple-muted">{campRegistrationReady ? openCamps.map((e) => `${e.title}, ${formatEventDates(e.start, e.end)}`).join(". ") + "." : `See the dates and details for ${openCamps.map((e) => e.title).join(" and ")}. Online applications are not ready yet.`}</p>
             </div>
-            <div className="flex flex-wrap gap-4"><Button href="/events/apply">Apply for your child</Button><Button href="/camps" variant="outline-light">About the camps</Button></div>
+            <div className="flex flex-wrap gap-3"><Button href={campRegistrationReady ? "/events/apply" : "/camps"}>{campRegistrationReady ? "Apply for your child" : "See camp details"}</Button>{campRegistrationReady && <Button href="/camps" variant="outline-light">About the camps</Button>}</div>
           </div>
         </Section>
       )}
@@ -232,7 +248,7 @@ export default async function Home() {
             <h2 className="t-h2">Plan your visit</h2>
             <p className="t-lead mt-4 text-muted">Come as you are. We have saved you a seat.</p>
             <dl className="mt-10 grid gap-6">
-              <div><dt className="font-semibold text-muted">When</dt><dd className="mt-1 text-xl font-bold">Every {f.day}, {f.display}</dd></div>
+              <div><dt className="font-semibold text-muted">When</dt><dd className="mt-1 text-xl font-bold">{finalGatheringIsUpcoming(f, now) ? `Saturday, 14 November · final gathering of 2026 · ${f.display}` : "We plan to meet again in January"}</dd></div>
               <div><dt className="font-semibold text-muted">Where</dt><dd className="mt-1 text-xl font-bold">{f.address}</dd></div>
               <div><dt className="font-semibold text-muted">Questions?</dt><dd className="mt-1 flex flex-wrap gap-x-6 text-xl font-bold">{contact.phones.map((p) => <a key={p.tel} href={`tel:${p.tel}`} className="inline-flex min-h-11 items-center text-purple underline underline-offset-4">{p.display}</a>)}</dd><dd className="mt-1 break-all text-muted">{contact.email}</dd></div>
             </dl>

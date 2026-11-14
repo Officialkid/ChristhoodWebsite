@@ -7,6 +7,8 @@ import { Button, Section } from "@/components/ui";
 import { site } from "@/content/site";
 import { getEvents, getSettings } from "@/lib/content";
 import { formatEventDates, formatMoney } from "@/lib/time";
+import { sealingReady } from "@/lib/crypto";
+import { store } from "@/lib/store";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
@@ -53,6 +55,7 @@ export default async function CampsPage() {
   const now = Date.now();
   const [events, { contact }] = await Promise.all([getEvents(), getSettings()]);
   const camps = events.filter((e) => e.category === "camp" && new Date(e.end ?? e.start).getTime() >= now);
+  const applicationReady = camps.some((c) => c.registrationOpen) && store.writable && await sealingReady();
   const call = `0${site.whatsapp.camps.replace(/^254/, "")}`;
   const link = "inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline decoration-purple/40 underline-offset-[6px] hover:decoration-purple";
 
@@ -65,7 +68,7 @@ export default async function CampsPage() {
         title="A place to belong, grow and become"
         tagline="Faith-centred holiday camps and mentorship for children and teenagers: rooted in Scripture, shaped by caring relationships, and full of room to discover what is possible."
         crumbs={[{ label: "Camps" }]}
-        actions={[{ label: "Apply for your child", href: "/events/apply" }]}
+        actions={[{ label: applicationReady ? "Apply for your child" : "Camp application information", href: "/events/apply" }]}
       />
 
       <Section>
@@ -87,7 +90,7 @@ export default async function CampsPage() {
                     {c.details && <p className="reading mt-3 text-muted">{c.details}</p>}
                   </div>
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-3 md:flex-col md:items-end">
-                    {c.registrationOpen ? <Button href={`/events/apply?camp=${encodeURIComponent(c.id)}`}>Apply for your child</Button> : <p className="font-semibold text-muted">Applications closed</p>}
+                    {c.registrationOpen ? applicationReady ? <Button href={`/events/apply?camp=${encodeURIComponent(c.id)}`}>Apply for your child</Button> : <p className="max-w-48 text-right text-sm font-semibold text-muted">Online applications are being set up</p> : <p className="font-semibold text-muted">Applications closed</p>}
                     {about && <Link href={about.href} className={link}>{about.label}<ArrowRight className="size-4" aria-hidden /></Link>}
                   </div>
                 </article>

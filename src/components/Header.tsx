@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowRight, ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { Icon } from "./icons";
 
 export type MenuLink = { label: string; href: string; blurb?: string; icon?: string };
 export type MenuItem = { label: string; href: string; icon?: string; children?: MenuLink[] };
@@ -33,7 +34,8 @@ export default function Header({ menu, portal, banner }: Props) {
     };
   }, [open]);
 
-  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
+  const matchesPath = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
+  const isActive = (item: MenuItem) => matchesPath(item.href) || Boolean(item.children?.some((child) => matchesPath(child.href)));
 
   return (
     <>
@@ -58,27 +60,29 @@ export default function Header({ menu, portal, banner }: Props) {
 
           <ul className="hidden items-stretch xl:flex">
             {menu.map((item, i) => {
-              const active = isActive(item.href);
+              const active = isActive(item);
               const wide = (item.children?.length ?? 0) > 6;
               return (
                 <li key={item.href} className="group relative flex">
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`relative inline-flex items-center gap-1.5 px-3.5 text-[0.95rem] font-semibold transition-colors after:absolute after:inset-x-3.5 after:-bottom-px after:h-[3px] after:origin-left after:bg-purple after:transition-transform after:duration-200 after:ease-out ${active ? "text-purple after:scale-x-100" : "text-ink after:scale-x-0 group-focus-within:text-purple group-focus-within:after:scale-x-100 group-hover:text-purple group-hover:after:scale-x-100"}`}
+                    className={`relative inline-flex min-h-11 items-center gap-1.5 px-3 text-[0.94rem] font-semibold transition-colors after:absolute after:inset-x-3 after:-bottom-px after:h-[3px] after:origin-left after:bg-purple after:transition-transform after:duration-200 after:ease-out ${active ? "text-purple after:scale-x-100" : "text-ink after:scale-x-0 group-focus-within:text-purple group-focus-within:after:scale-x-100 group-hover:text-purple group-hover:after:scale-x-100"}`}
                   >
                     {item.label}
                     {item.children && <ChevronDown className="size-3.5 opacity-60 transition-transform duration-200 group-focus-within:rotate-180 group-hover:rotate-180" aria-hidden />}
                   </Link>
                   {item.children && (
-                    <div className={`invisible absolute top-full z-10 opacity-0 transition-opacity duration-150 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 ${opensLeft(i, menu.length) ? "right-0" : "left-0"}`}>
-                      <div className={`border border-t-[3px] border-rule border-t-purple bg-paper ${wide ? "w-[40rem]" : "w-[23rem]"}`}>
+                    <div className={`invisible absolute top-full z-10 pt-2 opacity-0 transition-opacity duration-150 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 ${opensLeft(i, menu.length) ? "right-0" : "left-0"}`}>
+                      <div className={`max-h-[calc(100svh-6rem)] overflow-y-auto overscroll-contain border border-t-[3px] border-rule border-t-purple bg-paper ${wide ? "w-[min(40rem,calc(100vw-3rem))]" : "w-[min(24rem,calc(100vw-3rem))]"}`}>
                         <ul className={`grid gap-x-1 p-2 ${wide ? "grid-cols-2" : ""}`}>
                           {item.children.map((c) => (
                             <li key={c.href}>
-                              <Link href={c.href} className="block rounded-sm px-3.5 py-2.5 hover:bg-paper-2 focus-visible:bg-paper-2">
-                                <span className="block text-[0.95rem] font-semibold leading-snug text-ink">{c.label}</span>
-                                {c.blurb && <span className="mt-0.5 block text-[0.84rem] leading-snug text-muted">{c.blurb}</span>}
+                              <Link href={c.href} aria-current={pathname === c.href ? "page" : undefined} className={`group/item flex min-h-12 items-start gap-3 px-3.5 py-2.5 hover:bg-paper-2 focus-visible:bg-paper-2 ${pathname === c.href ? "text-purple" : "text-ink"}`}>
+                                {c.icon && <Icon name={c.icon} className="mt-0.5 size-4 shrink-0 text-purple" />}
+                                <span className="min-w-0"><span className="block text-[0.95rem] font-semibold leading-snug">{c.label}</span>
+                                  {c.blurb && <span className="mt-0.5 block text-[0.84rem] leading-snug text-muted">{c.blurb}</span>}
+                                </span>
                               </Link>
                             </li>
                           ))}
@@ -94,9 +98,9 @@ export default function Header({ menu, portal, banner }: Props) {
             })}
           </ul>
 
-          <div className="flex shrink-0 items-center gap-5 self-center">
-            <a href={portal.href} target="_blank" rel="noopener noreferrer" className="hidden min-h-11 items-center gap-1 whitespace-nowrap text-[0.9rem] font-semibold text-muted underline-offset-4 hover:text-purple hover:underline min-[1536px]:inline-flex">{portal.label} <ArrowUpRight className="size-3.5" aria-hidden /></a>
-            <Link href="/give" className="hidden min-h-11 items-center rounded-sm bg-gold px-5 text-[0.95rem] font-semibold text-ink transition-colors hover:bg-gold-hover sm:inline-flex">Give</Link>
+          <div className="flex shrink-0 items-center gap-3 self-center xl:gap-4">
+            <a href={portal.href} target="_blank" rel="noopener noreferrer" className="hidden min-h-11 items-center gap-1 whitespace-nowrap text-[0.9rem] font-semibold text-muted underline-offset-4 hover:text-purple hover:underline min-[1536px]:inline-flex">{portal.label.replace("Christhood ", "")} <ArrowUpRight className="size-3.5" aria-hidden /></a>
+            <Link href="/give" className="hidden min-h-11 items-center border border-purple/30 px-4 text-[0.95rem] font-semibold text-purple transition-colors hover:border-purple hover:bg-purple hover:text-on-purple sm:inline-flex">Give</Link>
             <button type="button" className="inline-flex h-11 items-center gap-2 rounded-sm border border-rule px-3 font-semibold min-[420px]:px-4 xl:hidden" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((v) => !v)}>
               {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
               <span className="max-[419px]:sr-only">{open ? "Close" : "Menu"}</span>
@@ -110,24 +114,26 @@ export default function Header({ menu, portal, banner }: Props) {
               <li key={item.href} className="border-b border-rule">
                 {item.children ? (
                   <details className="group">
-                    <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between text-2xl font-extrabold [font-variation-settings:'wdth'_86] [&::-webkit-details-marker]:hidden">
+                    <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-4 text-xl font-extrabold [font-variation-settings:'wdth'_86] [&::-webkit-details-marker]:hidden sm:text-2xl">
                       {item.label}
                       <ChevronDown className="size-5 text-purple transition group-open:rotate-180" aria-hidden />
                     </summary>
                     <ul className="grid pb-4">
-                      <li><Link href={item.href} className="flex min-h-11 items-center gap-2 font-semibold text-purple">All {item.label.toLowerCase()} <ArrowRight className="size-4" aria-hidden /></Link></li>
+                        <li><Link href={item.href} className="flex min-h-11 items-center gap-2 font-semibold text-purple">All {item.label.toLowerCase()} <ArrowRight className="size-4" aria-hidden /></Link></li>
                       {item.children.map((c) => (
                         <li key={c.href}>
-                          <Link href={c.href} className="block py-2.5">
-                            <span className="block font-semibold leading-snug">{c.label}</span>
-                            {c.blurb && <span className="mt-0.5 block text-[0.9rem] leading-snug text-muted">{c.blurb}</span>}
+                          <Link href={c.href} aria-current={pathname === c.href ? "page" : undefined} className="flex min-h-11 items-start gap-3 py-2.5">
+                            {c.icon && <Icon name={c.icon} className="mt-0.5 size-4 shrink-0 text-purple" />}
+                            <span className="min-w-0"><span className="block font-semibold leading-snug">{c.label}</span>
+                              {c.blurb && <span className="mt-0.5 block text-[0.9rem] leading-snug text-muted">{c.blurb}</span>}
+                            </span>
                           </Link>
                         </li>
                       ))}
                     </ul>
                   </details>
                 ) : (
-                  <Link href={item.href} className="flex min-h-14 items-center text-2xl font-extrabold [font-variation-settings:'wdth'_86]">{item.label}</Link>
+                  <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined} className="flex min-h-12 items-center text-xl font-extrabold [font-variation-settings:'wdth'_86] sm:text-2xl">{item.label}</Link>
                 )}
               </li>
             ))}

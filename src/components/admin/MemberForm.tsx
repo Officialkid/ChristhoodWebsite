@@ -8,7 +8,7 @@ import { btnClass, LinkButton } from "./ui";
 
 const ageGroups = ["Under 13", "13 – 19", "20 – 35", "36 – 55", "56 and above"];
 const heardFrom = ["A friend or family member", "Social media (Instagram, TikTok, Facebook, YouTube)", "The church website", "Walked past the venue", "A camp, event or outreach", "Other"];
-const interests = ["Talk to a pastor", "Become a member", "Join a ministry or fellowship group", "Be baptised", "Learn about Jewels, Teen Life or Branch", "Gave their life to Christ today"];
+const interests = ["Talk to a ministry leader", "Become a member", "Join a ministry or fellowship group", "Be baptised", "Learn about Jewels, Teen Life or Branch", "Gave their life to Christ today"];
 
 function Choice({ legend, name, type, options, error, columns = 2 }: { legend: string; name: string; type: "radio" | "checkbox"; options: string[]; error?: string; columns?: 2 | 3 }) {
   return (
@@ -47,7 +47,7 @@ function Inner({ today, onAgain }: { today: string; onAgain: () => void }) {
         <legend className="mb-1 text-xl font-bold">About them</legend>
         <TextField name="fullName" label="Full name" autoComplete="off" required maxLength={120} error={errors.fullName} />
         <div className="grid gap-6 sm:grid-cols-2">
-          <TextField name="phone" label="Phone or WhatsApp" type="tel" inputMode="tel" placeholder="07XX XXX XXX" required maxLength={20} error={errors.phone} />
+          <TextField name="phone" label="Phone" type="tel" inputMode="tel" placeholder="07XX XXX XXX" required maxLength={20} error={errors.phone} />
           <div>
             <TextField name="email" label="Email" type="email" placeholder="name@example.com" maxLength={120} disabled={noEmail} error={errors.email} hint="We use this to welcome them and keep in touch." />
             <label className="f-choice mt-2"><input type="checkbox" name="noEmail" value="Yes" checked={noEmail} onChange={(e) => setNoEmail(e.target.checked)} /><span className="leading-snug">They do not have an email address</span></label>
@@ -73,13 +73,13 @@ function Inner({ today, onAgain }: { today: string; onAgain: () => void }) {
       <fieldset className="grid gap-6">
         <legend className="mb-1 text-xl font-bold">How can we serve them?</legend>
         <Choice legend="They would like to… (tick any)" name="interests" type="checkbox" options={interests} />
-        <TextArea name="prayerRequest" label="Anything we can pray with them about?" optional rows={3} maxLength={2000} hint="Only the pastoral team will read this." />
+        <TextArea name="prayerRequest" label="Anything we can pray with them about?" optional rows={3} maxLength={2000} hint="Only the Prayer & Care Team will read this." />
       </fieldset>
 
       <div className="grid gap-5 border-t border-rule pt-8">
         {!noEmail && <Toggle name="sendWelcome" label="Send them a welcome email" hint="Sent only if email is switched on for the church (see System status)." defaultChecked />}
         <div>
-          <label className="f-choice !items-start !py-3"><input type="checkbox" name="consent" value="Yes" className="mt-1" /><span className="leading-snug">They agree that Christhood Ministries may keep these details and contact them by phone, WhatsApp or email about church life. Their details are not shared outside the church.</span></label>
+          <label className="f-choice !items-start !py-3"><input type="checkbox" name="consent" value="Yes" className="mt-1" /><span className="leading-snug">They agree that Christhood Ministries may keep these details and contact them by phone or email about church life. Their details are not shared outside the church.</span></label>
           {errors.consent && <p role="alert" className="f-error">{errors.consent}</p>}
         </div>
         <div className="flex flex-wrap items-center gap-3"><SaveButton>Register new member</SaveButton><LinkButton href="/123admin/guests" variant="ghost">Cancel</LinkButton></div>

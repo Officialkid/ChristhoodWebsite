@@ -34,6 +34,7 @@ export default function GoogleSignIn({ clientId }: { clientId: string }) {
 
   useEffect(() => {
     let dead = false;
+    let resizeObserver: ResizeObserver | undefined;
     (async () => {
       try {
         const nonce = await googleNonce();
@@ -56,7 +57,30 @@ export default function GoogleSignIn({ clientId }: { clientId: string }) {
             }
           },
         });
-        id.renderButton(box.current, { type: "standard", theme: "outline", size: "large", text: "signin_with", shape: "rectangular", logo_alignment: "left", width: Math.min(320, Math.max(200, window.innerWidth - 64)) });
+        const buttonOptions = {
+          type: "standard",
+          theme: "outline",
+          size: "large",
+          text: "signin_with",
+          shape: "rectangular",
+          logo_alignment: "left",
+        };
+        const renderButton = () => {
+          const target = box.current;
+          if (!target || dead) return;
+          const width = Math.max(160, Math.min(400, target.clientWidth));
+          target.dataset.renderedWidth = String(width);
+          target.replaceChildren();
+          id.renderButton(target, { ...buttonOptions, width });
+        };
+        renderButton();
+        resizeObserver = new ResizeObserver(() => {
+          const target = box.current;
+          if (!target) return;
+          const width = Math.max(160, Math.min(400, target.clientWidth));
+          if (target.dataset.renderedWidth !== String(width)) renderButton();
+        });
+        resizeObserver.observe(box.current);
       } catch {
         if (!dead) {
           setMessage("Google sign-in could not load. Check your connection, or use your password below.");
@@ -66,6 +90,7 @@ export default function GoogleSignIn({ clientId }: { clientId: string }) {
     })();
     return () => {
       dead = true;
+      resizeObserver?.disconnect();
     };
   }, [clientId]);
 
@@ -80,7 +105,7 @@ export default function GoogleSignIn({ clientId }: { clientId: string }) {
   }
   return (
     <div>
-      <div ref={box} className={state === "working" ? "pointer-events-none opacity-50" : ""} />
+      <div ref={box} className={`min-h-10 w-full ${state === "working" ? "pointer-events-none opacity-50" : ""}`} />
       {state === "working" && <p className="mt-3 flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" aria-hidden /> Checking…</p>}
       {state === "error" && <p role="alert" className="mt-3 border border-danger bg-danger-tint px-4 py-3 font-semibold text-danger">{message}</p>}
     </div>

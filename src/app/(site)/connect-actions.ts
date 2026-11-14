@@ -7,7 +7,16 @@ import { mirrorToSheet, notifyTeam } from "@/lib/notify";
 import { site } from "@/content/site";
 import type { Prayer } from "@/lib/types";
 
-export type FormState = { ok: boolean; message?: string; errors?: Record<string, string>; name?: string; type?: string };
+export type FormState = {
+  ok: boolean;
+  message?: string;
+  errors?: Record<string, string>;
+  name?: string;
+  type?: string;
+  count?: number;
+  familySignInRequired?: boolean;
+  familyLogin?: { phone: string; temporaryPassword: string };
+};
 
 const prayers = collection<Prayer>("prayers");
 
@@ -67,6 +76,6 @@ export async function submitPrayer(_prev: FormState, fd: FormData): Promise<Form
     whoMaySee: p.whoMaySee ?? "", mayShare: p.mayShare ?? "", callBack: callBack ? "Yes" : "", consent: "Yes",
   });
   if (!saved && !mirrored) return { ...couldNotSave, type };
-  after(() => notifyTeam(type, p.name ?? "Anonymous"));
+  after(() => notifyTeam(type));
   return { ok: true, type, name: p.name?.split(/\s+/)[0] };
 }

@@ -37,6 +37,7 @@ export default async function CampApplicationPage({ params }: { params: Promise<
       <PageTitle title={app.childName} icon="tent" lead={`${app.eventTitle} · received ${formatStamp(app.createdAt)}`} crumbs={[{ label: "Camp applications", href: "/123admin/camps" }, { label: app.childName }]} actions={<><Chip tone={app.status === "Approved" ? "ok" : app.status === "Pending review" ? "new" : "warn"}>{app.status}</Chip>{app.paymentVerified && <Chip tone="ok">Payment checked</Chip>}</>} />
       <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
         <div className="grid gap-10">
+          {app.parentUpdatedAt && <Notice tone="info" title="Parent updated the child's details">Latest information was saved {formatStamp(app.parentUpdatedAt)}. Review the current health and care details below before camp.</Notice>}
           {app.ageReview && <Notice tone="warn" title="Check the age">{app.childName} will be {app.ageAtCamp} at camp, outside the usual range for this camp. It is not refused automatically: talk to the parent and decide.</Notice>}
           {!d && <Notice tone="bad" title="The private details could not be opened">The registration key may have changed. The contact details below are still available.</Notice>}
 
@@ -121,7 +122,7 @@ export default async function CampApplicationPage({ params }: { params: Promise<
               ) : (
                 <>
                   <p className="mt-3 text-muted">This application was made without a family page, so the parent cannot see notes or the timetable yet.</p>
-                  <div className="mt-5"><LinkFamilyForm id={app.id} childName={app.childName} /></div>
+                  <div className="mt-5"><LinkFamilyForm id={app.id} childName={app.childName} phone={app.phone} /></div>
                 </>
               )}
             </div>

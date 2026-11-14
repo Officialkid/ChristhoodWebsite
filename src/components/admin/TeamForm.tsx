@@ -59,7 +59,7 @@ export default function TeamForm({ user, groups, selfId }: { user?: StoredUser; 
         {role === "head" && (
           <fieldset aria-describedby={errors.departments ? "dep-err" : undefined}>
             <legend className="f-label">Which departments do they lead?</legend>
-            <p className="f-hint">They can edit their department&apos;s page and events. Web, Media and Pastoral teams carry wider jobs.</p>
+            <p className="f-hint">They can edit their department&apos;s page and events. Web, Media and Prayer &amp; Care teams carry wider jobs.</p>
             {errors.departments && <p id="dep-err" role="alert" className="f-error">{errors.departments}</p>}
             <div className="mt-4 grid gap-6">
               {groups.map((g) => (

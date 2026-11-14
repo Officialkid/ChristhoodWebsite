@@ -11,7 +11,7 @@ type ButtonProps = {
   arrow?: boolean;
 };
 
-const base = "inline-flex min-h-12 items-center justify-center gap-2 rounded-sm px-6 text-[0.95rem] font-semibold transition-colors duration-200";
+const base = "inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-sm px-6 text-[0.95rem] font-semibold transition-colors duration-200 active:translate-y-px";
 const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
   gold: "bg-gold text-ink hover:bg-gold-hover",
   purple: "bg-purple text-on-purple hover:bg-purple-deep",
@@ -39,10 +39,10 @@ const tones = {
 } as const;
 
 /** A full-width band. Vertical space varies by purpose; the content column is shared. */
-export function Section({ tone = "paper", children, className = "", id, tight }: { tone?: keyof typeof tones; children: React.ReactNode; className?: string; id?: string; tight?: boolean }) {
+export function Section({ tone = "paper", children, className = "", containerClassName = "", id, tight }: { tone?: keyof typeof tones; children: React.ReactNode; className?: string; containerClassName?: string; id?: string; tight?: boolean }) {
   return (
-    <section id={id} className={`${tones[tone]} ${tight ? "py-12 md:py-16" : "py-[clamp(4rem,9vw,7.5rem)]"} ${id ? "scroll-mt-20" : ""} ${className}`}>
-      <div className="wrap">{children}</div>
+    <section id={id} className={`${tones[tone]} ${tight ? "py-10 md:py-12" : "py-[clamp(3.5rem,6vw,5.5rem)]"} ${id ? "scroll-mt-20" : ""} ${className}`}>
+      <div className={`wrap ${containerClassName}`}>{children}</div>
     </section>
   );
 }

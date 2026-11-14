@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getUser, log, sameOrigin } from "@/lib/auth";
 import { can } from "@/lib/rbac";
 import { mediaDb, saveUpload, MAX_UPLOAD_BYTES, photoHost } from "@/lib/media";
+import { isChristhoodFolder } from "@/lib/cloudinary";
 import { StorageUnavailable } from "@/lib/store";
 import { photoNames } from "@/lib/images";
 import type { EnhanceLevel } from "@/lib/enhance";
@@ -32,7 +33,10 @@ export async function POST(req: Request) {
     if (!/^image\/(jpeg|png|webp|heic|heif|avif)$/i.test(file.type)) return NextResponse.json({ error: "Please choose a JPG, PNG or WebP picture." }, { status: 415, headers });
     if (file.size > MAX_UPLOAD_BYTES) return NextResponse.json({ error: "That photo is too large to send. Try a smaller one." }, { status: 413, headers });
     const level = (["off", "natural", "strong"].includes(String(form.get("level"))) ? String(form.get("level")) : "natural") as EnhanceLevel;
-    const item = await saveUpload(Buffer.from(await file.arrayBuffer()), file.name, level, user.name);
+    const requestedFolder = form.get("folder");
+    const folder = typeof requestedFolder === "string" && requestedFolder ? requestedFolder.trim() : undefined;
+    if (folder && !isChristhoodFolder(folder)) return NextResponse.json({ error: "Choose a Christhood photo folder." }, { status: 400, headers });
+    const item = await saveUpload(Buffer.from(await file.arrayBuffer()), file.name, level, user.name, folder);
     await log(user, "Uploaded a photo", item.name);
     return NextResponse.json({ item }, { headers });
   } catch (error) {

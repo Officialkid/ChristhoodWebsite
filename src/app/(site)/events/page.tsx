@@ -6,24 +6,26 @@ import { Button, Section } from "@/components/ui";
 import { categoryLabel } from "@/content/events";
 import { getEvents, getSettings } from "@/lib/content";
 import { formatEventDates } from "@/lib/time";
+import { finalGatheringIsUpcoming } from "@/lib/gathering-schedule";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
   title: "Events & camps",
-  description: "Transformative mentorship experiences, missions, camps and worship gatherings. See what is coming up at Christhood and register online.",
+  description: "See upcoming mentorship experiences, missions, camps and worship gatherings at Christhood, with dates and details for each event.",
   alternates: { canonical: "/events" },
 };
 
 export default async function EventsPage() {
   const [all, { fellowship: f }] = await Promise.all([getEvents(), getSettings()]);
   const now = Date.now();
+  const finalGatheringUpcoming = finalGatheringIsUpcoming(f, now);
   const upcoming = all.filter((e) => new Date(e.end ?? e.start).getTime() >= now);
   const past = all.filter((e) => new Date(e.end ?? e.start).getTime() < now).reverse();
   const cats = [...new Set(upcoming.map((e) => e.category))].map((c) => ({ value: c, label: categoryLabel[c], count: upcoming.filter((e) => e.category === c).length }));
 
   return (
     <>
-      <PageHero slot="events.hero" title="Upcoming events" tagline="Mentorship, missions, camps and worship gatherings. Register online, or add the date to your calendar." crumbs={[{ label: "Events" }]} actions={[{ label: "Camps and applications", href: "/camps" }]} />
+      <PageHero slot="events.hero" title="Upcoming events" tagline="Mentorship, missions, camps and worship gatherings. See the details and save each date to your calendar." crumbs={[{ label: "Events" }]} actions={[{ label: "Camps and applications", href: "/camps" }]} />
       <Section tone="alt">
         {upcoming.length > 0 ? (
           <>
@@ -33,7 +35,7 @@ export default async function EventsPage() {
             </div>
           </>
         ) : (
-          <div className="border-t border-rule py-10"><h2 className="t-h2">New dates are on the way</h2><p className="t-lead mt-3 max-w-xl text-muted">We announce events here as soon as they are set. Until then, join us every {f.day}, {f.display}.</p></div>
+          <div className="border-t border-rule py-10"><h2 className="t-h2">New dates are on the way</h2><p className="t-lead mt-3 max-w-xl text-muted">{finalGatheringUpcoming ? `Our final gathering of 2026 is Saturday, 14 November, ${f.display}. We plan to meet again in January as we prepare for camps.` : "We are pausing regular gatherings as we prepare for camps. We plan to meet again in January; the exact date will be shared when confirmed."}</p></div>
         )}
         {past.length > 0 && (
           <details className="mt-10">
@@ -44,7 +46,7 @@ export default async function EventsPage() {
       </Section>
       <Section tone="purple" tight>
         <div className="flex flex-wrap items-center justify-between gap-6">
-          <div><h2 className="text-3xl">Every {f.day}, {f.display}</h2><p className="mt-2 text-on-purple-muted">Saturday fellowship at {f.venue}, {f.area}.</p></div>
+          <div><h2 className="text-3xl">{finalGatheringUpcoming ? `Final 2026 gathering · 14 November` : "Gatherings resume in January"}</h2><p className="mt-2 text-on-purple-muted">{finalGatheringUpcoming ? `${f.display} at ${f.venue}, ${f.area}. Further information about January will be shared when available.` : "We are pausing regular gatherings as we prepare for camps. The exact January date will be shared when confirmed."}</p></div>
           <Button href="/#visit">Plan your visit</Button>
         </div>
       </Section>

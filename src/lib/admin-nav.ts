@@ -14,7 +14,7 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
   if (pages.length) {
     website.push({
       href: `${A}/pages`,
-      label: user.role === "admin" ? "Pages" : "My pages",
+      label: user.role === "admin" ? "Departments" : "My departments",
       icon: "church",
       children: pages.map((p) => ({ href: `${A}/pages/${p.kind}/${p.slug}`, label: p.title, icon: pageIcon[p.slug] ?? "church" })),
     });
@@ -51,7 +51,7 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
 
   const site: AdminNavGroup["items"] = [{ href: `${A}/share`, label: "Share links and QR codes", icon: "qr" }];
   if (can(user, "settings")) site.push({ href: `${A}/settings`, label: "Church details", icon: "settings" });
-  if (can(user, "users")) site.push({ href: `${A}/team`, label: "Team and access", icon: "shield", badge: counts.requests, children: [{ href: `${A}/team/requests`, label: "Access requests", icon: "guest" }, { href: `${A}/team/door`, label: "Team door", icon: "key" }] });
+  if (can(user, "users")) site.push({ href: `${A}/team`, label: "Team and access", icon: "shield", badge: counts.requests, children: [{ href: `${A}/team/camps`, label: "Camp access", icon: "tent" }, { href: `${A}/team/requests`, label: "Access requests", icon: "guest" }, { href: `${A}/team/door`, label: "Team door", icon: "key" }] });
   if (can(user, "system")) {
     site.push({ href: `${A}/status`, label: "System status", icon: "activity" });
     site.push({ href: `${A}/activity`, label: "Activity log", icon: "history" });

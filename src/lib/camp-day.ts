@@ -3,7 +3,7 @@ import { unseal } from "./crypto";
 import { mayCareForCampers, mayKeepRoster, mayOpenCamp } from "./rbac";
 import { collection } from "./store";
 import { fmt, toNairobiInput } from "./time";
-import type { CampApplication, CampAssignment, CampAttendance, CampNote, CampSealed, CampSession, StoredUser } from "./types";
+import type { CampApplication, CampAssignment, CampAttendance, CampNote, CampPhoto, CampSealed, CampSession, StoredUser } from "./types";
 
 /**
  * Camp days: the timetable, the expected list, who looks after which camper, attendance and notes.
@@ -15,6 +15,7 @@ export const campSessions = collection<CampSession>("camp-sessions");
 export const campAssignments = collection<CampAssignment>("camp-assignments");
 export const campAttendance = collection<CampAttendance>("camp-attendance");
 export const campNotes = collection<CampNote>("camp-notes");
+export const campPhotos = collection<CampPhoto>("camp-photos");
 
 export const attendanceId = (applicationId: string, date: string) => `${applicationId}~${date}`;
 

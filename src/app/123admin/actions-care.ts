@@ -4,7 +4,7 @@ import { z } from "zod";
 import { requirePerm, log, newId } from "@/lib/auth";
 import { getSettings } from "@/lib/content";
 import { mirrorToSheet, welcomeEmail } from "@/lib/notify";
-import { canReadPrayer } from "@/lib/rbac";
+import { can, canReadPrayer } from "@/lib/rbac";
 import { collection, StorageUnavailable } from "@/lib/store";
 import type { Result } from "@/components/admin/forms";
 import type { Prayer, Visitor } from "@/lib/types";
@@ -34,19 +34,19 @@ export async function updateGuest(fd: FormData): Promise<Result> {
     const status = text(fd, "status", 12) as Visitor["status"];
     if (!["new", "contacted", "settled"].includes(status)) return bad("Choose a status.");
     await visitors.put({ ...v, status, notes: text(fd, "notes") || undefined, followedUpBy: status === "new" ? undefined : v.followedUpBy && v.status !== "new" ? v.followedUpBy : user.name });
-    await log(user, "Updated a guest", v.fullName);
+    await log(user, "Updated a new-member record");
     return ok("Saved.");
   });
 }
 
 export async function deleteGuest(fd: FormData): Promise<Result> {
   const user = await requirePerm("visitors");
-  if (user.role !== "admin" && !user.departments.includes("pastoral")) return bad("Only the pastoral team or an administrator can delete guest records.");
+  if (!can(user, "members")) return bad("Only the Protocol team or an administrator can delete new-member records.");
   return guard(async () => {
     const v = await visitors.get(text(fd, "id", 40));
     if (!v) return bad("That guest is already gone.");
     await visitors.remove(v.id);
-    await log(user, "Deleted a guest record", v.fullName);
+    await log(user, "Deleted a new-member record");
     return ok("Guest record deleted.");
   });
 }
@@ -121,23 +121,47 @@ export async function registerMember(_prev: Result, fd: FormData): Promise<Resul
       invitedBy: text(fd, "invitedBy", 120) || undefined,
       homeChurch: text(fd, "homeChurch", 30) || undefined,
       interests: fd.getAll("interests").map((i) => String(i).trim().slice(0, 80)).filter(Boolean).slice(0, 8),
-      prayerRequest: text(fd, "prayerRequest", 2000) || undefined,
       status: "new",
       registeredBy: user.name,
     };
+    const prayerRequest = text(fd, "prayerRequest", 2000);
     await visitors.put(v);
+    let prayerSaved = true;
+    if (prayerRequest) {
+      try {
+        await prayers.put({
+          id: newId(),
+          sourceVisitorId: v.id,
+          createdAt: v.createdAt,
+          type: "prayer",
+          anonymous: false,
+          name: v.fullName,
+          phone: v.phone,
+          category: "New member",
+          message: prayerRequest,
+          whoMaySee: "Prayer & Care Team only",
+          mayShare: "No",
+          callBack: false,
+          status: "new",
+        });
+      } catch {
+        prayerSaved = false;
+        console.error("Could not save the prayer request from a new-member registration.");
+      }
+    }
     await mirrorToSheet({
       form: "visitor", fullName: v.fullName, phone: v.phone, email: v.email ?? "", area: v.area ?? "", ageGroup: v.ageGroup ?? "", visitDate: v.visitDate,
       firstVisit: v.firstVisit, heardFrom: v.heardFrom ?? "", invitedBy: v.invitedBy ?? "", homeChurch: v.homeChurch ?? "", interests: v.interests.join("; "),
-      prayerRequest: v.prayerRequest ?? "", consent: "Yes",
+      consent: "Yes",
     });
-    await log(user, "Registered a new member", v.fullName);
+    await log(user, "Registered a new member");
 
     let note = "";
     if (v.email && text(fd, "sendWelcome", 3) === "Yes") {
       const sent = await welcomeEmail(v.email, v.fullName.split(/\s+/)[0], await getSettings());
       note = sent === "sent" ? " A welcome email has been sent." : sent === "failed" ? " The welcome email could not be sent." : " Welcome emails are not switched on yet, so none was sent.";
     }
-    return { ok: true, message: `${v.fullName.split(/\s+/)[0]} is registered.${note}`, stamp: Date.now(), id: v.id };
+    const prayerNote = prayerRequest && !prayerSaved ? " The member is registered, but their prayer request could not be saved. Please pass it privately to the Prayer & Care Team." : "";
+    return { ok: true, message: `${v.fullName.split(/\s+/)[0]} is registered.${note}${prayerNote}`, stamp: Date.now(), id: v.id };
   });
 }

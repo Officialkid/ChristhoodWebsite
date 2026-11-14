@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, HandCoins, HandHeart, UserPlus } from "lucide-react";
+import { CalendarDays, HandCoins, HandHeart } from "lucide-react";
 
 const items = [
-  { href: "/visit", label: "I'm new", Icon: UserPlus },
   { href: "/events", label: "Events", Icon: CalendarDays },
   { href: "/prayer", label: "Pray", Icon: HandHeart },
   { href: "/give", label: "Give", Icon: HandCoins },
@@ -15,7 +14,7 @@ const items = [
 export default function MobileDock() {
   const path = usePathname();
   return (
-    <nav aria-label="Quick actions" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-rule bg-paper pb-[env(safe-area-inset-bottom)] md:hidden">
+    <nav aria-label="Quick actions" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-rule bg-paper pb-[env(safe-area-inset-bottom)] md:hidden">
       {items.map(({ href, label, Icon }) => {
         const active = path === href || path.startsWith(`${href}/`);
         const give = href === "/give";

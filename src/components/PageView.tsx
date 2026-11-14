@@ -6,6 +6,7 @@ import { Section } from "./ui";
 import Reveal from "./Reveal";
 import { site } from "@/content/site";
 import type { PageDoc, SiteSettings } from "@/lib/types";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 const CARE_PAGES = new Set(["international-faith-chapel", "counselling"]);
 
@@ -13,15 +14,17 @@ type Props = { page: PageDoc; section: { label: string; href: string }; siblings
 
 /** One template for every ministry and programme page. */
 export default function PageView({ page, section, siblings, settings }: Props) {
-  const others = siblings.filter((s) => s.slug !== page.slug);
+  const currentIndex = Math.max(0, siblings.findIndex((s) => s.slug === page.slug));
+  const previous = siblings[(currentIndex - 1 + siblings.length) % siblings.length];
+  const next = siblings[(currentIndex + 1) % siblings.length];
+  const sectionNoun = section.label === "Ministries" ? "ministry" : "programme";
   return (
     <>
       <PageHero title={page.title} tagline={page.tagline} image={page.hero} badge={page.audience} crumbs={[{ label: section.label, href: section.href }, { label: page.title }]} actions={page.actions} />
 
       {page.intro.length > 0 && (
         <Section>
-          <Reveal className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
-            <div />
+          <Reveal className="ml-auto grid max-w-5xl gap-6 lg:w-7/12">
             <div className="grid gap-6">
               <p className="t-lead">{page.intro[0]}</p>
               {page.intro.slice(1).map((p) => <p key={p.slice(0, 24)} className="reading text-muted">{p}</p>)}
@@ -34,21 +37,24 @@ export default function PageView({ page, section, siblings, settings }: Props) {
 
       {CARE_PAGES.has(page.slug) && <CareDesk whatsapp={site.whatsapp} email={settings.contact.email} />}
 
-      <Section tone="deep">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
-          <header><h2 className="t-h2">More {section.label.toLowerCase()}</h2><Link href={section.href} className="mt-4 inline-flex min-h-11 items-center font-semibold text-gold underline underline-offset-[6px]">See all {section.label.toLowerCase()}</Link></header>
-          <ul className="border-t border-on-purple/25">
-            {others.map((o) => (
-              <li key={o.slug} className="border-b border-on-purple/25">
-                <Link href={`${section.href}/${o.slug}`} className="group flex items-baseline justify-between gap-6 py-4">
-                  <span className="text-xl font-bold group-hover:underline group-hover:underline-offset-4">{o.title}</span>
-                  {o.audience && <span className="hidden text-right text-[0.95rem] text-on-purple-muted sm:block">{o.audience}</span>}
-                </Link>
-              </li>
-            ))}
-          </ul>
+      <Section tone="deep" tight>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <h2 className="t-h2">Keep exploring</h2>
+          <Link href={section.href} className="inline-flex min-h-11 items-center gap-2 font-semibold text-on-purple underline underline-offset-4 hover:text-gold">All {section.label.toLowerCase()} <ArrowUpRight className="size-4" aria-hidden /></Link>
         </div>
-        <p className="mt-12 text-on-purple-muted">Questions about {page.title}? Call <a className="font-semibold text-on-purple underline underline-offset-4" href={`tel:${settings.contact.phones[0]?.tel}`}>{settings.contact.phones[0]?.display}</a> or <Link className="font-semibold text-on-purple underline underline-offset-4" href="/#visit">plan a visit</Link>.</p>
+        {siblings.length > 1 && (
+          <nav aria-label={`${section.label} navigation`} className="mt-5 grid border-y border-on-purple/25 sm:grid-cols-2 sm:divide-x sm:divide-on-purple/25">
+            <Link href={`${section.href}/${previous.slug}`} className="group flex min-h-20 items-center justify-between gap-4 py-4 sm:pr-8">
+              <span className="min-w-0"><span className="block text-sm text-on-purple-muted">Previous {sectionNoun}</span><span className="mt-1 block text-lg font-bold group-hover:underline group-hover:underline-offset-4">{previous.title}</span></span>
+              <ArrowLeft className="size-5 shrink-0 text-on-purple-muted transition-transform group-hover:-translate-x-1" aria-hidden />
+            </Link>
+            <Link href={`${section.href}/${next.slug}`} className="group flex min-h-20 items-center justify-between gap-4 border-t border-on-purple/25 py-4 sm:border-t-0 sm:pl-8">
+              <span className="min-w-0"><span className="block text-sm text-on-purple-muted">Next {sectionNoun}</span><span className="mt-1 block text-lg font-bold group-hover:underline group-hover:underline-offset-4">{next.title}</span></span>
+              <ArrowRight className="size-5 shrink-0 text-on-purple-muted transition-transform group-hover:translate-x-1" aria-hidden />
+            </Link>
+          </nav>
+        )}
+        <p className="mt-5 text-on-purple-muted">Questions about {page.title}? Call <a className="font-semibold text-on-purple underline underline-offset-4" href={`tel:${settings.contact.phones[0]?.tel}`}>{settings.contact.phones[0]?.display}</a> or <Link className="font-semibold text-on-purple underline underline-offset-4" href="/#visit">plan a visit</Link>.</p>
       </Section>
     </>
   );

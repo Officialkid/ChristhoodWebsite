@@ -49,10 +49,11 @@ export function Choices({ legend, optional, hint, error, type, name, options, de
   );
 }
 
-export function SubmitButton({ children, pending: pendingLabel = "Sending…", className = "" }: { children: React.ReactNode; pending?: string; className?: string }) {
+export function SubmitButton({ children, pending: pendingLabel = "Sending…", className = "", tone = "gold" }: { children: React.ReactNode; pending?: string; className?: string; tone?: "gold" | "purple" }) {
   const { pending } = useFormStatus();
+  const colors = tone === "purple" ? "bg-purple text-on-purple hover:bg-purple-deep" : "bg-gold text-ink hover:bg-gold-hover";
   return (
-    <button type="submit" disabled={pending} className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-sm bg-gold px-7 text-[0.98rem] font-bold text-ink transition-colors hover:bg-gold-hover disabled:cursor-wait disabled:opacity-70 ${className}`}>
+    <button type="submit" disabled={pending} className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-sm px-7 text-[0.98rem] font-bold transition-colors ${colors} disabled:cursor-wait disabled:opacity-70 ${className}`}>
       {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
       {pending ? pendingLabel : children}
     </button>

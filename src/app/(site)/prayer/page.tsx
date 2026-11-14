@@ -7,7 +7,7 @@ import { Section } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Prayer requests and thanksgiving",
-  description: "Send a prayer request or share a thanksgiving with the Christhood Ministries pastoral and intercessory team. You can stay anonymous.",
+  description: "Send a prayer request or share a thanksgiving with the Christhood Prayer & Care Team. You can stay anonymous.",
   alternates: { canonical: "/prayer" },
 };
 

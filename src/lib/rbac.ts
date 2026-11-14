@@ -7,7 +7,7 @@ import type { StoredUser } from "./types";
  *
  * Every ministry and programme is a department. A department head can edit their own page and their own events.
  * A few shared departments carry wider jobs: the web team runs the home page, events and announcements, the media team
- * runs the photo library, and the pastoral team reads new-guest forms and prayer requests.
+ * runs the photo library, and the Prayer & Care Team handles prayer requests.
  * Administrators can do everything, including adding people.
  */
 export type Perm =
@@ -21,7 +21,7 @@ export type Department = { id: string; name: string; blurb: string; perms: Perm[
 const shared: Department[] = [
   { id: "web", name: "Web & Communications", blurb: "Home page words, announcements, events, messages, leaders and stories.", perms: ["home", "banner", "messages", "people", "images", "events:all"] },
   { id: "media", name: "Media Team", blurb: "The photo library, page pictures, messages, and the Media Ministry page.", perms: ["media", "images", "messages", "page:ministry/media"] },
-  { id: "pastoral", name: "Pastoral Team", blurb: "Follow up new members and answer prayer requests.", perms: ["visitors", "prayers"] },
+  { id: "pastoral", name: "Prayer & Care Team", blurb: "Prayer follow-up and support.", perms: ["prayers"] },
   // The team that runs camps for the whole ministry: every application, the returning-campers register, camp events and both camp pages.
   { id: "camps", name: "Camps Department", blurb: "Camp applications for every camp, the returning campers register, camp events and the Jewels and Teen Life pages.", perms: ["camps:all", "camps:day", "camps:roster", "events:jewels", "events:teen-life", "page:programme/jewels", "page:programme/teen-life"] },
   // On the days of camp. Facilitators care for the campers they are given. Head facilitators keep the expected list and the timetable and never see health details.
@@ -30,7 +30,7 @@ const shared: Department[] = [
 ];
 
 const extra: Record<string, Perm[]> = {
-  // Only the Protocol team may register a new member. Others may read and follow up.
+  // Protocol handles the new-member register. Access is limited to people assigned to Protocol and administrators.
   protocol: ["visitors", "members"],
   // Camp applications belong to the programme that runs the camp.
   jewels: ["camps:jewels"],
@@ -90,7 +90,7 @@ export function eventDepartments(user: Actor): Department[] {
 export const canEditEvent = (user: Actor, event: { department?: string }) =>
   user.role === "admin" || can(user, "events:all") || (event.department ? can(user, `events:${event.department}`) : false);
 
-/** "Pastoral team only" requests stay with the pastoral team. Requests shared with intercessors are open to prayer departments too. */
+/** Private requests stay with the Prayer & Care Team. Requests shared with intercessors are open to prayer departments too. */
 export function canReadPrayer(user: Actor, prayer: { type?: string; whoMaySee?: string }): boolean {
   if (user.role === "admin" || user.departments.includes("pastoral")) return true;
   if (prayer.type === "thanksgiving" || !prayer.whoMaySee) return true;

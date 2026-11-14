@@ -17,6 +17,21 @@ export function photoSet(prefix: string): string[] {
 
 /** Resolve a photo name or full address into what the page needs to draw it. */
 export function resolvePhoto(src: string) {
+  // Cloudinary imports use on-demand sizes instead of separate "-sm" and "-md" files.
+  if (src.startsWith("https://res.cloudinary.com/") && src.includes("/image/upload/")) {
+    const marker = "/image/upload/";
+    const full = new URL(src);
+    const rawWidth = Number(full.searchParams.get("ch_w"));
+    const rawHeight = Number(full.searchParams.get("ch_h"));
+    const w = Number.isInteger(rawWidth) && rawWidth > 0 && rawWidth <= 10_000 ? rawWidth : 1800;
+    const h = Number.isInteger(rawHeight) && rawHeight > 0 && rawHeight <= 10_000 ? rawHeight : 1200;
+    full.searchParams.delete("ch_w");
+    full.searchParams.delete("ch_h");
+    const address = full.toString();
+    const small = address.replace(marker, marker + "c_limit,w_720,q_auto,f_auto/");
+    const medium = address.replace(marker, marker + "c_limit,w_1200,q_auto,f_auto/");
+    return { full: address, medium, small, w, h, blur: undefined as string | undefined };
+  }
   // A picture the team uploaded: a small copy sits beside the full one with "-sm" before the extension.
   if (/^https?:\/\//.test(src) || src.startsWith("/media/")) {
     const small = src.replace(/\.webp$/, "-sm.webp");

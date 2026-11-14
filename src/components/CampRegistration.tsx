@@ -131,7 +131,7 @@ export default function CampRegistration({ camps, numbers, depositKes, facilitat
           <li
             key={s}
             aria-current={i === step ? "step" : undefined}
-            className={`rounded-sm px-3 py-2 text-center text-xs font-semibold sm:text-sm ${i === step ? "bg-purple text-on-purple" : i < step ? "bg-gold text-ink" : "bg-paper-2 text-muted"}`}
+            className={`rounded-sm px-3 py-2 text-center text-xs font-semibold sm:text-sm ${i === step ? "bg-purple text-on-purple" : i < step ? "bg-purple-tint text-purple" : "bg-paper-2 text-muted"}`}
           >
             {i + 1}. {s}
           </li>

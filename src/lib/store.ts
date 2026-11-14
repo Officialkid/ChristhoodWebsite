@@ -125,6 +125,27 @@ export const store = {
     if (storageMode === "none") throw new StorageUnavailable();
     await locked(async () => writeJson("docs", { ...(await readJson<Record<string, unknown>>("docs", {})), [key]: value }));
   },
+  /** Create a document only if its key is still free. Used for unique account indexes. */
+  async setDocIfAbsent<T>(key: string, value: T): Promise<boolean> {
+    if (mongoUrl) {
+      try {
+        await (await mongo()).docs.insertOne({ _id: key as never, value });
+        return true;
+      } catch (error) {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === 11000) return false;
+        throw error;
+      }
+    }
+    if (redis) return (await redis.set(`doc:${key}`, value, { nx: true })) === "OK";
+    if (pool) return (await sql<{ key: string }>("insert into ch_docs (key, value) values ($1, $2) on conflict (key) do nothing returning key", [key, JSON.stringify(value)])).length > 0;
+    if (storageMode === "none") throw new StorageUnavailable();
+    return locked(async () => {
+      const docs = await readJson<Record<string, unknown>>("docs", {});
+      if (Object.hasOwn(docs, key)) return false;
+      await writeJson("docs", { ...docs, [key]: value });
+      return true;
+    });
+  },
 
   /** A collection of records, each with its own id. */
   async records<T>(col: string): Promise<Record<string, T>> {

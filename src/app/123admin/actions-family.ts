@@ -3,12 +3,12 @@
 import { randomInt } from "node:crypto";
 import { hashPassword, log, newId, requireUser } from "@/lib/auth";
 import { unseal } from "@/lib/crypto";
-import { CODE_DAYS, campers, campUpdates, codeHash, familyByPhone, families, newCode, profileOf, saveChild } from "@/lib/family";
+import { CODE_DAYS, campers, campUpdates, claimPhoneIfFree, codeHash, familyByPhone, families, familyChildren, newCode, profileOf, saveChild } from "@/lib/family";
 import { normalisePhone, phoneOk } from "@/lib/phone";
 import { campScope } from "@/lib/rbac";
 import { collection, StorageUnavailable } from "@/lib/store";
 import type { Result } from "@/components/admin/forms";
-import type { CampApplication, CampSealed, CampUpdate } from "@/lib/types";
+import type { CampApplication, CampSealed, CampUpdate, Family } from "@/lib/types";
 
 const text = (fd: FormData, k: string, max = 200) => String(fd.get(k) ?? "").trim().slice(0, max);
 const ok = (message: string, extra: Partial<Result> = {}): Result => ({ ok: true, message, stamp: Date.now(), ...extra });
@@ -25,8 +25,8 @@ async function guard(fn: () => Promise<Result>): Promise<Result> {
   }
 }
 
-/** Easy to read out loud: no 0/O or 1/l. */
-const tempPassword = () => Array.from({ length: 12 }, () => "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789"[randomInt(54)]).join("");
+/** Easy to share by phone and only used to set a parent's own password. */
+const tempPassword = () => Array.from({ length: 8 }, () => randomInt(10)).join("");
 
 /** The camp office makes a one-time code after checking the person really is the child's parent. */
 export async function issueFamilyCode(fd: FormData): Promise<Result> {
@@ -92,11 +92,7 @@ export async function resetFamilyPassword(fd: FormData): Promise<Result> {
   });
 }
 
-/**
- * A parent who applied before they had a family page: the camp office, having checked the person really is the parent,
- * puts the application (and the child's saved details) on the family page that uses the parent's phone number.
- * This is why it is done by the office and never automatically by phone number: anyone could type someone else's number.
- */
+/** A verified parent can link an older application; if no account exists, the office creates access and gives a temporary password. */
 export async function linkApplicationToFamily(_prev: Result, fd: FormData): Promise<Result> {
   const user = await requireUser();
   if (campScope(user) !== "all") return bad("Only an administrator or the Camps Department can put an application on a family page.");
@@ -105,19 +101,49 @@ export async function linkApplicationToFamily(_prev: Result, fd: FormData): Prom
     const app = await applications.get(text(fd, "id", 60));
     if (!app) return bad("That application is not available.");
     if (app.familyId) return bad(`${app.childName} is already on a family page.`);
+    if (text(fd, "verified", 3) !== "yes") return bad("Confirm that you have checked this person is the child's parent.", { verified: "Confirm the parent's identity before giving family-page access." });
     const raw = text(fd, "phone", 30);
     if (!phoneOk(raw)) return bad("Type the phone number the parent signs in with.", { phone: "Type the phone number the parent signs in with." });
-    const family = await familyByPhone(normalisePhone(raw));
-    if (!family || !family.active) return bad("No family page uses that number yet. Ask the parent to make one at the Family page first.", { phone: "No family page uses that number." });
-    let profile = null;
+    const phone = normalisePhone(raw);
+    let family = await familyByPhone(phone);
+    if (family && !family.active) return bad("That phone number is linked to an inactive family page. Contact an administrator.", { phone: "This family page is inactive." });
+    let profile;
     try {
       profile = profileOf(await unseal<CampSealed>(app.sealed));
     } catch {
       return bad("The child's private details could not be opened, so they cannot be moved. Check the registration key.");
     }
-    const childId = await saveChild(family, "", app.childName, app.camp === "other" ? undefined : app.camp, profile);
-    await applications.put({ ...app, familyId: family.id, childId, updatedAt: new Date().toISOString() });
-    await log(user, "Put an application on a family page", `${app.childName} → ${family.name}`);
-    return ok(`${app.childName} is now on ${family.name}'s family page.`);
+    let password: string | undefined;
+    let createdFamily: Family | null = null;
+    if (!family) {
+      password = tempPassword();
+      createdFamily = {
+        id: newId(), phone, name: app.guardian, email: app.email, smsUpdates: app.smsUpdates,
+        hash: await hashPassword(password), active: true, mustChange: true, createdAt: new Date().toISOString(),
+      };
+      family = createdFamily;
+      await families.put(createdFamily);
+    }
+    try {
+      const childId = await saveChild(family, "", app.childName, app.camp === "other" ? undefined : app.camp, profile);
+      await applications.put({ ...app, familyId: family.id, childId, updatedAt: new Date().toISOString() });
+      if (createdFamily && !(await claimPhoneIfFree(phone, family.id))) {
+        await applications.put(app);
+        const kids = await familyChildren.list().catch(() => []);
+        await Promise.allSettled(kids.filter((child) => child.familyId === family!.id).map((child) => familyChildren.remove(child.id)));
+        await families.remove(family.id);
+        return bad("A family page was created for this number at the same time. Refresh and link the application again.", { phone: "Refresh the page and try again." });
+      }
+      await log(user, createdFamily ? "Created family access and linked an application" : "Put an application on a family page", `${app.childName} → ${family.name}`);
+      return ok(createdFamily ? "Family access is ready. Give the sign-in details to the verified parent." : `${app.childName} is now on ${family.name}'s family page.`, password ? { secret: `Phone: ${phone}\nTemporary password: ${password}` } : {});
+    } catch (error) {
+      await applications.put(app).catch(() => undefined);
+      if (createdFamily) {
+        const kids = await familyChildren.list().catch(() => []);
+        await Promise.allSettled(kids.filter((child) => child.familyId === createdFamily!.id).map((child) => familyChildren.remove(child.id)));
+        await families.remove(createdFamily.id).catch(() => undefined);
+      }
+      throw error;
+    }
   });
 }

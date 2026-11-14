@@ -28,33 +28,58 @@ async function LoginScreen() {
   const [setup, status] = await Promise.all([needsSetup().catch(() => false), systemStatus()]);
   const canCreate = setup && store.writable && status.signIn;
   return (
-    <div className="grid min-h-svh lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <section className="relative flex flex-col justify-between gap-12 bg-purple-deep px-6 py-10 text-on-purple sm:px-10 lg:px-14 lg:py-14">
-        <Link href="/" className="inline-flex items-center gap-3 self-start">
-          <Image src="/logo-96.png" alt="" width={48} height={48} className="size-12 rounded-full" priority />
-          <span className="text-2xl font-extrabold [font-variation-settings:'wdth'_86]">Christhood Ministries</span>
-        </Link>
-        <div>
-          <h1 className="t-h1 max-w-[12ch]">Team area</h1>
-          <p className="t-lead mt-5 max-w-md text-on-purple-muted">Update the website, welcome new guests and stand with people in prayer. No developer needed.</p>
+    <main className="min-h-svh bg-paper text-ink">
+      <header className="border-b border-rule">
+        <div className="mx-auto flex max-w-[84rem] items-center justify-between gap-4 px-4 py-3 sm:px-8 sm:py-4">
+          <Link href="/" className="inline-flex min-h-11 items-center gap-3" aria-label="Christhood Ministries home">
+            <Image src="/logo-96.png" alt="" width={44} height={44} className="size-11 rounded-full" priority />
+            <span>
+              <span className="block text-[1.1rem] font-extrabold leading-tight [font-variation-settings:'wdth'_86]">Christhood</span>
+              <span className="block text-[0.8rem] font-semibold leading-tight text-purple">Ministries</span>
+            </span>
+          </Link>
+          <Link href="/" className="inline-flex min-h-11 items-center gap-2 px-1 text-sm font-semibold text-purple underline-offset-4 hover:underline">
+            <span className="sm:hidden">Back</span>
+            <span className="hidden sm:inline">Back to website</span>
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
         </div>
-        <p className="hidden max-w-sm font-serif text-lg leading-snug text-on-purple-muted lg:block">“Whatever you do, work at it with all your heart, as working for the Lord.”<span className="mt-1 block font-sans text-base font-semibold text-on-purple">Colossians 3:23</span></p>
-      </section>
+      </header>
 
-      <section className="flex items-center px-6 py-12 sm:px-10 lg:px-16">
-        <div className="mx-auto w-full max-w-md">
-          <h2 className="text-[clamp(1.75rem,3vw,2.25rem)]">{canCreate ? "Set up the first administrator" : "Sign in"}</h2>
-          <p className="mt-2 text-muted">{canCreate ? "This person can add everyone else and give each department head their own access." : process.env.GOOGLE_CLIENT_ID ? "Sign in with Google. No account yet? Sign in anyway and an administrator will be asked to approve you." : "Use the email and password your administrator gave you."}</p>
-          <div className="mt-8 grid gap-6">
-            {!status.signIn && <Notice tone="warn" title="Sign-in is not switched on yet">The hosting settings need a secret key before anyone can sign in. The setup steps are in the README.</Notice>}
-            {status.signIn && setup && !store.writable && <Notice tone="warn" title="Saving is not switched on yet">Connect the free database in the hosting dashboard first, then come back here to create the first administrator.</Notice>}
-            {canCreate ? <FirstSetup needsKey={Boolean(process.env.VERCEL)} /> : !setup && status.signIn ? <SignIn googleClientId={process.env.GOOGLE_CLIENT_ID} /> : null}
+      <div className="mx-auto grid min-h-[calc(100svh-4.25rem)] max-w-[84rem] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        <section aria-labelledby="team-area-title" className="flex flex-col justify-center border-b border-rule px-5 py-9 sm:px-10 sm:py-12 lg:border-b-0 lg:border-r lg:px-16">
+          <div className="max-w-xl">
+            <p className="flex items-center gap-3 text-sm font-semibold text-purple"><span className="h-px w-8 bg-purple" aria-hidden />For the Christhood team</p>
+            <h1 id="team-area-title" className="mt-5 max-w-[11ch] text-5xl sm:text-6xl">Team area</h1>
+            <p className="mt-5 max-w-[38ch] font-serif text-[1.08rem] leading-[1.7] text-muted">Update the website, welcome new guests and stand with people in prayer.</p>
           </div>
-          <p className="mt-10 text-[0.9rem] text-muted">Forgotten your password? Ask your administrator to reset it for you.</p>
-          <p className="mt-2 text-[0.9rem]"><Link href="/" className="font-semibold text-purple underline underline-offset-4">Back to the website</Link></p>
-        </div>
-      </section>
-    </div>
+          <div className="mt-8 max-w-md border-t border-rule pt-5 sm:mt-12 sm:pt-6">
+            <blockquote className="max-w-[40ch] font-serif text-base leading-relaxed text-muted">“Whatever you do, work at it with all your heart, as working for the Lord.”</blockquote>
+            <p className="mt-2 text-sm font-semibold">Colossians 3:23</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="sign-in-title" className="flex items-center px-5 py-9 sm:px-10 sm:py-12 lg:px-16">
+          <div className="mx-auto w-full max-w-[26rem]">
+            <p className="text-sm font-semibold text-purple">Team sign-in</p>
+            <h2 id="sign-in-title" className="mt-3 text-3xl">{canCreate ? "Set up the first administrator" : "Sign in"}</h2>
+            <p className="mt-3 max-w-[38ch] text-base leading-relaxed text-muted">
+              {canCreate
+                ? "This person can add everyone else and give each department head their own access."
+                : process.env.GOOGLE_CLIENT_ID
+                  ? "Use your Google account to sign in. New team members can request access for an administrator to review."
+                  : "Use the email and password your administrator gave you."}
+            </p>
+            <div className="mt-8 grid gap-6">
+              {!status.signIn && <Notice tone="warn" title="Sign-in is temporarily unavailable">Please ask the person who manages the site to help.</Notice>}
+              {status.signIn && setup && !store.writable && <Notice tone="warn" title="Setup is not ready yet">The site administrator needs to finish the database setup before the first administrator can be created.</Notice>}
+              {canCreate ? <FirstSetup needsKey={Boolean(process.env.VERCEL)} /> : !setup && status.signIn ? <SignIn googleClientId={process.env.GOOGLE_CLIENT_ID} /> : null}
+            </div>
+            <p className="mt-8 border-t border-rule pt-5 text-sm leading-relaxed text-muted">Forgotten your password? Ask your administrator to reset it for you.</p>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }
 
@@ -132,7 +157,7 @@ async function Overview({ user }: { user: StoredUser }) {
     requests > 0 && { key: "access", n: requests, href: "/123admin/team/requests", title: requests === 1 ? "person asked for team access" : "people asked for team access", meta: "Approve the ones you know and give them a role." },
     toReview.length > 0 && { key: "camp", n: toReview.length, href: "/123admin/camps?status=Pending%20review", title: toReview.length === 1 ? "camp application to review" : "camp applications to review", meta: ageChecks ? `${plural(ageChecks, "is", "are")} outside the usual age range and ${ageChecks === 1 ? "needs" : "need"} a look.` : "Check the details and the payment, then approve." },
     unpaid > 0 && { key: "unpaid", n: unpaid, href: "/123admin/camps?status=Approved", title: unpaid === 1 ? "approved camper without a payment check" : "approved campers without a payment check", meta: "Open each one and tick the box once the office has seen the money." },
-    newGuests.length > 0 && { key: "guests", n: newGuests.length, href: "/123admin/guests", title: newGuests.length === 1 ? "new member to follow up" : "new members to follow up", meta: lateGuests ? `${plural(lateGuests, "has", "have")} waited three days or more. Call or WhatsApp them.` : "Call or WhatsApp them this week." },
+    newGuests.length > 0 && { key: "guests", n: newGuests.length, href: "/123admin/guests", title: newGuests.length === 1 ? "new member to follow up" : "new members to follow up", meta: lateGuests ? `${plural(lateGuests, "has", "have")} waited three days or more. Call or email them.` : "Call or email them this week." },
     newPrayers.length > 0 && { key: "prayers", n: newPrayers.length, href: "/123admin/prayers", title: newPrayers.length === 1 ? "new prayer request" : "new prayer requests", meta: callBacks ? `${plural(callBacks, "asked", "asked")} for a call back. Handled in confidence.` : "Handled in confidence." },
   ].filter(Boolean) as { key: string; n: number; href: string; title: string; meta: string }[];
 

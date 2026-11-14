@@ -5,7 +5,7 @@ import type { SiteSettings } from "@/lib/types";
 
 /** Optional extras after a form is saved. Each one is switched on only when its settings exist, and a failure never loses the form. */
 
-export async function notifyTeam(kind: "visitor" | "prayer" | "thanksgiving" | "camp", who: string) {
+export async function notifyTeam(kind: "visitor" | "prayer" | "thanksgiving" | "camp") {
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM, NOTIFY_EMAILS } = process.env;
   if (!SMTP_HOST || !NOTIFY_EMAILS) return;
   try {
@@ -14,7 +14,7 @@ export async function notifyTeam(kind: "visitor" | "prayer" | "thanksgiving" | "
     await transport.sendMail({
       from: SMTP_FROM ?? SMTP_USER,
       to: NOTIFY_EMAILS,
-      subject: `New ${label} from the website: ${who.replace(/[\r\n]+/g, " ").slice(0, 60)}`,
+      subject: `New ${label} from the website`,
       // Details stay in the admin area. Prayer requests are never copied into email.
       text: `A new ${label} has come in through the website.\n\nOpen it here: ${site.url}/123admin/${kind === "visitor" ? "guests" : kind === "camp" ? "camps" : "prayers"}\n\nFor privacy, the details are kept only in the admin area, not in this email.`,
     });
@@ -66,20 +66,24 @@ export async function welcomeEmail(to: string, firstName: string, settings: Site
   const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
   if (!SMTP_HOST) return "not-set-up";
   const f = settings.fellowship;
+  const finalGatheringEndsAt = Date.parse(`2026-11-14T${f.end}:00+03:00`);
+  const gatheringDetails = Date.now() < finalGatheringEndsAt
+    ? `Our final gathering of 2026 is Saturday, 14 November, ${f.display}, at ${f.address}. After that, we plan to meet again in January as we prepare for camps. Further information will be shared when available.`
+    : "We are pausing regular gatherings as we prepare for camps. We plan to meet again in January. Further information will be shared when available.";
   try {
     const transport = nodemailer.createTransport({ host: SMTP_HOST, port: Number(SMTP_PORT ?? 587), secure: Number(SMTP_PORT) === 465, auth: SMTP_USER ? { user: SMTP_USER, pass: SMTP_PASS } : undefined });
     await transport.sendMail({
       from: SMTP_FROM ?? SMTP_USER,
       to,
-      replyTo: settings.contact.email,
+      replyTo: process.env.PROTOCOL_EMAIL?.trim() || settings.contact.email,
       subject: "Welcome to Christhood Ministries",
       text: [
         `Dear ${firstName},`,
         "",
         "Welcome to the Christhood family. We are so glad you joined us.",
         "",
-        `We meet every ${f.day}, ${f.display}, at ${f.address}.`,
-        "Our protocol team will keep in touch, and you are always welcome to reply to this email or call us:",
+        gatheringDetails,
+        "Our protocol team will keep in touch. You are welcome to reply to this email or call us:",
         ...settings.contact.phones.map((p) => `  ${p.display}`),
         "",
         "Believe. Belong. Become.",

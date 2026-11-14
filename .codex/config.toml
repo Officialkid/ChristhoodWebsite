@@ -1,0 +1,3 @@
+[mcp_servers.christhood_cloudinary]
+url = "https://asset-management.mcp.cloudinary.com/mcp"
+default_tools_approval_mode = "writes"

@@ -36,7 +36,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     <>
       <Header menu={menu} portal={site.portal} banner={banner} />
       <main id="main">{children}</main>
-      <Footer menu={menu} settings={settings} />
+      <Footer settings={settings} />
       <MobileDock />
       <TeamDoor />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(churchLd).replace(/</g, "\\u003c") }} />

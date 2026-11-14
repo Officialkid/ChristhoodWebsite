@@ -19,8 +19,8 @@ export default async function ProgrammesPage() {
       <Section tone="alt"><Directory pages={programmes} base="/programmes" showAudience /></Section>
       <Section tone="purple" tight>
         <div className="flex flex-wrap items-center justify-between gap-6">
-          <div><h2 className="t-h2">Camps are open for registration</h2><p className="t-lead mt-3 text-on-purple-muted">Register a child, volunteer as a facilitator, or sponsor a camper.</p></div>
-          <Button href="/events/register">Register now</Button>
+          <div><h2 className="t-h2">Camps and ways to take part</h2><p className="t-lead mt-3 text-on-purple-muted">Find camp dates, programme details and ways to support young people.</p></div>
+          <Button href="/camps">Explore the camps</Button>
         </div>
       </Section>
     </>

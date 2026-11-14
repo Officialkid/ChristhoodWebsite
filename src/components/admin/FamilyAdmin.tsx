@@ -14,7 +14,7 @@ function Shown({ title, note, value }: { title: string; note: string; value: str
     <Notice tone="warn" title={title}>
       <p>{note}</p>
       <p className="mt-3 flex flex-wrap items-center gap-3">
-        <code className="select-all break-all rounded-sm bg-paper px-3 py-2 text-lg font-bold tracking-wide">{value}</code>
+        <code className="select-all whitespace-pre-line break-all rounded-sm bg-paper px-3 py-2 text-lg font-bold tracking-wide">{value}</code>
         <button type="button" onClick={async () => { await navigator.clipboard.writeText(value); toast.success("Copied."); }} className={btnClass.secondary}><Copy className="size-4" aria-hidden /> Copy</button>
       </p>
     </Notice>
@@ -104,14 +104,26 @@ export function RemoveUpdate({ id }: { id: string }) {
 }
 
 /** The camp office puts an application made without a family page onto the parent's family page. */
-export function LinkFamilyForm({ id, childName }: { id: string; childName: string }) {
+export function LinkFamilyForm({ id, childName, phone }: { id: string; childName: string; phone: string }) {
   const router = useRouter();
-  const { run, formRef, errors } = useSave(linkApplicationToFamily, () => router.refresh());
+  const [credentials, setCredentials] = useState<string | null>(null);
+  const { run, formRef, errors } = useSave(linkApplicationToFamily, (result) => {
+    router.refresh();
+    if (result.secret) setCredentials(result.secret);
+  });
   return (
-    <form ref={formRef} action={run} className="grid max-w-md gap-4" noValidate>
-      <input type="hidden" name="id" value={id} />
-      <TextField name="phone" label="Phone number on the parent's family page" type="tel" inputMode="tel" autoComplete="off" error={errors.phone} hint={`Check that this person really is ${childName}'s parent first. Then the application, the status and any notes shared with the family show on their page.`} />
-      <div><SaveButton>Put on the family page</SaveButton></div>
-    </form>
+    <div className="grid gap-4">
+      {credentials && <Shown title="Family access is ready" note="Give these sign-in details privately to the parent. They must choose a new password when they first sign in." value={credentials} />}
+      <form ref={formRef} action={run} className="grid max-w-md gap-4" noValidate>
+        <input type="hidden" name="id" value={id} />
+        <TextField name="phone" label="Phone number on the parent's family page" type="tel" inputMode="tel" autoComplete="off" defaultValue={phone} error={errors.phone} hint={`If no family page exists, this will create one and link the application. Check that this person really is ${childName}'s parent first.`} />
+        <label className="flex items-start gap-3 text-[0.95rem]">
+          <input type="checkbox" name="verified" value="yes" required aria-invalid={errors.verified ? true : undefined} className="mt-1 size-5 accent-purple" />
+          <span>I have confirmed that this person is the child&apos;s parent or legal guardian.</span>
+        </label>
+        {errors.verified && <p role="alert" className="f-error">{errors.verified}</p>}
+        <div><SaveButton>Link application and give access</SaveButton></div>
+      </form>
+    </div>
   );
 }

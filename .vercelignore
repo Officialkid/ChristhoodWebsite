@@ -1,5 +1,6 @@
 legacy/
 docs/
+.codex/
 .scratch/
 .data/
 .next/

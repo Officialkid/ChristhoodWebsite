@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight, Check, Copy, Play } from "lucide-react";
@@ -11,7 +12,6 @@ import Counter from "yet-another-react-lightbox/plugins/counter";
 import "yet-another-react-lightbox/styles.css";
 import "yet-another-react-lightbox/plugins/thumbnails.css";
 import "yet-another-react-lightbox/plugins/counter.css";
-import { Icon } from "./icons";
 
 /** One tap copies text, and says so. */
 export function CopyButton({ value, label, tone = "dark" }: { value: string; label: string; tone?: "dark" | "light" }) {
@@ -97,34 +97,27 @@ export function VideoCard({ id, title }: { id: string; title: string }) {
 
 export type DirItem = { href: string; title: string; meta?: string; summary: string; photo: GalleryPhoto; icon?: string };
 
-/** A list of links where hovering or focusing a row shows its photo beside it. On phones the photo is left out. */
+/** Every department stays visible as a clear row, with its own photo at every screen size. */
 export function DirectoryView({ items }: { items: DirItem[] }) {
-  const [active, setActive] = useState(0);
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-20">
-      <ul className="border-t border-rule">
+    <ul className="border-t border-rule">
         {items.map((it, i) => (
           <li key={it.href} className="border-b border-rule">
-            <Link href={it.href} onMouseEnter={() => setActive(i)} onFocus={() => setActive(i)} className="group grid grid-cols-[1fr_auto] items-start gap-x-6 py-6">
-              <span>
+            <Link href={it.href} className="group grid min-h-24 grid-cols-[minmax(0,1fr)_5.25rem_1.25rem] items-center gap-3 py-4 sm:grid-cols-[2.5rem_minmax(0,1fr)_7.5rem_1.5rem] sm:gap-5 sm:py-5">
+              <span aria-hidden="true" className="hidden text-[0.9rem] font-semibold tabular-nums text-purple sm:block">{String(i + 1).padStart(2, "0")}</span>
+              <span className="min-w-0">
                 {it.meta && <span className="mb-1 block text-[0.9rem] font-semibold text-muted">{it.meta}</span>}
-                <span className={`flex items-center gap-3 text-[clamp(1.5rem,2.7vw,2.25rem)] font-extrabold leading-[1.08] [font-variation-settings:'wdth'_86] transition-colors ${active === i ? "text-purple" : ""}`}><Icon name={it.icon} className="size-[0.8em] shrink-0 text-purple" /><span>{it.title}</span></span>
-                <span className="reading mt-2 block text-muted">{it.summary}</span>
+                <span className="block text-[1.2rem] font-extrabold leading-tight [font-variation-settings:'wdth'_86] group-hover:text-purple group-hover:underline group-hover:underline-offset-4 sm:text-[1.45rem]">{it.title}</span>
+                <span className="reading mt-1 block text-[0.98rem] text-muted">{it.summary}</span>
               </span>
-              <ArrowUpRight aria-hidden className={`mt-1 size-7 transition-all ${active === i ? "text-purple" : "text-muted"} group-hover:translate-x-0.5 group-hover:-translate-y-0.5`} />
+              <span className="relative block aspect-[4/3] overflow-hidden bg-paper-2">
+                <Image src={it.photo.small} alt="" fill sizes="(min-width:640px) 120px, 84px" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+              </span>
+              <ArrowUpRight aria-hidden className="size-5 text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-purple" />
             </Link>
           </li>
         ))}
-      </ul>
-      <div className="relative hidden lg:block" aria-hidden>
-        <div className="sticky top-28 aspect-[4/5] overflow-hidden bg-paper-2">
-          {items.map((it, i) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={it.href} src={it.photo.small} alt="" loading={i < 2 ? "eager" : "lazy"} decoding="async" className={`absolute inset-0 size-full object-cover transition-opacity duration-300 ${active === i ? "opacity-100" : "opacity-0"}`} />
-          ))}
-        </div>
-      </div>
-    </div>
+    </ul>
   );
 }
 
@@ -133,16 +126,29 @@ export type Quote = { name: string; role: string; quote: string; photo?: string 
 /** One story at a time, large, with the names to choose from beside it. */
 export function QuoteSwitcher({ stories }: { stories: Quote[] }) {
   const [i, setI] = useState(0);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  if (!stories.length) return <p className="reading text-muted">No stories are available right now.</p>;
   const s = stories[i];
+  const onTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, current: number) => {
+    let next: number | undefined;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (current + 1) % stories.length;
+    if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (current - 1 + stories.length) % stories.length;
+    if (event.key === "Home") next = 0;
+    if (event.key === "End") next = stories.length - 1;
+    if (next === undefined) return;
+    event.preventDefault();
+    setI(next);
+    tabRefs.current[next]?.focus();
+  };
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-20">
-      <figure id="story-panel" role="tabpanel" aria-live="polite">
+      <figure id="story-panel" role="tabpanel" aria-labelledby={`story-tab-${i}`} aria-live="polite" tabIndex={0}>
         <blockquote className="font-serif text-[clamp(1.3rem,2.1vw,1.7rem)] leading-[1.5]">“{s.quote}”</blockquote>
         <figcaption className="mt-6"><span className="font-bold">{s.name}</span><span className="text-muted">, {s.role}</span></figcaption>
       </figure>
-      <div role="tablist" aria-label="Choose a story" aria-orientation="vertical" className="border-t border-rule">
+      <div role="tablist" aria-label="Choose a story" aria-orientation="vertical" onKeyDown={(event) => onTabKeyDown(event, i)} className="border-t border-rule">
         {stories.map((x, n) => (
-          <button key={x.name} type="button" role="tab" aria-selected={n === i} aria-controls="story-panel" onClick={() => setI(n)} className={`flex min-h-14 w-full items-center gap-3 border-b border-rule py-2 text-left transition-colors ${n === i ? "text-purple" : "text-muted hover:text-ink"}`}>
+          <button key={x.name} ref={(el) => { tabRefs.current[n] = el; }} id={`story-tab-${n}`} type="button" role="tab" aria-selected={n === i} aria-controls="story-panel" tabIndex={n === i ? 0 : -1} onClick={() => setI(n)} className={`flex min-h-14 w-full items-center gap-3 border-b border-rule py-2 text-left transition-colors ${n === i ? "text-purple" : "text-muted hover:text-ink"}`}>
             {x.photo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={x.photo} alt="" loading="lazy" className="size-10 shrink-0 rounded-sm object-cover" /> : <span className="size-10 shrink-0 bg-paper-2" />}
             <span><span className="block font-semibold leading-tight">{x.name}</span><span className="block text-[0.85rem] leading-tight">{x.role}</span></span>
           </button>

@@ -6,8 +6,17 @@ import { btnClass } from "./ui";
 import type { MediaItem } from "@/lib/types";
 
 /** Small copy of a picture for previews. Church photos are named; uploads and outside pictures carry their own address. */
-export const previewSrc = (src?: string) => (!src ? "" : /^(https?:)?\/\//.test(src) || src.startsWith("/media/") ? src.replace(/\.webp$/, "-sm.webp") : src.startsWith("/") ? src : `/img/${src}-sm.webp`);
-
+export const previewSrc = (src?: string) => {
+  if (!src) return "";
+  if (src.startsWith("https://res.cloudinary.com/") && src.includes("/image/upload/")) {
+    const address = new URL(src);
+    address.searchParams.delete("ch_w");
+    address.searchParams.delete("ch_h");
+    return address.toString().replace("/image/upload/", "/image/upload/c_limit,w_480,q_auto,f_auto/");
+  }
+  if (/^(https?:)?\/\//.test(src) || src.startsWith("/media/")) return src.replace(/\.webp$/, "-sm.webp");
+  return src.startsWith("/") ? src : "/img/" + src + "-sm.webp";
+};
 type Library = { photos: string[]; uploads: MediaItem[]; host: string };
 let cache: Library | null = null;
 async function loadLibrary(force = false): Promise<Library> {
@@ -168,9 +177,9 @@ export function PhotoField({ name, label, defaultValue, fallback, hint, focusNam
             <button type="button" onClick={() => dialog.current?.close()} aria-label="Close" className="inline-flex size-11 items-center justify-center hover:bg-paper-2"><X className="size-5" aria-hidden /></button>
           </div>
           <div className="flex flex-wrap items-center gap-2 border-b border-rule px-4 py-3">
-            <div role="tablist" aria-label="Where the picture comes from" className="flex gap-1">
+            <div role="group" aria-label="Where the picture comes from" className="flex flex-wrap gap-1">
               {([["church", "Church photos"], ["mine", "Uploaded"], ["upload", "Upload new"]] as const).map(([t, l]) => (
-                <button key={t} type="button" role="tab" aria-selected={tab === t} onClick={() => setTab(t)} className={`min-h-11 px-4 text-[0.95rem] font-semibold ${tab === t ? "bg-purple text-on-purple" : "hover:bg-paper-2"}`}>{l}</button>
+                <button key={t} type="button" aria-pressed={tab === t} aria-controls={`${id}-source-panel`} onClick={() => setTab(t)} className={`min-h-11 px-4 text-[0.95rem] font-semibold ${tab === t ? "bg-purple text-on-purple" : "hover:bg-paper-2"}`}>{l}</button>
               ))}
             </div>
             {tab !== "upload" && (
@@ -181,7 +190,7 @@ export function PhotoField({ name, label, defaultValue, fallback, hint, focusNam
               </label>
             )}
           </div>
-          <div className="flex-1 overflow-y-auto p-4">
+          <div id={`${id}-source-panel`} className="flex-1 overflow-y-auto p-4">
             {error && <p role="alert" className="f-error mb-3">{error}</p>}
             {!lib && !error && <p className="flex items-center gap-2 text-muted"><Loader2 className="size-4 animate-spin" aria-hidden /> Loading photos…</p>}
             {lib && tab === "church" && (

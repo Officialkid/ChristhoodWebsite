@@ -7,6 +7,7 @@ import { mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { store } from "@/lib/store";
 import { formatStamp } from "@/lib/time";
 import { NoteForm, RemoveNote } from "@/components/admin/CampDay";
+import { CampPhotoManager } from "@/components/admin/CampPhotoManager";
 import { btnClass, Chip, Empty, Notice, PageTitle } from "@/components/admin/ui";
 import type { CampSealed } from "@/lib/types";
 
@@ -116,6 +117,7 @@ export default async function CamperCarePage({ params }: { params: Promise<{ eve
           </div>
         </aside>
       </div>
+      <div className="mt-12"><CampPhotoManager applicationId={app.id} childName={app.childName} canShare={Boolean(app.familyId) && d?.mediaConsent === "Yes"} /></div>
     </>
   );
 }

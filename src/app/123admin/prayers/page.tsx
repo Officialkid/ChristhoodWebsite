@@ -23,7 +23,7 @@ export default async function PrayersPage() {
       />
       <div className="mt-8 grid gap-6">
         {!store.writable && <Notice tone="warn" title="Saving is not switched on yet">Requests sent from the website cannot be kept until the database is connected.</Notice>}
-        {hidden > 0 && <Notice>{hidden} {hidden === 1 ? "request is" : "requests are"} for the pastoral team only and {hidden === 1 ? "is" : "are"} not shown to you. This keeps the promise made on the form.</Notice>}
+        {hidden > 0 && <Notice>{hidden} {hidden === 1 ? "request is" : "requests are"} for the Prayer &amp; Care Team only and {hidden === 1 ? "is" : "are"} not shown to you. This keeps the promise made on the form.</Notice>}
         <PrayerInbox prayers={prayers} />
       </div>
     </>

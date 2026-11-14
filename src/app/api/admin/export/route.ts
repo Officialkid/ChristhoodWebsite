@@ -24,8 +24,8 @@ export async function GET(req: Request) {
     if (!can(user, "visitors")) return new Response("No access.", { status: 403 });
     const list = (await collection<Visitor>("visitors").list()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
     rows = [
-      ["Received", "Date of visit", "Full name", "Phone", "Email", "Lives in", "Age group", "First visit?", "Heard about us", "Invited by", "Home church", "Would like to", "Prayer request", "Status", "Followed up by", "Notes"],
-      ...list.map((g) => [g.createdAt, g.visitDate, g.fullName, g.phone, g.email, g.area, g.ageGroup, g.firstVisit, g.heardFrom, g.invitedBy, g.homeChurch, g.interests.join("; "), g.prayerRequest, g.status, g.followedUpBy, g.notes].map((v) => String(v ?? ""))),
+      ["Received", "Date of visit", "Full name", "Phone", "Email", "Lives in", "Age group", "First visit?", "Heard about us", "Invited by", "Home church", "Would like to", "Status", "Followed up by", "Notes"],
+      ...list.map((g) => [g.createdAt, g.visitDate, g.fullName, g.phone, g.email, g.area, g.ageGroup, g.firstVisit, g.heardFrom, g.invitedBy, g.homeChurch, g.interests.join("; "), g.status, g.followedUpBy, g.notes].map((v) => String(v ?? ""))),
     ];
   } else if (kind === "prayers") {
     if (!can(user, "prayers")) return new Response("No access.", { status: 403 });
