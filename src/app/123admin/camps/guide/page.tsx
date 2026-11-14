@@ -50,7 +50,7 @@ const parts: { id: string; title: string; body: React.ReactNode }[] = [
       <>
         <p>Press <strong>Here</strong> or <strong>Away</strong> beside a child. Pressing the same button again takes the mark off, so a wrong tap is easy to undo.</p>
         <p>The line above the list counts as you go: how many are here, how many are away, how many are not marked yet. Marks are kept for each day separately.</p>
-        <p>You can mark your own campers. Head facilitators and the camp office can mark anyone.</p>
+        <p>The team on the ground keeps the register. You mark your own campers; head facilitators and the camp office can mark anyone.</p>
       </>
     ),
   },
