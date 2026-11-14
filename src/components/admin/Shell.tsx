@@ -128,11 +128,11 @@ export default function Shell({ groups, user, signOut, find = [], children }: Pr
   const searchHint = find.length > 0 ? "Search screens, people and applications" : "Jump to a screen";
 
   return (
-    <div className="admin min-h-svh bg-paper lg:grid lg:grid-cols-[17.5rem_minmax(0,1fr)]">
+    <div className="admin min-h-svh bg-paper lg:grid lg:grid-cols-[17.5rem_minmax(0,1fr)] print:block">
       <a href="#admin-main" className="fixed left-4 top-4 z-[90] -translate-y-24 rounded-sm bg-gold px-5 py-3 font-semibold text-ink focus:translate-y-0">Skip to the content</a>
 
       {/* Sidebar on large screens */}
-      <aside className="a-side sticky top-0 hidden h-svh flex-col overflow-y-auto bg-purple-deep text-on-purple lg:flex">
+      <aside className="a-side sticky top-0 hidden h-svh flex-col print:!hidden overflow-y-auto bg-purple-deep text-on-purple lg:flex">
         <Brand />
         <div className="flex-1">{nav}</div>
         <Account user={user} signOut={signOut} />
@@ -140,7 +140,7 @@ export default function Shell({ groups, user, signOut, find = [], children }: Pr
 
       {/* Top bar and drawer on smaller screens */}
       <div className="lg:contents">
-        <header className="sticky top-0 z-40 flex min-h-14 items-center gap-2 border-b border-rule bg-paper px-3 pt-[env(safe-area-inset-top)] lg:hidden">
+        <header className="sticky top-0 z-40 flex min-h-14 items-center gap-2 border-b border-rule bg-paper px-3 pt-[env(safe-area-inset-top)] lg:hidden print:!hidden">
           <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" aria-expanded={open} aria-controls="admin-drawer" className="inline-flex size-11 items-center justify-center rounded-sm border border-rule"><Menu className="size-5" aria-hidden /></button>
           <Link href="/123admin" className="flex min-h-11 min-w-0 flex-1 items-center gap-2 font-extrabold [font-variation-settings:'wdth'_86]"><Image src="/logo-96.png" alt="" width={32} height={32} className="size-8 rounded-full" /><span className="truncate">Christhood team</span></Link>
           <button type="button" onClick={() => setPalette(true)} aria-label={searchHint} className="inline-flex size-11 items-center justify-center rounded-sm border border-rule"><Search className="size-5" aria-hidden /></button>
@@ -157,7 +157,7 @@ export default function Shell({ groups, user, signOut, find = [], children }: Pr
         </aside>
 
         <div className="min-w-0">
-          <div className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b border-rule bg-paper px-8 lg:flex">
+          <div className="sticky top-0 z-30 hidden h-14 items-center gap-4 border-b border-rule bg-paper px-8 lg:flex print:!hidden">
             <button type="button" onClick={() => setPalette(true)} className="inline-flex h-10 w-full max-w-[28rem] items-center gap-3 rounded-sm border border-rule px-3 text-left text-[0.92rem] text-muted transition-colors hover:border-ink hover:text-ink">
               <Search className="size-4 shrink-0" aria-hidden /> <span className="min-w-0 flex-1 truncate">{searchHint}</span> <kbd className="rounded-sm border border-rule px-1.5 font-sans text-[0.76rem]">Ctrl K</kbd>
             </button>

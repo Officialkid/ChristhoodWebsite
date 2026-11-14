@@ -10,7 +10,7 @@ import type { Result } from "./forms";
 import { btnClass } from "./ui";
 import type { CampSession } from "@/lib/types";
 
-const seg = "inline-flex min-h-11 min-w-[4.5rem] items-center justify-center px-4 text-[0.95rem] font-semibold";
+const seg = "inline-flex min-h-11 flex-1 items-center justify-center px-4 text-[0.95rem] font-semibold transition-colors sm:min-w-[4.5rem] sm:flex-none";
 
 /** Here / Away for one camper on one day. Pressing the mark that is already on takes it off again. */
 export function AttendanceToggle({ id, date, name, status }: { id: string; date: string; name: string; status?: "present" | "absent" }) {
@@ -30,7 +30,7 @@ export function AttendanceToggle({ id, date, name, status }: { id: string; date:
       router.refresh();
     });
   return (
-    <span role="group" aria-label={`Attendance for ${name}`} className="inline-flex" aria-busy={pending}>
+    <span role="group" aria-label={`Attendance for ${name}`} className="flex w-full sm:inline-flex sm:w-auto" aria-busy={pending}>
       <button type="button" aria-pressed={mark === "present"} aria-label={`${name}: here`} onClick={() => press("present")} className={`${seg} border border-r-0 ${mark === "present" ? "border-purple bg-purple text-on-purple" : "border-ink/35 hover:border-ink"}`}>Here</button>
       <button type="button" aria-pressed={mark === "absent"} aria-label={`${name}: away`} onClick={() => press("absent")} className={`${seg} border ${mark === "absent" ? "border-ink bg-ink text-paper" : "border-ink/35 hover:border-ink"}`}>Away</button>
     </span>

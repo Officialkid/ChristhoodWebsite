@@ -16,7 +16,6 @@ const views = [
   ["unmarked", "Not marked yet"],
   ["unassigned", "Nobody looks after them"],
 ] as const;
-const camp = (c: string) => (c === "jewels" ? "Jewels" : c === "teen-life" ? "Teen Life" : "Camp");
 
 export default async function CampDayPage({ params, searchParams }: { params: Promise<{ eventId: string }>; searchParams: Promise<{ date?: string; show?: string }> }) {
   const { eventId } = await params;
@@ -61,21 +60,23 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
               <LinkButton href={`${root}/assign`} icon="users">Who looks after whom</LinkButton>
               <a href={`/api/admin/export?kind=register&event=${encodeURIComponent(eventId)}&date=${date}`} className={btnClass.secondary}><Download className="size-4" aria-hidden /> Register for {dayShort(date)}</a>
             </>
-          ) : undefined
+          ) : (
+            <LinkButton href={`${ADMIN_PATH}/camps/guide`} icon="book">Facilitator guide</LinkButton>
+          )
         }
       />
 
       <div className="mt-8 grid gap-12">
         {days.length > 1 && (
-          <nav aria-label="Choose the day" className="flex flex-wrap gap-1">
-            {days.map((d) => <Link key={d} href={link(d)} aria-current={d === date ? "page" : undefined} className={`inline-flex min-h-11 items-center px-4 text-[0.95rem] font-semibold ${d === date ? "bg-purple text-on-purple" : "border border-rule hover:border-ink"}`}>{dayShort(d)}{d === todayInNairobi() && <span className="ml-2 opacity-75">today</span>}</Link>)}
+          <nav aria-label="Choose the day" className="a-tabs">
+            {days.map((d) => <Link key={d} href={link(d)} aria-current={d === date ? "page" : undefined} className="a-tab">{dayShort(d)}{d === todayInNairobi() && <span className="n">today</span>}</Link>)}
           </nav>
         )}
 
         <section aria-labelledby="tt">
           <h2 id="tt" className="text-xl">{dayLabel(date)}</h2>
           {today.length === 0 ? (
-            <p className="mt-3 max-w-xl text-muted">No timetable has been added for this day.{keeper && <> <Link href={`${root}/timetable`} className="font-semibold text-purple underline underline-offset-4">Add it</Link>.</>}</p>
+            <p className="mt-4 max-w-[62ch] text-muted">{keeper ? <>No timetable has been added for this day. <Link href={`${root}/timetable`} className="font-semibold text-purple underline underline-offset-4">Add it</Link>.</> : "The head facilitators have not written the timetable for this day yet."}</p>
           ) : (
             <ol className="mt-3 border-t border-rule">
               {today.map((s) => (
@@ -96,11 +97,11 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
           <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
             <div>
               <h2 id="reg" className="text-xl">{keeper ? "Who is here" : "Your campers"}</h2>
-              <p className="mt-1 text-muted" aria-live="polite">{here} here · {away} away · {base.length - here - away} not marked yet</p>
+              <p className="mt-1 text-muted" aria-live="polite"><strong className="font-bold text-ink">{here}</strong> here · <strong className="font-bold text-ink">{away}</strong> away · <strong className="font-bold text-ink">{base.length - here - away}</strong> not marked yet</p>
             </div>
             {keeper && (
-              <nav aria-label="Filter the list" className="flex flex-wrap gap-1">
-                {views.map(([v, l]) => <Link key={v} href={link(date, v)} aria-current={view === v ? "page" : undefined} className={`inline-flex min-h-11 items-center px-4 text-[0.95rem] font-semibold ${view === v ? "bg-purple text-on-purple" : "border border-rule hover:border-ink"}`}>{l}</Link>)}
+              <nav aria-label="Filter the list" className="a-tabs">
+                {views.map(([v, l]) => <Link key={v} href={link(date, v)} aria-current={view === v ? "page" : undefined} className="a-tab">{l}</Link>)}
               </nav>
             )}
           </div>
@@ -120,10 +121,10 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
                 return (
                   <li key={a.id} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-rule py-4">
                     <div className="min-w-0 flex-1 basis-64">
-                      <p className="font-bold leading-snug">{a.childName} <span className="font-normal text-muted">· age {a.ageAtCamp}</span> <Chip>{camp(a.camp)}</Chip>{photos.get(a.id) === "No" && <> <Chip tone="warn">No photos</Chip></>}</p>
-                      <p className="mt-0.5 text-[0.92rem] text-muted">{keeper ? (owner ? `With ${owner.userName}` : "Nobody looks after them yet") : `Guardian: ${a.guardian}`}</p>
+                      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-bold leading-snug"><span>{a.childName} <span className="font-normal text-muted">· age {a.ageAtCamp}</span></span>{photos.get(a.id) === "No" && <Chip tone="warn">No photos</Chip>}</p>
+                      {keeper && <p className="mt-0.5 text-[0.92rem] text-muted">{owner ? `With ${owner.userName}` : "Nobody looks after them yet"}</p>}
                       <p className="mt-1 flex flex-wrap items-center gap-x-5">
-                        <a href={`tel:${a.phone}`} className="inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline underline-offset-4"><Phone className="size-4" aria-hidden /> {a.guardian}<span className="sr-only">, call</span></a>
+                        <a href={`tel:${a.phone}`} className="inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline underline-offset-4"><Phone className="size-4" aria-hidden /> <span><span className="sr-only">Call guardian </span>{a.guardian}</span></a>
                         {care && <Link href={`${root}/camper/${a.id}`} className="inline-flex min-h-11 items-center font-semibold text-purple underline underline-offset-4">Care details and notes</Link>}
                       </p>
                     </div>

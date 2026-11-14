@@ -5,7 +5,7 @@ import { campApplications, campAssignments, campSessions, campDays, dayShort, to
 import { getEvents } from "@/lib/content";
 import { mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { formatEventDates } from "@/lib/time";
-import { Chip, Empty, Notice, PageTitle, Row } from "@/components/admin/ui";
+import { Chip, Empty, LinkButton, Notice, PageTitle, Row } from "@/components/admin/ui";
 
 export const metadata = { title: "Camp days" };
 
@@ -33,6 +33,7 @@ export default async function CampDaysPage() {
       <PageTitle
         title="Camp days"
         icon="clipboard"
+        actions={<LinkButton href={`${ADMIN_PATH}/camps/guide`} icon="book">Facilitator guide</LinkButton>}
         lead={keeper ? "The expected list, the timetable and who looks after whom. Open a camp to mark who has arrived." : "The timetable, and the campers you look after. Open a camp to mark who is here and to write notes."}
       />
       <div className="mt-8 grid gap-6">

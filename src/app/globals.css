@@ -108,6 +108,8 @@
   .a-table .a-go::after { content: ""; position: absolute; inset: 0; }
   .a-table .a-go:focus-visible { outline-offset: -3px; }
   .a-table .r { text-align: right; }
+  /* A short table of plain words needs no header that follows the page. */
+  .a-table[data-labelled] th { position: static; }
   @media (max-width: 47.99rem) {
     .a-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
     .a-table, .a-table tbody { display: block; }
@@ -118,6 +120,8 @@
     .a-table td:first-child { order: -3; flex: 1 1 8rem; min-width: 0; font-size: 1rem; color: var(--color-ink); }
     .a-table td.k { order: -2; flex: none; }
     .a-table .r { text-align: left; }
+    .a-table[data-labelled] td[data-label]::before { content: attr(data-label) ": "; color: var(--color-muted); }
+    .a-table[data-labelled] td[data-label] { color: var(--color-ink); }
   }
 }
 
@@ -139,4 +143,11 @@
   .rise { animation: none; }
   .word-rise { animation: none; }
   * { scroll-behavior: auto !important; }
+}
+
+/* On paper only the content prints, in plain black on white. */
+@media print {
+  body { background: #fff; }
+  .admin #admin-main { max-width: none; padding: 0; }
+  .admin .a-table th { position: static; }
 }

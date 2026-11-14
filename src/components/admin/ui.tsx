@@ -140,9 +140,9 @@ export function FilterLinks({ label, items }: { label: string; items: { href: st
 }
 
 /** A table that stacks into short entries on a phone. Put `data-label` on each cell after the first so the stacked entry still says what it is. */
-export function DataTable({ caption, head, children }: { caption: string; head: { label: string; className?: string }[]; children: React.ReactNode }) {
+export function DataTable({ caption, head, children, labelled }: { caption: string; head: { label: string; className?: string }[]; children: React.ReactNode; /** Repeat each column name before its value when the table stacks on a phone (for tables of plain words, where a bare "Yes" says nothing). */ labelled?: boolean }) {
   return (
-    <table className="a-table">
+    <table className="a-table" data-labelled={labelled ? "" : undefined}>
       <caption className="sr-only">{caption}</caption>
       <thead>
         <tr>{head.map((h) => <th key={h.label} scope="col" className={h.className}>{h.label}</th>)}</tr>

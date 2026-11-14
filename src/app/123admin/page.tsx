@@ -68,6 +68,7 @@ const blurbs: Record<string, string> = {
   "/123admin/events": "Camps, mentorship seasons and gatherings.",
   "/123admin/camps": "Parents' applications for the Jewels and Teen Life camps.",
   "/123admin/camps/day": "The timetable, who is here, and notes for the children you look after.",
+  "/123admin/camps/guide": "How camp days work, step by step. Short enough to read before camp.",
   "/123admin/banner": "A short message across the top of every page.",
   "/123admin/messages": "Add a sermon video for people to watch.",
   "/123admin/people": "Leaders' words and members' stories.",
@@ -154,6 +155,14 @@ async function Overview({ user }: { user: StoredUser }) {
     : [];
   const keeper = mayKeepRoster(user);
 
+  // Camp helpers with no applications of their own to review: the camp ahead, how it stands, and what to read before it starts.
+  const ahead = runsCamp && campRows.length === 0
+    ? [...new Set(camps.filter((a) => a.status === "Approved").map((a) => a.eventId))]
+        .map((id) => ({ id, event: events.find((e) => e.id === id), title: events.find((e) => e.id === id)?.title ?? camps.find((a) => a.eventId === id)?.eventTitle ?? "Camp", when: campWhen(events.find((e) => e.id === id), today) }))
+        .filter((c) => c.when.label !== "Finished" && !onToday.some((o) => o.id === c.id))
+        .sort((a, b) => (a.event?.start ?? "").localeCompare(b.event?.start ?? ""))
+    : [];
+
   const showSide = changes.length > 0;
   const mayWait = user.role === "admin" || can(user, "visitors") || can(user, "prayers") || scope === "all" || scope.length > 0;
   const date = fmt({ weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date());
@@ -199,6 +208,30 @@ async function Overview({ user }: { user: StoredUser }) {
               </Section>
             );
           })}
+
+          {ahead.length > 0 && (
+            <Section id="ahead" title={ahead.length === 1 ? "The camp ahead" : "The camps ahead"} aside={<Link href={`${ADMIN_PATH}/camps/guide`} className="inline-flex min-h-8 items-center gap-1 font-semibold text-purple hover:underline pointer-coarse:min-h-11">Read the facilitator guide <ArrowRight className="size-4" aria-hidden /></Link>}>
+              <ul>
+                {ahead.map((c) => {
+                  const expected = camps.filter((a) => a.eventId === c.id && a.status === "Approved");
+                  const withMe = expected.filter((a) => given.find((g) => g.id === a.id)?.userId === user.id).length;
+                  const lines = sessions.filter((s) => s.eventId === c.id).length;
+                  return (
+                    <li key={c.id}>
+                      <Link href={`${ADMIN_PATH}/camps/day/${c.id}`} className="group grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 border-b border-rule px-1 py-4 transition-colors hover:bg-paper-2">
+                        <span className="min-w-0">
+                          <span className="block font-bold leading-snug">{c.title}</span>
+                          <span className="mt-0.5 block text-[0.92rem] leading-snug text-muted">{c.event ? formatEventDates(c.event.start, c.event.end) : ""}{c.when.label ? <> · <span className="font-semibold text-ink">{c.when.label}</span></> : null}</span>
+                          <span className="mt-1 block text-[0.92rem] leading-snug text-muted">{keeper ? `${plural(expected.length, "camper", "campers")} expected` : withMe > 0 ? `${plural(withMe, "camper is", "campers are")} with you` : "No campers are with you yet. The head facilitators give them out before camp."} · {lines > 0 ? `${plural(lines, "timetable line", "timetable lines")}` : "timetable not written yet"}</span>
+                        </span>
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Section>
+          )}
 
           {(waiting.length > 0 || mayWait) && (
           <Section id="waiting" title="Waiting for you">
@@ -271,7 +304,7 @@ async function Overview({ user }: { user: StoredUser }) {
         )}
       </div>
 
-      <Section id="all" title="Everything you can change">
+      <Section id="all" title="All your screens">
         <div className="mt-5 grid gap-x-10 gap-y-7 md:grid-cols-2 xl:grid-cols-3">
           {nav.filter((g) => g.title !== "Start").map((g) => (
             <div key={g.title}>

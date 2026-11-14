@@ -19,19 +19,25 @@ export function buildNav(user: StoredUser, counts: { guests: number; prayers: nu
       children: pages.map((p) => ({ href: `${A}/pages/${p.kind}/${p.slug}`, label: p.title, icon: pageIcon[p.slug] ?? "church" })),
     });
   }
+  const camps = campScope(user);
   const hasEvents = user.role === "admin" || [...permsOf(user)].some((p) => p.startsWith("events:"));
   if (hasEvents) website.push({ href: `${A}/events`, label: "Events", icon: "calendar" });
-  const camps = campScope(user);
-  if (camps === "all" || camps.length) website.push({ href: `${A}/camps`, label: "Camp applications", icon: "tent", badge: counts.camps, children: [
-      { href: `${A}/camps/returning`, label: "Returning campers", icon: "users" },
-      { href: `${A}/camps/updates`, label: "Updates to families", icon: "megaphone" },
-      ...(camps === "all" ? [{ href: `${A}/camps/families`, label: "Family accounts", icon: "key" }] : []),
-    ] });
-  if (can(user, "camps:day")) website.push({ href: `${A}/camps/day`, label: "Camp days", icon: "clipboard" });
   if (can(user, "banner")) website.push({ href: `${A}/banner`, label: "Announcement bar", icon: "megaphone" });
   if (can(user, "messages")) website.push({ href: `${A}/messages`, label: "Messages to watch", icon: "play" });
   if (can(user, "people")) website.push({ href: `${A}/people`, label: "Leaders and stories", icon: "users" });
   if (website.length) groups.push({ title: "Website", items: website });
+  const campItems: AdminNavGroup["items"] = [];
+  if (camps === "all" || camps.length) campItems.push({ href: `${A}/camps`, label: "Camp applications", icon: "tent", badge: counts.camps, children: [
+      { href: `${A}/camps/returning`, label: "Returning campers", icon: "users" },
+      { href: `${A}/camps/updates`, label: "Updates to families", icon: "megaphone" },
+      ...(camps === "all" ? [{ href: `${A}/camps/families`, label: "Family accounts", icon: "key" }] : []),
+    ] });
+  if (can(user, "camps:day")) {
+    campItems.push({ href: `${A}/camps/day`, label: "Camp days", icon: "clipboard" });
+    campItems.push({ href: `${A}/camps/guide`, label: "Facilitator guide", icon: "book" });
+  }
+
+  if (campItems.length) groups.push({ title: "Camps", items: campItems });
 
   const pictures: AdminNavGroup["items"] = [];
   if (can(user, "images")) pictures.push({ href: `${A}/pictures`, label: "Page pictures", icon: "image-plus" });
