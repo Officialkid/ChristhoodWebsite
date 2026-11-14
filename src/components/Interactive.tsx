@@ -123,12 +123,28 @@ export function DirectoryView({ items }: { items: DirItem[] }) {
 
 export type Quote = { name: string; role: string; quote: string; photo?: string };
 
-/** One story at a time, large, with the names to choose from beside it. */
+/** One story at a time, large, with the names to choose from beside it. It turns by itself until the visitor takes over. */
 export function QuoteSwitcher({ stories }: { stories: Quote[] }) {
   const [i, setI] = useState(0);
+  const [hold, setHold] = useState(false); // pointer or keyboard focus is inside
+  const [stopped, setStopped] = useState(false); // the visitor chose a story or pressed Pause
+  const calm = useReducedMotion();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const turning = stories.length > 1 && !calm && !hold && !stopped;
+
+  // The story changes by itself every 8 seconds until the visitor takes over.
+  useEffect(() => {
+    if (!turning) return;
+    const timer = setInterval(() => setI((n) => (n + 1) % stories.length), 8000);
+    return () => clearInterval(timer);
+  }, [turning, stories.length]);
+
   if (!stories.length) return <p className="reading text-muted">No stories are available right now.</p>;
   const s = stories[i];
+  const choose = (n: number) => {
+    setI(n);
+    setStopped(true);
+  };
   const onTabKeyDown = (event: React.KeyboardEvent<HTMLDivElement>, current: number) => {
     let next: number | undefined;
     if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (current + 1) % stories.length;
@@ -137,22 +153,36 @@ export function QuoteSwitcher({ stories }: { stories: Quote[] }) {
     if (event.key === "End") next = stories.length - 1;
     if (next === undefined) return;
     event.preventDefault();
-    setI(next);
+    choose(next);
     tabRefs.current[next]?.focus();
   };
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-20">
-      <figure id="story-panel" role="tabpanel" aria-labelledby={`story-tab-${i}`} aria-live="polite" tabIndex={0}>
+    <div
+      className="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-20"
+      onMouseEnter={() => setHold(true)}
+      onMouseLeave={() => setHold(false)}
+      onFocus={() => setHold(true)}
+      onBlur={() => setHold(false)}
+    >
+      <figure id="story-panel" role="tabpanel" aria-labelledby={`story-tab-${i}`} aria-live={turning ? "off" : "polite"} tabIndex={0}>
         <blockquote className="font-serif text-[clamp(1.3rem,2.1vw,1.7rem)] leading-[1.5]">“{s.quote}”</blockquote>
         <figcaption className="mt-6"><span className="font-bold">{s.name}</span><span className="text-muted">, {s.role}</span></figcaption>
-      </figure>
-      <div role="tablist" aria-label="Choose a story" aria-orientation="vertical" onKeyDown={(event) => onTabKeyDown(event, i)} className="border-t border-rule">
-        {stories.map((x, n) => (
-          <button key={x.name} ref={(el) => { tabRefs.current[n] = el; }} id={`story-tab-${n}`} type="button" role="tab" aria-selected={n === i} aria-controls="story-panel" tabIndex={n === i ? 0 : -1} onClick={() => setI(n)} className={`flex min-h-14 w-full items-center gap-3 border-b border-rule py-2 text-left transition-colors ${n === i ? "text-purple" : "text-muted hover:text-ink"}`}>
-            {x.photo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={x.photo} alt="" loading="lazy" className="size-10 shrink-0 rounded-sm object-cover" /> : <span className="size-10 shrink-0 bg-paper-2" />}
-            <span><span className="block font-semibold leading-tight">{x.name}</span><span className="block text-[0.85rem] leading-tight">{x.role}</span></span>
+        {stories.length > 1 && !calm && (
+          <button type="button" onClick={() => setStopped((v) => !v)} aria-pressed={stopped} className="mt-4 inline-flex min-h-11 items-center text-[0.95rem] font-semibold text-muted underline underline-offset-4 hover:text-purple">
+            {stopped ? "Play the stories" : "Pause the stories"}
           </button>
-        ))}
+        )}
+      </figure>
+      <div>
+        <p className="mb-2 text-[0.9rem] text-muted">{stories.length} stories</p>
+        <div role="tablist" aria-label="Choose a story" aria-orientation="vertical" onKeyDown={(event) => onTabKeyDown(event, i)} className="border-t border-rule">
+          {stories.map((x, n) => (
+            <button key={x.name} ref={(el) => { tabRefs.current[n] = el; }} id={`story-tab-${n}`} type="button" role="tab" aria-selected={n === i} aria-controls="story-panel" tabIndex={n === i ? 0 : -1} onClick={() => choose(n)} className={`flex min-h-14 w-full items-center gap-3 border-b border-rule py-2 text-left transition-colors ${n === i ? "text-purple" : "text-muted hover:text-ink"}`}>
+              {x.photo ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={x.photo} alt="" loading="lazy" className="size-10 shrink-0 rounded-sm object-cover" /> : <span className="flex size-10 shrink-0 items-center justify-center bg-paper-2 font-bold text-purple" aria-hidden>{x.name[0]}</span>}
+              <span className="min-w-0"><span className="block truncate font-semibold leading-tight">{x.name}</span><span className="block truncate text-[0.85rem] leading-tight">{x.role}</span></span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

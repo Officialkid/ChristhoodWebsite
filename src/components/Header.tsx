@@ -22,6 +22,7 @@ const opensLeft = (i: number, count: number) => i >= count - 3;
 export default function Header({ menu, portal, banner }: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
@@ -33,6 +34,18 @@ export default function Header({ menu, portal, banner }: Props) {
       document.documentElement.style.overflow = "";
     };
   }, [open]);
+
+  // The bar slips away while reading down the page and returns on the first scroll up.
+  useEffect(() => {
+    let last = 0;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setIsHeaderHidden(y > last && y > 100);
+      last = Math.max(y, 0);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const matchesPath = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`));
   const isActive = (item: MenuItem) => matchesPath(item.href) || Boolean(item.children?.some((child) => matchesPath(child.href)));
@@ -48,7 +61,7 @@ export default function Header({ menu, portal, banner }: Props) {
           </div>
         </div>
       )}
-      <header className="sticky top-0 z-50 border-b border-rule bg-paper">
+      <header className={`sticky top-0 z-50 border-b border-rule bg-paper transition-transform duration-300 ease-in-out motion-reduce:transition-none ${isHeaderHidden && !open ? "-translate-y-full focus-within:translate-y-0" : "translate-y-0"}`}>
         <nav aria-label="Main" className="wrap flex h-[4.5rem] items-stretch justify-between gap-6 xl:gap-10">
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <Image src="/logo-96.png" alt="" width={44} height={44} className="size-10 rounded-full" priority />
@@ -103,7 +116,7 @@ export default function Header({ menu, portal, banner }: Props) {
             <Link href="/give" className="hidden min-h-11 items-center border border-purple/30 px-4 text-[0.95rem] font-semibold text-purple transition-colors hover:border-purple hover:bg-purple hover:text-on-purple sm:inline-flex">Give</Link>
             <button type="button" className="inline-flex h-11 items-center gap-2 rounded-sm border border-rule px-3 font-semibold min-[420px]:px-4 xl:hidden" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((v) => !v)}>
               {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
-              <span className="max-[419px]:sr-only">{open ? "Close" : "Menu"}</span>
+              <span className="max-[359px]:sr-only">{open ? "Close" : "Menu"}</span>
             </button>
           </div>
         </nav>
@@ -137,9 +150,10 @@ export default function Header({ menu, portal, banner }: Props) {
                 )}
               </li>
             ))}
+            
             <li className="grid gap-5 py-6">
               <Link href="/give" className="inline-flex min-h-12 items-center justify-center rounded-sm bg-gold px-6 font-semibold text-ink hover:bg-gold-hover">Give</Link>
-              <a href={portal.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 font-semibold text-purple">{portal.label} <ArrowUpRight className="size-4" aria-hidden /></a>
+              <a href={portal.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 font-semibold text-purple">{portal.label.replace("Christhood ", "")} <ArrowUpRight className="size-4" aria-hidden /></a>
             </li>
           </ul>
         </div>
