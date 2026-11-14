@@ -11,13 +11,13 @@ type ButtonProps = {
   arrow?: boolean;
 };
 
-const base = "inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-sm px-6 text-[0.95rem] font-semibold transition-colors duration-200 active:translate-y-px";
+const base = "inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-sm text-[0.95rem] font-semibold transition-colors duration-200 active:translate-y-px";
 const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  gold: "bg-gold text-ink hover:bg-gold-hover",
-  purple: "bg-purple text-on-purple hover:bg-purple-deep",
-  outline: "border border-ink/35 text-ink hover:border-ink hover:bg-ink hover:text-paper",
-  "outline-light": "border border-on-purple/50 text-on-purple hover:border-on-purple hover:bg-on-purple hover:text-purple-deep",
-  text: "min-h-11 px-0 text-purple underline decoration-purple/40 decoration-1 underline-offset-[6px] hover:decoration-purple",
+  gold: "px-6 bg-gold text-ink hover:bg-gold-hover",
+  purple: "px-6 bg-purple text-on-purple hover:bg-purple-deep",
+  outline: "px-6 border border-ink/35 text-ink hover:border-ink hover:bg-ink hover:text-paper",
+  "outline-light": "px-6 border border-on-purple/50 text-on-purple hover:border-on-purple hover:bg-on-purple hover:text-purple-deep",
+  text: "min-h-11 text-purple underline decoration-purple/40 decoration-1 underline-offset-[6px] hover:decoration-purple",
 };
 
 export function Button({ href, children, variant = "gold", external, className = "", arrow = true }: ButtonProps) {

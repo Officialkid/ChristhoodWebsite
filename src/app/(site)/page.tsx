@@ -41,8 +41,8 @@ export default async function Home() {
   return (
     <>
       {/* Hero: one photograph, the name, one promise, one action */}
-      <section className="grid bg-paper lg:min-h-[min(52rem,calc(100svh-4.5rem))] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-        <div className="wrap flex flex-col justify-center py-12 sm:py-16 lg:py-12">
+      <section className="grid bg-paper lg:min-h-[min(52rem,calc(100svh-4.5rem))] lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:pl-[max(1.25rem,calc((100%-78rem)/2))] min-[1536px]:pl-[max(2.5rem,calc((100%-88rem)/2))]">
+        <div className="wrap flex flex-col justify-center py-12 sm:py-16 lg:mx-0 lg:w-auto lg:py-12 lg:pr-12">
           <p className="text-lg font-semibold text-purple">Christhood International Outfield Ministry</p>
           <h1 className="t-hero mt-3 max-w-[10ch] text-ink">{hero.headline}</h1>
           <p className="t-lead mt-6 max-w-xl text-muted">{hero.sub}</p>
