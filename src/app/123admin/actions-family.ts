@@ -38,7 +38,7 @@ export async function issueFamilyCode(fd: FormData): Promise<Result> {
     if (camper.familyId) return bad(`${camper.name} is already on a family page.`);
     const code = newCode();
     await campers.put({ ...camper, code: { hash: codeHash(code), expires: new Date(Date.now() + CODE_DAYS * 86_400_000).toISOString() } });
-    await log(user, "Made a family code", camper.name);
+    await log(user, "Made a family code", camper.id);
     return ok(`Give this code to the parent. It works once and runs out in ${CODE_DAYS} days.`, { secret: code });
   });
 }
@@ -87,7 +87,7 @@ export async function resetFamilyPassword(fd: FormData): Promise<Result> {
     if (!family) return bad("That family is not on the list.");
     const password = tempPassword();
     await families.put({ ...family, hash: await hashPassword(password), mustChange: true });
-    await log(user, "Reset a family password", family.name);
+    await log(user, "Reset a family password", family.id);
     return ok(`New temporary password for ${family.name}.`, { secret: password });
   });
 }
@@ -134,7 +134,7 @@ export async function linkApplicationToFamily(_prev: Result, fd: FormData): Prom
         await families.remove(family.id);
         return bad("A family page was created for this number at the same time. Refresh and link the application again.", { phone: "Refresh the page and try again." });
       }
-      await log(user, createdFamily ? "Created family access and linked an application" : "Put an application on a family page", `${app.childName} → ${family.name}`);
+      await log(user, createdFamily ? "Created family access and linked an application" : "Put an application on a family page", `${app.id} → ${family.id}`);
       return ok(createdFamily ? "Family access is ready. Give the sign-in details to the verified parent." : `${app.childName} is now on ${family.name}'s family page.`, password ? { secret: `Phone: ${phone}\nTemporary password: ${password}` } : {});
     } catch (error) {
       await applications.put(app).catch(() => undefined);
@@ -145,5 +145,17 @@ export async function linkApplicationToFamily(_prev: Result, fd: FormData): Prom
       }
       throw error;
     }
+  });
+}
+
+/** Opens a family's phone number and email on request, so the account list never carries them. Each look is written to the activity log by id. */
+export async function revealFamilyContact(id: string): Promise<Result> {
+  const user = await requireUser();
+  if (campScope(user) !== "all") return bad("Only an administrator or the Camps Department can open family contact details.");
+  return guard(async () => {
+    const family = await families.get(String(id).slice(0, 40));
+    if (!family) return bad("That family is not on the list.");
+    await log(user, "Opened a family's contact details", family.id);
+    return ok("Contact details opened.", { secret: [family.phone, family.email].filter(Boolean).join("\n") });
   });
 }

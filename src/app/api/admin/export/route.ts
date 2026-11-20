@@ -1,5 +1,5 @@
-import { getUser } from "@/lib/auth";
-import { can, canReadPrayer, mayOpenCamp } from "@/lib/rbac";
+import { getUser, log } from "@/lib/auth";
+import { campScope, can, canReadPrayer, mayOpenCamp } from "@/lib/rbac";
 import { unseal } from "@/lib/crypto";
 import { collection } from "@/lib/store";
 import { approvedFor, campAssignments, campAttendance, dateOk, photoRule } from "@/lib/camp-day";
@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 /** Stops a spreadsheet from running typed text as a formula. */
 const cell = (v: unknown) => {
   const s = String(v ?? "").replace(/\r?\n/g, " ").trim();
-  const safe = /^[=+\-@]/.test(s) ? `'${s}` : s;
+  const safe = /^[=+\-@\t]/.test(s) ? `'${s}` : s;
   return `"${safe.replace(/"/g, '""')}"`;
 };
 
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
     ];
   } else if (kind === "camps") {
     const list = (await collection<CampApplication>("camp-applications").list()).filter((a) => mayOpenCamp(user, a)).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-    if (!list.length && !(user.role === "admin" || user.departments.some((d) => d === "jewels" || d === "teen-life"))) return new Response("No access.", { status: 403 });
+    if (campScope(user) !== "all" && !campScope(user).length) return new Response("No access.", { status: 403 });
     const body: string[][] = [];
     for (const a of list) {
       let d: CampSealed | null = null;
@@ -52,6 +52,7 @@ export async function GET(req: Request) {
       ...body,
     ];
   } else if (kind === "campers") {
+    if (campScope(user) !== "all" && !campScope(user).length) return new Response("No access.", { status: 403 });
     const list = (await collection<Camper>("campers").list()).filter((c) => mayOpenCamp(user, c)).sort((a, b) => a.name.localeCompare(b.name));
     const body: string[][] = [];
     for (const c of list) {
@@ -80,6 +81,7 @@ export async function GET(req: Request) {
     rows = [["Child", "Age", "Camp", "Parent or guardian", "Phone", "Photos", "Looked after by", `Here on ${date}`], ...body];
   } else return new Response("Unknown list.", { status: 400 });
 
+  await log(user, "Downloaded a list", `${kind}, ${rows.length - 1} rows`);
   const csv = "﻿" + rows.map((r) => r.map(cell).join(",")).join("\r\n");
   return new Response(csv, {
     headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="christhood-${kind}-${new Date().toISOString().slice(0, 10)}.csv"`, "Cache-Control": "no-store" },

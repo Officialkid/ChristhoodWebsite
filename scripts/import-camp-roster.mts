@@ -9,7 +9,7 @@ import fs from "node:fs";
 import { MongoClient } from "mongodb";
 import { Pool } from "pg";
 import { camperRows } from "../src/lib/camper-csv";
-import { keyFrom, sealWith } from "../src/lib/seal-core";
+import { keyFingerprint, keyFrom, sealWith } from "../src/lib/seal-core";
 
 const file = process.argv[2];
 const mongoUrl = process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URL;
@@ -22,14 +22,20 @@ if (!file || !(mongoUrl || url) || !secret || secret.length < 24) {
 
 const { rows, skipped } = camperRows(fs.readFileSync(file, "utf8"));
 const key = keyFrom(secret);
+// Compare this with the key fingerprint on the team area's System status screen. If they differ the site cannot open these records.
+console.log(`Sealing with key fingerprint ${keyFingerprint(key)}.`);
 const record = (r: (typeof rows)[number]) => ({ id: r.id, camp: r.camp, name: r.name, year: r.year, sealed: sealWith(key, { age: r.age, guardian: r.guardian, location: r.location, contact: r.contact }) });
 
 if (mongoUrl) {
   // Same database name rule as the site: the one in the address, else MONGODB_DB, else "christhood".
   const dbName = process.env.MONGODB_DB || /^mongodb(?:\+srv)?:\/\/[^/]+\/([^/?]+)/.exec(mongoUrl)?.[1] || "christhood";
-  const client = new MongoClient(mongoUrl, { maxPoolSize: 1, serverSelectionTimeoutMS: 8000 });
+  const client = new MongoClient(mongoUrl, { maxPoolSize: 1, serverSelectionTimeoutMS: 45000, connectTimeoutMS: 20000, family: 4 });
   const records = client.db(dbName).collection("ch_records");
-  for (const r of rows) await records.replaceOne({ _id: `campers/${r.id}` as never }, { col: "campers", id: r.id, value: record(r) }, { upsert: true });
+  // Update in place: an existing camper keeps the family link and code already issued.
+  for (const r of rows) {
+    const v = record(r);
+    await records.updateOne({ _id: `campers/${r.id}` as never }, { $set: { col: "campers", id: r.id, "value.id": v.id, "value.camp": v.camp, "value.name": v.name, "value.year": v.year, "value.sealed": v.sealed } }, { upsert: true });
+  }
   const n = await records.countDocuments({ col: "campers" });
   console.log(`${rows.length} campers imported${skipped ? `, ${skipped} rows skipped` : ""}. The database now holds ${n}.`);
   await client.close();
@@ -37,7 +43,7 @@ if (mongoUrl) {
   const pool = new Pool({ connectionString: url, max: 1 });
   await pool.query("create table if not exists ch_records (col text not null, id text not null, value jsonb not null, primary key (col, id))");
   for (const r of rows) {
-    await pool.query("insert into ch_records (col, id, value) values ('campers', $1, $2) on conflict (col, id) do update set value = excluded.value", [r.id, JSON.stringify(record(r))]);
+    await pool.query("insert into ch_records (col, id, value) values ('campers', $1, $2) on conflict (col, id) do update set value = ch_records.value || excluded.value", [r.id, JSON.stringify(record(r))]);
   }
   const count = await pool.query("select count(*)::int n from ch_records where col = 'campers'");
   console.log(`${rows.length} campers imported${skipped ? `, ${skipped} rows skipped` : ""}. The database now holds ${count.rows[0].n}.`);

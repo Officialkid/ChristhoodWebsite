@@ -1,5 +1,6 @@
 import { CheckCircle2, CircleAlert, CircleDashed } from "lucide-react";
 import { requirePerm, systemStatus } from "@/lib/auth";
+import { sealingKey } from "@/lib/crypto";
 import { photoHost } from "@/lib/media";
 import { Notice, PageTitle } from "@/components/admin/ui";
 
@@ -9,7 +10,7 @@ type Line = { state: "ok" | "todo" | "optional"; title: string; now: string; how
 
 export default async function StatusPage() {
   await requirePerm("system");
-  const s = await systemStatus();
+  const [s, key] = await Promise.all([systemStatus(), sealingKey()]);
   const lines: Line[] = [
     {
       state: s.storage === "none" ? "todo" : "ok",
@@ -32,7 +33,7 @@ export default async function StatusPage() {
     {
       state: s.sealing ? "ok" : "todo",
       title: "Registration key (children's private details)",
-      now: s.sealing ? "Set. Health and family details in camp applications are encrypted before they are saved." : "Missing. Online camp applications stay closed (parents are asked to WhatsApp the camp office) until it is added.",
+      now: s.sealing ? `Set (key fingerprint ${key.fingerprint ?? "unknown"}${key.alternates ? `, with ${key.alternates} plain-text variant${key.alternates === 1 ? "" : "s"} also tried when opening` : ""}). Health and family details in camp applications are encrypted before they are saved. If the Returning campers screen cannot open its details, the file was sealed with a different key: the import script prints its own fingerprint to compare.` : "Missing. Online camp applications stay closed (parents are asked to WhatsApp the camp office) until it is added.",
       how: s.sealing ? undefined : "Add an environment variable named REGISTRATION_KEY with a long random value (32+ characters), and keep a copy somewhere safe. Without it the private details cannot be read again. Then redeploy.",
     },
     {

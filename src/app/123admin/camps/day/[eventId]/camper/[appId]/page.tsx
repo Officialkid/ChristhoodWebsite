@@ -34,7 +34,7 @@ export default async function CamperCarePage({ params }: { params: Promise<{ eve
     d = null;
   }
   // Opening a child's health details is written to the activity log, at most once every ten minutes per person and child.
-  if ((await store.hit(`care:${user.id}:${app.id}`, 600).catch(() => 2)) === 1) await log(user, "Opened a camper's care details", app.childName);
+  if ((await store.hit(`care:${user.id}:${app.id}`, 600).catch(() => 2)) === 1) await log(user, "Opened a camper's care details", app.id);
 
   const all = (await campNotes.list()).filter((n) => n.applicationId === app.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const notes = await Promise.all(all.map(async (n) => {

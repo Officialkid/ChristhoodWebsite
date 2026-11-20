@@ -71,13 +71,13 @@ export async function assignCamper(fd: FormData): Promise<Result> {
     const userId = text(fd, "userId", 60);
     if (!userId) {
       await campAssignments.remove(app.id);
-      await log(user, "Took a camper off a facilitator", app.childName);
+      await log(user, "Took a camper off a facilitator", app.id);
       return ok("Not assigned.");
     }
     const facilitator = await users.get(userId);
     if (!facilitator || !facilitator.active || !mayCareForCampers(facilitator)) return bad("That person cannot be given campers. Add them to Camp facilitators first.");
     await campAssignments.put({ id: app.id, eventId: app.eventId, userId: facilitator.id, userName: facilitator.name, by: user.name, at: new Date().toISOString() });
-    await log(user, "Gave a camper to a facilitator", `${app.childName} → ${facilitator.name}`);
+    await log(user, "Gave a camper to a facilitator", `${app.id} → ${facilitator.id}`);
     return ok(`${app.childName} is with ${facilitator.name}.`);
   });
 }

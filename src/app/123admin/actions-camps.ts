@@ -4,7 +4,7 @@ import { requireUser, log } from "@/lib/auth";
 import { campScope, mayOpenCamp } from "@/lib/rbac";
 import { collection, StorageUnavailable } from "@/lib/store";
 import { camperRows } from "@/lib/camper-csv";
-import { seal, sealingReady } from "@/lib/crypto";
+import { seal, sealingReady, unseal } from "@/lib/crypto";
 import type { Result } from "@/components/admin/forms";
 import type { CampApplication, CampAppStatus, Camper, CamperSealed } from "@/lib/types";
 
@@ -35,7 +35,7 @@ export async function reviewApplication(_prev: Result, fd: FormData): Promise<Re
     if (!statuses.includes(status)) return bad("Choose a decision.");
     const now = new Date().toISOString();
     await applications.put({ ...app, status, paymentVerified: fd.get("paymentVerified") === "yes", reviewNote: text(fd, "note") || undefined, reviewedBy: user.name, reviewedAt: now, updatedAt: now });
-    await log(user, `Marked a camp application "${status}"`, app.childName);
+    await log(user, `Marked a camp application "${status}"`, app.id);
     return ok("Saved.");
   });
 }
@@ -47,7 +47,7 @@ export async function deleteApplication(fd: FormData): Promise<Result> {
     const app = await applications.get(text(fd, "id", 40));
     if (!app) return bad("That application is already gone.");
     await applications.remove(app.id);
-    await log(user, "Deleted a camp application", app.childName);
+    await log(user, "Deleted a camp application", app.id);
     return ok("Application deleted.");
   });
 }
@@ -63,9 +63,29 @@ export async function importCampers(_prev: Result, fd: FormData): Promise<Result
     const campers = collection<Camper>("campers");
     for (const r of rows) {
       const data: CamperSealed = { age: r.age, guardian: r.guardian, location: r.location, contact: r.contact };
-      await campers.put({ id: r.id, camp: r.camp, name: r.name, year: r.year, sealed: await seal(data) });
+      // An existing camper keeps the family link and any code already issued; only the register details change.
+      const before = await campers.get(r.id);
+      await campers.put({ ...(before?.familyId ? { familyId: before.familyId } : {}), ...(before?.code ? { code: before.code } : {}), id: r.id, camp: r.camp, name: r.name, year: r.year, sealed: await seal(data) });
     }
     await log(user, "Imported returning campers", `${rows.length}`);
     return ok(`${rows.length} campers imported${skipped ? `, ${skipped} rows skipped` : ""}.`);
+  });
+}
+
+/** Opens one returning camper's phone number on request, so lists never carry it. Each look is written to the activity log by id, never by name. */
+export async function revealCamperContact(id: string): Promise<Result> {
+  const user = await requireUser();
+  return guard(async () => {
+    const camper = await collection<Camper>("campers").get(String(id).slice(0, 60));
+    if (!camper || !mayOpenCamp(user, camper)) return bad("That camper is not available to you.");
+    let d: CamperSealed;
+    try {
+      d = await unseal<CamperSealed>(camper.sealed);
+    } catch {
+      return bad("The private details could not be opened.");
+    }
+    if (!d.contact) return bad("No phone number is on file.");
+    await log(user, "Opened a camper's phone number", camper.id);
+    return { ok: true, stamp: Date.now(), secret: d.contact };
   });
 }
