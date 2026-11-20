@@ -20,7 +20,9 @@ async function loadKeys(): Promise<Buffer[]> {
     // A space, line break or pair of quotes pasted into the host's settings changes the key. Details sealed with the plain
     // value (for example by the import script) would then never open, so the plain forms are tried too. Nothing is rewritten.
     const forms = [fromEnv, fromEnv.trim(), fromEnv.trim().replace(/^(["'])(.*)\1$/s, "$2")].filter((f) => f.length >= 24);
-    return [...new Set(forms)].map(keyFrom);
+    // REGISTRATION_KEY_PREVIOUS holds an older key whose records are still in the database. It is only used to open them; nothing is sealed with it.
+    const older = (process.env.REGISTRATION_KEY_PREVIOUS ?? "").trim().replace(/^(["'])(.*)\1$/s, "$2");
+    return [...new Set([...forms, ...(older.length >= 24 ? [older] : [])])].map(keyFrom);
   }
   if (process.env.VERCEL) return [];
   const f = path.join(process.cwd(), ".data", "registration.key");
