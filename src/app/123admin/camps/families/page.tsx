@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { ADMIN_PATH, requireUser } from "@/lib/auth";
 import { families, familyChildren } from "@/lib/family";
+import { maskEmail, maskPhone } from "@/lib/mask";
 import { campScope } from "@/lib/rbac";
 import { formatStamp } from "@/lib/time";
-import { ResetPasswordButton } from "@/components/admin/FamilyAdmin";
-import { Empty, PageTitle } from "@/components/admin/ui";
+import FamilyAccounts, { type FamilyRow } from "@/components/admin/FamilyAccounts";
+import { PageHeader } from "@/components/admin/kit/PageHeader";
 
 export const metadata = { title: "Family accounts" };
 
@@ -14,28 +15,24 @@ export default async function FamiliesPage() {
   if (campScope(user) !== "all") redirect(`${ADMIN_PATH}/no-access`);
 
   const [list, kids] = await Promise.all([families.list().catch(() => []), familyChildren.list().catch(() => [])]);
-  const rows = list.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  // Phone numbers and emails are masked here. The full details are opened one family at a time, on request, and each look is logged.
+  const rows: FamilyRow[] = list.map((f) => ({
+    id: f.id,
+    name: f.name,
+    phoneMask: maskPhone(f.phone),
+    emailMask: maskEmail(f.email),
+    children: kids.filter((k) => k.familyId === f.id).map((k) => ({ name: k.name, camp: k.camp === "jewels" ? "Jewels" : k.camp === "teen-life" ? "Teen Life" : undefined })),
+    createdAt: f.createdAt,
+    joined: formatStamp(f.createdAt),
+    active: f.active,
+    mustChange: Boolean(f.mustChange),
+    smsUpdates: Boolean(f.smsUpdates),
+  }));
 
   return (
-    <>
-      <PageTitle title="Family accounts" icon="users" lead="Parents who made a family page. If someone forgets their password, give them a temporary one here." crumbs={[{ label: "Camp applications", href: "/123admin/camps" }, { label: "Family accounts" }]} />
-      <div className="mt-8">
-        {rows.length === 0 ? (
-          <Empty icon="users" title="No family accounts yet">Parents make one from the Camps menu on the website.</Empty>
-        ) : (
-          <ul className="border-t border-rule">
-            {rows.map((f) => (
-              <li key={f.id} className="flex flex-wrap items-start gap-x-6 gap-y-3 border-b border-rule py-5">
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold">{f.name}</p>
-                  <p className="text-[0.92rem] text-muted">{[f.phone, f.email, `${kids.filter((k) => k.familyId === f.id).length} child${kids.filter((k) => k.familyId === f.id).length === 1 ? "" : "ren"}`, `joined ${formatStamp(f.createdAt)}`].filter(Boolean).join(" · ")}</p>
-                </div>
-                <ResetPasswordButton id={f.id} name={f.name} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </>
+    <div className="grid gap-5">
+      <PageHeader title="Family accounts" description="Parents who made a family page. Open one to see their children or, if they forget their password, give them a temporary one." />
+      <FamilyAccounts rows={rows} />
+    </div>
   );
 }

@@ -8,6 +8,7 @@ import { site } from "@/content/site";
 import { getEvents } from "@/lib/content";
 import { campAttendance, campDays, campNotes, campPhotos, campSessions, dayLabel, todayInNairobi } from "@/lib/camp-day";
 import { unseal } from "@/lib/crypto";
+import { UpdateArticle } from "@/components/camps/UpdateArticle";
 import { campUpdates, familyChildren, getFamily } from "@/lib/family";
 import { collection } from "@/lib/store";
 import { formatEventDates, formatStamp } from "@/lib/time";
@@ -325,13 +326,7 @@ export default async function FamilyPage() {
         <Section id="updates" tone={alt(afterChildren)} tight containerClassName="max-w-[76rem]">
           <h2 className="t-h2">Updates from the camp team</h2>
           <div className="mt-8 border-t border-rule">
-            {news.map((u) => (
-              <article key={u.id} className="border-b border-rule py-7">
-                <h3 className="text-xl">{u.title}</h3>
-                <p className="mt-1 text-[0.92rem] text-muted">{formatStamp(u.createdAt)}{u.camp !== "all" ? ` · ${u.camp === "jewels" ? "Jewels" : "Teen Life"}` : ""}</p>
-                <p className="reading mt-3 whitespace-pre-line text-muted">{u.body}</p>
-              </article>
-            ))}
+            {news.map((u) => <UpdateArticle key={u.id} title={u.title} stamp={formatStamp(u.createdAt)} audience={u.camp === "all" ? undefined : u.camp === "jewels" ? "Jewels" : "Teen Life"} body={u.body} />)}
           </div>
         </Section>
       )}

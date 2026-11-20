@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import Shell, { type FindItem } from "@/components/admin/Shell";
 import { getUser, users } from "@/lib/auth";
 import { buildNav } from "@/lib/admin-nav";
@@ -21,6 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const user = await getUser();
   if (!user) return <div className="min-h-svh bg-paper">{children}</div>;
 
+  const folded = (await cookies()).get("ch-side")?.value === "1";
   const scope = campScope(user);
   const [guests, prayers, camps, requests] = await Promise.all([
     can(user, "visitors") ? collection<Visitor>("visitors").list().catch(() => []) : [],
@@ -46,6 +48,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       user={{ name: user.name, roleLabel }}
       signOut={logout}
       find={find}
+      folded={folded}
     >
       {children}
     </Shell>

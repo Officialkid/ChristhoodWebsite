@@ -1,19 +1,26 @@
 import { requirePerm } from "@/lib/auth";
-import { getSettings } from "@/lib/content";
+import { getSettings, getSlots } from "@/lib/content";
 import { store } from "@/lib/store";
 import { defaultSettings } from "@/content/site";
-import { HomeForm } from "@/components/admin/ContentForms";
-import { LinkButton, PageTitle } from "@/components/admin/ui";
+import { slotGroups } from "@/content/slots";
+import HomeStudio, { type StudioSlot } from "@/components/admin/HomeStudio";
 
 export const metadata = { title: "Home page" };
 
+/** The home page as a workspace: the real page in the middle, the properties of the chosen part at the side. */
 export default async function HomeEditor() {
   await requirePerm("home");
-  const settings = store.writable ? await getSettings() : defaultSettings;
+  const [settings, slots] = await Promise.all([store.writable ? getSettings() : Promise.resolve(defaultSettings), store.writable ? getSlots() : Promise.resolve({})]);
+  const home = slotGroups.find((g) => g.id === "home")!.slots;
+  const pictures: StudioSlot[] = home.map((s) => {
+    const chosen = (slots as Record<string, { src?: string; focus?: string }>)[s.key];
+    return { key: s.key, label: s.label, fallback: s.fallback, focus: chosen?.focus ?? s.focus, src: chosen?.src };
+  });
   return (
-    <>
-      <PageTitle title="Home page" icon="home" lead="The words at the top of the home page, the weekly scripture and the welcome." actions={<LinkButton href="/123admin/pictures" icon="image-plus">Change the pictures</LinkButton>} />
-      <div className="mt-8"><HomeForm settings={settings} /></div>
-    </>
+    <HomeStudio
+      canSave={store.writable}
+      slots={pictures}
+      initial={{ headline: settings.hero.headline, sub: settings.hero.sub, kicker: settings.hero.kicker, verse: settings.verse.text, ref: settings.verse.ref, welcome: settings.welcome.join("\n\n") }}
+    />
   );
 }

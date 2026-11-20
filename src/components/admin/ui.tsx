@@ -4,22 +4,10 @@ import { Icon } from "../icons";
 
 /** Small building blocks shared by every admin screen. */
 
-/** The top of a screen: where you are, what this screen is, and the few things you can do from it. */
+/** The top of a screen: what this screen is, and the few things you can do from it. Where you are is shown once, by the breadcrumbs in the header bar, so `crumbs` is accepted but not drawn. */
 export function PageTitle({ title, lead, actions, crumbs }: { title: string; lead?: React.ReactNode; /** Kept so older screens still compile; the menu already shows each screen's icon. */ icon?: string; actions?: React.ReactNode; crumbs?: { label: string; href?: string }[] }) {
   return (
     <header className="border-b border-rule pb-5">
-      {crumbs && crumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="mb-2">
-          <ol className="flex flex-wrap items-center gap-x-2 text-[0.9rem] text-muted">
-            {crumbs.map((c, i) => (
-              <li key={c.label} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden>/</span>}
-                {c.href ? <Link href={c.href} className="inline-flex min-h-8 items-center underline-offset-4 hover:text-purple hover:underline pointer-coarse:min-h-11">{c.label}</Link> : <span aria-current="page" className="text-ink">{c.label}</span>}
-              </li>
-            ))}
-          </ol>
-        </nav>
-      )}
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
         <div className="min-w-0">
           <h1 className="break-words text-[clamp(1.6rem,2.4vw,1.95rem)] leading-[1.1]">{title}</h1>

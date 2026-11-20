@@ -5,7 +5,7 @@ import { deleteApplication, reviewApplication } from "@/app/123admin/actions-cam
 import { DeleteButton, SaveButton, SelectField, TextArea, Toggle, useSave } from "./forms";
 import type { CampApplication } from "@/lib/types";
 
-export default function CampReviewForm({ app, canDelete }: { app: CampApplication; canDelete: boolean }) {
+export default function CampReviewForm({ app, canDelete, onGone }: { app: Pick<CampApplication, "id" | "status" | "paymentVerified" | "reviewNote" | "reviewedBy">; canDelete: boolean; /** Called after the application is deleted, for a screen that shows the form beside its list. */ onGone?: () => void }) {
   const router = useRouter();
   const { run, formRef, errors } = useSave(reviewApplication, () => router.refresh());
   return (
@@ -24,7 +24,7 @@ export default function CampReviewForm({ app, canDelete }: { app: CampApplicatio
       {app.reviewedBy && <p className="text-[0.9rem] text-muted">Last reviewed by {app.reviewedBy}.</p>}
       <div className="a-bar">
         <SaveButton>Save decision</SaveButton>
-        {canDelete && <span className="ml-auto"><DeleteButton label="Delete application" action={async (fd) => { const r = await deleteApplication(fd); if (r.ok) router.push("/123admin/camps"); return r; }} fields={{ id: app.id }} /></span>}
+        {canDelete && <span className="ml-auto"><DeleteButton label="Delete application" action={async (fd) => { const r = await deleteApplication(fd); if (r.ok) { onGone?.(); router.push("/123admin/camps"); router.refresh(); } return r; }} fields={{ id: app.id }} /></span>}
       </div>
     </form>
   );

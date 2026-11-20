@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
 import { ADMIN_PATH, requireUser } from "@/lib/auth";
-import { campUpdates } from "@/lib/family";
+import { campUpdates, families, familyChildren } from "@/lib/family";
 import { campScope } from "@/lib/rbac";
-import { store } from "@/lib/store";
+import { collection, store } from "@/lib/store";
 import { formatStamp } from "@/lib/time";
-import { RemoveUpdate, UpdateForm } from "@/components/admin/FamilyAdmin";
-import { Chip, Empty, Notice, PageTitle } from "@/components/admin/ui";
+import UpdatesWorkspace, { type Audience, type UpdateRow } from "@/components/admin/UpdatesWorkspace";
+import { PageHeader } from "@/components/admin/kit/PageHeader";
+import { Notice } from "@/components/admin/ui";
+import type { CampApplication } from "@/lib/types";
 
 export const metadata = { title: "Updates to families" };
 
@@ -17,35 +19,29 @@ export default async function UpdatesPage() {
   const scope = campScope(user);
   if (scope !== "all" && scope.length === 0) redirect(`${ADMIN_PATH}/no-access`);
 
-  const groups = (scope === "all" ? (["all", "jewels", "teen-life"] as const) : scope).map((v) => ({ value: v, label: v === "all" ? "Every family with a child at camp" : `${names[v]} families` }));
-  const mine = (await campUpdates.list().catch(() => [])).filter((u) => scope === "all" || (u.camp !== "all" && scope.includes(u.camp))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const [list, fams, kids, apps] = await Promise.all([
+    campUpdates.list().catch(() => []),
+    families.list().catch(() => []),
+    familyChildren.list().catch(() => []),
+    collection<CampApplication>("camp-applications").list().catch(() => []),
+  ]);
+
+  // How many family pages will show each message. A family sees "all" always, and a camp's messages when a child or application is in that camp.
+  const active = new Set(fams.filter((f) => f.active).map((f) => f.id));
+  const reach = (camp: "jewels" | "teen-life") => new Set([...kids.filter((k) => k.camp === camp).map((k) => k.familyId), ...apps.filter((a) => a.camp === camp && a.familyId).map((a) => a.familyId as string)].filter((id) => active.has(id))).size;
+  const counts = { all: active.size, jewels: reach("jewels"), "teen-life": reach("teen-life") };
+
+  const audiences: Audience[] = (scope === "all" ? (["all", "jewels", "teen-life"] as const) : scope).map((v) => ({ value: v, label: v === "all" ? "Every family with a child at camp" : `${names[v]} families`, short: names[v], families: counts[v] }));
+  const mine: UpdateRow[] = list
+    .filter((u) => scope === "all" || (u.camp !== "all" && scope.includes(u.camp)))
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .map((u) => ({ id: u.id, title: u.title, body: u.body, camp: u.camp, audience: names[u.camp], by: u.by, createdAt: u.createdAt, stamp: formatStamp(u.createdAt) }));
 
   return (
-    <>
-      <PageTitle title="Updates to families" icon="megaphone" lead="Short messages parents read on their family page: what to bring, pick-up times, news from camp." crumbs={[{ label: "Camp applications", href: "/123admin/camps" }, { label: "Updates to families" }]} />
-      <div className="mt-8 grid gap-12">
-        {!store.writable && <Notice tone="warn" title="Saving is not switched on yet">Updates cannot be posted until the database is connected.</Notice>}
-        <UpdateForm groups={groups} />
-        <section aria-labelledby="posted">
-          <h2 id="posted" className="text-xl">Posted so far</h2>
-          {mine.length === 0 ? (
-            <div className="mt-4"><Empty icon="megaphone" title="Nothing posted yet">Your first update will appear here.</Empty></div>
-          ) : (
-            <ul className="mt-4 border-t border-rule">
-              {mine.map((u) => (
-                <li key={u.id} className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3 border-b border-rule py-5">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-bold">{u.title} <Chip>{names[u.camp]}</Chip></p>
-                    <p className="text-[0.9rem] text-muted">{u.by} · {formatStamp(u.createdAt)}</p>
-                    <p className="mt-2 whitespace-pre-line break-words text-muted">{u.body}</p>
-                  </div>
-                  <RemoveUpdate id={u.id} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      </div>
-    </>
+    <div className="grid gap-6">
+      <PageHeader title="Updates to families" description="Short messages parents read on their family page: what to bring, pick-up times, news from camp." />
+      {!store.writable && <Notice tone="warn" title="Saving is not switched on yet">Updates cannot be posted until the database is connected.</Notice>}
+      <UpdatesWorkspace audiences={audiences} updates={mine} writable={store.writable} />
+    </div>
   );
 }

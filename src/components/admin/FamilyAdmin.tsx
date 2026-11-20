@@ -4,12 +4,13 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, KeyRound, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { deleteUpdate, issueFamilyCode, linkApplicationToFamily, postUpdate, resetFamilyPassword } from "@/app/123admin/actions-family";
-import { DeleteButton, SaveButton, SelectField, TextArea, TextField, useSave } from "./forms";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { issueFamilyCode, linkApplicationToFamily, resetFamilyPassword } from "@/app/123admin/actions-family";
+import { SaveButton, TextField, useSave } from "./forms";
 import { btnClass, Notice } from "./ui";
 
 /** A code or password shown once, with a button to copy it. */
-function Shown({ title, note, value }: { title: string; note: string; value: string }) {
+export function Shown({ title, note, value }: { title: string; note: string; value: string }) {
   return (
     <Notice tone="warn" title={title}>
       <p>{note}</p>
@@ -54,53 +55,54 @@ export function CodeButton({ id, name, active }: { id: string; name: string; act
   );
 }
 
-export function ResetPasswordButton({ id, name }: { id: string; name: string }) {
+/** Resets a parent's password after an explicit confirmation. The temporary password is shown once, here, and never again. */
+export function ResetPasswordDialog({ id, name }: { id: string; name: string }) {
+  const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const [shown, setShown] = useState<{ message: string; value: string } | null>(null);
+  const close = () => { setOpen(false); setShown(null); };
   return (
-    <span className="grid w-full gap-3">
-      <span>
-        <button
-          type="button"
-          disabled={pending}
-          aria-label={`Reset the password for ${name}`}
-          onClick={() =>
-            start(async () => {
-              const fd = new FormData();
-              fd.set("id", id);
-              const r = await resetFamilyPassword(fd);
-              if (r.ok && r.secret) setShown({ message: r.message ?? "", value: r.secret });
-              else toast.error(r.message ?? "Could not reset the password.");
-            })
-          }
-          className={btnClass.secondary}
-        >
-          {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <KeyRound className="size-4" aria-hidden />} Reset password
-        </button>
-      </span>
-      {shown && <Shown title={shown.message} note="Give this to the parent privately (for example on WhatsApp). It is shown only once, and they choose their own password when they sign in." value={shown.value} />}
-    </span>
+    <>
+      <button type="button" onClick={() => setOpen(true)} className={btnClass.secondary} aria-haspopup="dialog"><KeyRound className="size-4" aria-hidden /> Reset password</button>
+      <Dialog open={open} onOpenChange={(o) => { if (!o && !pending) close(); }}>
+        <DialogContent>
+          {shown ? (
+            <>
+              <DialogTitle>Temporary password ready</DialogTitle>
+              <DialogDescription>Give this to the parent privately, for example on WhatsApp. It is shown only once, and they choose their own password when they sign in.</DialogDescription>
+              <div className="mt-4"><Shown title={shown.message} note="Copy it now. Closing this window hides it for good." value={shown.value} /></div>
+              <DialogFooter><button type="button" onClick={close} className={btnClass.primary}>Done</button></DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogTitle>Reset the password for {name}?</DialogTitle>
+              <DialogDescription>Their current password stops working at once, and any phone or computer they are signed in on is signed out. You will get a temporary password to give them.</DialogDescription>
+              <p className="mt-3 border-l-4 border-gold pl-3 text-[0.93rem]">Reset it only when you are sure you are speaking to this parent.</p>
+              <DialogFooter>
+                <button type="button" onClick={close} disabled={pending} className={btnClass.secondary}>Keep their password</button>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() =>
+                    start(async () => {
+                      const fd = new FormData();
+                      fd.set("id", id);
+                      const r = await resetFamilyPassword(fd);
+                      if (r.ok && r.secret) setShown({ message: r.message ?? "", value: r.secret });
+                      else toast.error(r.message ?? "Could not reset the password.");
+                    })
+                  }
+                  className={btnClass.primary}
+                >
+                  {pending && <Loader2 className="size-4 animate-spin" aria-hidden />} Reset and show the new password
+                </button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
-}
-
-export function UpdateForm({ groups }: { groups: { value: string; label: string }[] }) {
-  const router = useRouter();
-  const { run, formRef, errors } = useSave(postUpdate, () => {
-    formRef.current?.reset();
-    router.refresh();
-  });
-  return (
-    <form ref={formRef} action={run} className="grid max-w-2xl gap-6" noValidate>
-      <SelectField name="camp" label="Who is it for?" options={groups} defaultValue={groups[0]?.value} error={errors.camp} />
-      <TextField name="title" label="Title" maxLength={120} required error={errors.title} />
-      <TextArea name="body" label="Update" rows={6} maxLength={3000} required error={errors.body} hint="Every family in that group can read this. Do not put a child's name or health details in it." />
-      <div><SaveButton>Post update</SaveButton></div>
-    </form>
-  );
-}
-
-export function RemoveUpdate({ id }: { id: string }) {
-  return <DeleteButton action={deleteUpdate} fields={{ id }} label="Remove" confirmText="Yes, remove it" />;
 }
 
 /** The camp office puts an application made without a family page onto the parent's family page. */

@@ -62,6 +62,11 @@ const nextConfig: NextConfig = {
         source: "/123admin/:path*",
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }, { key: "X-Frame-Options", value: "DENY" }],
       },
+      {
+        // The editor's live copy of the home page: shown only inside the team area, never indexed or cached.
+        source: "/studio/:path*",
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }, { key: "X-Frame-Options", value: "SAMEORIGIN" }],
+      },
       { source: "/123admin", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }, { key: "Cache-Control", value: "no-store" }, { key: "X-Frame-Options", value: "DENY" }] },
     ];
   },
