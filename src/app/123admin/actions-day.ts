@@ -2,11 +2,12 @@
 
 import { after } from "next/server";
 import { log, newId, requireUser, users } from "@/lib/auth";
-import { attendanceId, campApplications, campAssignments, campAttendance, campDays, campNotes, campSessions, dateOk, mayMarkFor, mayOpenCare, timeOk } from "@/lib/camp-day";
+import { attendanceId, campApplications, campAssignments, campAttendance, campDays, campNotes, campSessions, dateOk, liveAssignments, mayMarkFor, mayOpenCare, timeOk } from "@/lib/camp-day";
+import { arrivalId, campArrivals } from "@/lib/camp-gate";
 import { getEvents } from "@/lib/content";
 import { seal } from "@/lib/crypto";
-import { mayCareForCampers, mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { sendFamilyCampAlert } from "@/lib/httpsms";
+import { mayCareForCampers, mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { StorageUnavailable } from "@/lib/store";
 import type { Result } from "@/components/admin/forms";
 import type { CampSession } from "@/lib/types";
@@ -48,6 +49,9 @@ export async function markAttendance(fd: FormData): Promise<Result> {
     if (!mayMarkFor(user, assignment)) return bad("You can mark only the campers you look after.");
     const status = text(fd, "status", 10);
     const id = attendanceId(app.id, date);
+    // The gate is the record of who came through the door. Staff cannot contradict it from the register; they correct it at the gate.
+    const received = await campArrivals.get(arrivalId(app.id, date));
+    if (received && status !== "present") return bad(`The gate received ${app.childName} that day (by ${received.arrivedBy}). Correct it at the gate desk first.`);
     if (status === "clear") {
       await campAttendance.remove(id);
       return ok("Mark removed.");
@@ -91,9 +95,10 @@ export async function shareOutCampers(fd: FormData): Promise<Result> {
     const team = (await users.list()).filter((u) => u.active && mayCareForCampers(u));
     if (!team.length) return bad("There are no facilitators yet. Add people to Camp facilitators in Team and access.");
     const apps = (await campApplications.list()).filter((a) => a.eventId === eventId && a.status === "Approved").sort((a, b) => a.childName.localeCompare(b.childName));
-    const mine = await campAssignments.list();
-    const load = new Map(team.map((u) => [u.id, mine.filter((m) => m.eventId === eventId && m.userId === u.id).length]));
-    const done = new Set(mine.map((m) => m.id));
+    // A camper given to someone who has since left or lost the role counts as not given, so they are shared out again.
+    const live = [...(await liveAssignments(eventId)).values()];
+    const load = new Map(team.map((u) => [u.id, live.filter((m) => m.userId === u.id).length]));
+    const done = new Set(live.map((m) => m.id));
     let n = 0;
     for (const app of apps) {
       if (done.has(app.id)) continue;
@@ -172,9 +177,13 @@ export async function addNote(_prev: Result, fd: FormData): Promise<Result> {
     const words = text(fd, "text", 2000);
     if (words.length < 3) return bad("Write the note.", { text: "Write the note." });
     const shared = fd.get("shared") === "yes";
-    await campNotes.put({ id: newId(), applicationId: app.id, eventId: app.eventId, byId: user.id, by: user.name, createdAt: new Date().toISOString(), shared, sealed: await seal({ text: words }) });
+    const kinds = ["note", "incident", "first-aid", "medicine"] as const;
+    const kind = kinds.find((k) => k === text(fd, "kind", 12)) ?? "note";
+    await campNotes.put({ id: newId(), applicationId: app.id, eventId: app.eventId, byId: user.id, by: user.name, createdAt: new Date().toISOString(), shared, kind, sealed: await seal({ text: words }) });
+    // An incident, first aid or medicine given is on the camp's record, with who wrote it. The words stay sealed.
+    if (kind !== "note") await log(user, `Wrote a camp ${kind === "first-aid" ? "first aid" : kind} entry`, app.id);
     if (shared && app.familyId && app.smsUpdates) after(() => sendFamilyCampAlert(app.phone, "shared-note"));
-    return ok(shared ? "Note saved and shared with the family." : "Note saved for the camp team.");
+    return ok(kind !== "note" ? "Saved on the camp's record." : shared ? "Note saved and shared with the family." : "Note saved for the camp team.");
   });
 }
 
@@ -186,5 +195,21 @@ export async function deleteNote(fd: FormData): Promise<Result> {
     if (note.byId !== user.id && user.role !== "admin" && !mayKeepRoster(user)) return bad("You can remove only your own notes.");
     await campNotes.remove(note.id);
     return ok("Removed.");
+  });
+}
+
+/**
+ * Opens a parent's phone number from the camp day list on request, so the list itself never carries it. Head facilitators and the
+ * camp office may ask for anyone's; a facilitator only for the campers they look after. Every opening is written to the activity log.
+ */
+export async function revealGuardianPhone(fd: FormData): Promise<Result> {
+  const user = await requireUser();
+  if (!mayRunCampDay(user)) return bad("Camp days are not part of your department.");
+  return guard(async () => {
+    const app = await campApplications.get(text(fd, "id", 60));
+    if (!app || app.status !== "Approved") return bad("That camper is not on the expected list.");
+    if (!mayMarkFor(user, await campAssignments.get(app.id))) return bad("You can open the numbers of only the campers you look after.");
+    await log(user, "Opened a parent's phone number on the camp day list", app.id);
+    return ok("Number shown.", { secret: app.phone });
   });
 }

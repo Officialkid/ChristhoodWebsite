@@ -30,6 +30,7 @@ export default function EventForm({ event, departments, startValue, endValue, ca
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <TextField name="start" label="Starts" type="datetime-local" defaultValue={startValue} error={errors.start} required />
         <TextField name="end" label="Ends" optional type="datetime-local" defaultValue={endValue} error={errors.end} />
+        <TextField name="capacity" label="Places" optional type="number" min={1} step={1} inputMode="numeric" defaultValue={event?.capacity} error={errors.capacity} hint="The most children a camp takes. Leave empty for no limit." />
         <TextField name="fee" label="Cost in shillings" optional type="number" min={0} step={10} inputMode="numeric" defaultValue={event?.fee} error={errors.fee} hint="Leave empty if it is free." />
       </div>
       <div className="grid gap-6 sm:grid-cols-2">

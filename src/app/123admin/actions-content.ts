@@ -61,6 +61,9 @@ export async function saveEvent(_p: Result, fd: FormData): Promise<Result> {
     const feeRaw = text(fd, "fee", 12);
     const fee = feeRaw === "" ? undefined : Number(feeRaw);
     if (fee !== undefined && (!Number.isFinite(fee) || fee < 0)) errors.fee = "Enter the amount in shillings, or leave it empty.";
+    const capacityRaw = text(fd, "capacity", 6);
+    const capacity = capacityRaw === "" ? undefined : Number(capacityRaw);
+    if (capacity !== undefined && (!Number.isInteger(capacity) || capacity < 1)) errors.capacity = "Enter a whole number of places, or leave it empty.";
     const href = text(fd, "registerHref", 300);
     if (href && !/^(\/|https:\/\/)/.test(href)) errors.registerHref = "Start the link with / (a page on this site) or https://.";
     const department = text(fd, "department", 60) || undefined;
@@ -76,6 +79,7 @@ export async function saveEvent(_p: Result, fd: FormData): Promise<Result> {
       end,
       location: text(fd, "location", 160) || undefined,
       fee,
+      capacity,
       category,
       image: photoRef(text(fd, "image", 500)),
       details: text(fd, "details", 3000) || undefined,

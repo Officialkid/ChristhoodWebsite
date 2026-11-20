@@ -25,6 +25,15 @@ export type GateRow = {
   lookedAfter?: string;
   /** Last digits of the phone, for head facilitators and the camp office only. The number itself is never sent until they ask. */
   phoneEnd?: string;
+  /** The application was approved and later changed. The child is at camp, so they stay on the list until collected. */
+  removed?: string;
+  /** Head facilitators and the camp office only: the payment has not been checked. */
+  unpaid?: boolean;
+  /** Not an approved application: a walk-in or a returning child. The parent still has to apply. */
+  noApplication?: boolean;
+  /** A health note was taken at the gate. Facilitators read it; others only see that it exists. */
+  hasCare?: boolean;
+  care?: { emergency: string; health: string };
   state?: { status: "in" | "out"; droppedBy: string; authorized: string[]; medication?: boolean; arrived: string; arrivedBy: string; collectedBy?: string; left?: string; leftBy?: string; via?: "dropper" | "named" | "exception"; exception?: string; backfilled?: boolean };
 };
 
@@ -181,6 +190,9 @@ export function GateDesk({ eventId, date, rows, canSeePhones, keeper }: { eventI
                     <span>{r.name}{r.age ? <span className="font-normal text-muted"> · age {r.age}</span> : null}</span>
                     {r.photos === "No" && <Chip tone="warn">No photos</Chip>}
                     {s?.medication && <Chip tone="warn">Medicine handed in</Chip>}
+                    {r.removed && <Chip tone="warn">Application is now {r.removed}</Chip>}
+                    {r.unpaid && <Chip>Payment not checked</Chip>}
+                    {s && r.noApplication && <Chip tone="warn">No application yet</Chip>}
                   </p>
                   <p className="mt-0.5 text-[0.95rem] text-muted">
                     {[sourceLabel[r.source] + (r.source === "returning" && r.year ? ` (${r.year}), not registered` : ""), r.guardian && `Parent: ${r.guardian}`, r.lookedAfter && `With ${r.lookedAfter}`].filter(Boolean).join(" · ")}
@@ -190,6 +202,7 @@ export function GateDesk({ eventId, date, rows, canSeePhones, keeper }: { eventI
                       {s.status === "out" ? <>Collected at {s.left} by {s.collectedBy}{s.via === "exception" ? " (exception)" : ""}. </> : <>At camp since {s.arrived}{s.backfilled ? " (entered later)" : ""}, brought by {s.droppedBy}. </>}
                     </p>
                   )}
+                  {s?.status === "in" && r.hasCare && (r.care ? <p className="mt-1 text-[0.95rem]"><span className="font-semibold">Health:</span> {r.care.health} · <span className="font-semibold">Emergency:</span> {r.care.emergency}</p> : <p className="mt-1 text-[0.95rem] text-muted">A health note was taken at the gate. The facilitator looking after {r.name.split(" ")[0]} reads it.</p>)}
                   {canSeePhones && r.phoneEnd && (
                     phones[r.key] ? (
                       <a href={`tel:${phones[r.key]}`} className="mt-1 inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline underline-offset-4"><Phone className="size-4" aria-hidden /> <span><span className="sr-only">Call </span>{phones[r.key]}</span></a>
@@ -244,7 +257,7 @@ function CheckInSheet({ row, pending, onClose, onSubmit }: { row: GateRow; pendi
         onSubmit={(e) => {
           e.preventDefault();
           const f = new FormData(e.currentTarget);
-          onSubmit({ key: row.key, droppedBy: String(f.get("droppedBy") ?? ""), mayCollect: String(f.get("mayCollect") ?? ""), medication: f.get("medication") === "yes" ? "yes" : "", confirmed: f.get("confirmed") === "yes" ? "yes" : "" });
+          onSubmit({ key: row.key, droppedBy: String(f.get("droppedBy") ?? ""), mayCollect: String(f.get("mayCollect") ?? ""), medication: f.get("medication") === "yes" ? "yes" : "", confirmed: f.get("confirmed") === "yes" ? "yes" : "", emName: String(f.get("emName") ?? ""), emPhone: String(f.get("emPhone") ?? ""), health: String(f.get("health") ?? "") });
         }}
       >
         <div className="flex flex-wrap items-center gap-2">
@@ -256,6 +269,15 @@ function CheckInSheet({ row, pending, onClose, onSubmit }: { row: GateRow; pendi
             <p className="font-bold">Not registered for this camp</p>
             <p className="mt-1 text-[0.95rem]">{row.name} came in {row.year}. Their details may be out of date. The parent must say they are joining before you check them in.</p>
             <label className="f-choice mt-3"><input type="checkbox" name="confirmed" value="yes" required /><span className="font-semibold leading-snug">The parent confirmed {row.name.split(" ")[0]} is joining this camp</span></label>
+          </div>
+        )}
+        {returning && (
+          <div className="grid gap-4 border-l-4 border-gold bg-paper-2 px-4 py-4">
+            <p className="font-bold">No application on file: take these now</p>
+            <div><label htmlFor="emn" className="f-label">Emergency contact: name</label><input id="emn" name="emName" required minLength={2} maxLength={80} autoComplete="off" className="f-input" /></div>
+            <div><label htmlFor="emp" className="f-label">Emergency contact: phone</label><input id="emp" name="emPhone" type="tel" required maxLength={20} autoComplete="off" className="f-input" /></div>
+            <div><label htmlFor="hl" className="f-label">Allergies, conditions or medicine</label><p id="hl-h" className="f-hint">Write None if there is nothing.</p><input id="hl" name="health" required minLength={2} maxLength={400} autoComplete="off" aria-describedby="hl-h" className="f-input" /></div>
+            <p className="text-[0.95rem]">Ask the parent to send a full application online this week. The photo rule is not known, so do not photograph this child.</p>
           </div>
         )}
         <div>
@@ -353,6 +375,10 @@ function WalkInSheet({ eventId, onClose }: { eventId: string; onClose: () => voi
         <TextField name="age" label="Age" required inputMode="numeric" maxLength={2} autoComplete="off" error={errors.age} />
         <TextField name="guardian" label="Parent or guardian" required maxLength={80} autoComplete="off" error={errors.guardian} />
         <TextField name="phone" label="Phone number" required type="tel" maxLength={20} autoComplete="off" error={errors.phone} hint="A number we can call today." />
+        <TextField name="emName" label="Emergency contact: name" required maxLength={80} autoComplete="off" error={errors.emName} hint="Someone else we can call if the parent cannot be reached." />
+        <TextField name="emPhone" label="Emergency contact: phone" required type="tel" maxLength={20} autoComplete="off" error={errors.emPhone} />
+        <TextField name="health" label="Allergies, conditions or medicine" required maxLength={400} autoComplete="off" error={errors.health} hint="Write None if there is nothing." />
+        <p className="text-[0.95rem] text-muted">Ask the parent to send a full application online this week. Do not photograph a child who has no application.</p>
         <p className="text-[0.95rem] text-muted">Adding a child does not check them in. Check them in from the list once the parent is at the gate.</p>
       </form>
     </RecordSheet>

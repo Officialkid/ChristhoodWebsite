@@ -3,6 +3,8 @@
 import { createHash, randomInt } from "node:crypto";
 import { after } from "next/server";
 import { clientKey, hashPassword, newId } from "@/lib/auth";
+import { campOfEvent } from "@/lib/camp-gate";
+import { placesLeft } from "@/lib/camp-day";
 import { getEvents } from "@/lib/content";
 import { seal, sealingReady } from "@/lib/crypto";
 import { claimPhoneIfFree, familyByPhone, familyChildren, families, getFamily, profileOf, saveChild, startFamilySession } from "@/lib/family";
@@ -66,22 +68,22 @@ async function removeNewFamily(familyId: string, applicationIds: string[] = []) 
 }
 
 /** Which programme an event belongs to, so the right department head sees its applications. */
-async function campOf(event: { department?: string; title: string }): Promise<CampApplication["camp"]> {
-  if (event.department === "jewels" || /jewels/i.test(event.title)) return "jewels";
-  if (event.department === "teen-life" || /teen/i.test(event.title)) return "teen-life";
-  return "other";
+async function campOf(event: { id: string; department?: string; title: string }): Promise<CampApplication["camp"]> {
+  return campOfEvent(event) ?? "other";
 }
 
 export async function submitCampApplication(_prev: FormState, fd: FormData): Promise<FormState> {
-  if (clean(fd.get("website")) || Number(fd.get("elapsedMs") ?? 0) < 12000) return { ok: true, name: "your child" };
+  if (clean(fd.get("website"))) return { ok: true, name: "your child" };
+  // A real parent who is very quick is told so, instead of being shown a success that saved nothing.
+  if (Number(fd.get("elapsedMs") ?? 0) < 12000) return fail("That was very quick. Please check your answers and send the application again.");
   if ((await store.hit(`camp:${await clientKey()}`, 3600)) > 8) return fail("That is a lot of applications from one place. Please try again in an hour.");
   if (!store.writable || !(await sealingReady())) return fail(`Online applications are not switched on yet, ${callUs} and we will register your child.`);
 
   const event = (await getEvents()).find((e) => e.id === clean(fd.get("eventId"), 120));
   const eventStart = event ? Date.parse(event.start) : NaN;
   const eventEnd = event ? Date.parse(event.end ?? event.start) : NaN;
-  if (!event || event.category !== "camp" || !event.registrationOpen || !Number.isFinite(eventStart) || !Number.isFinite(eventEnd) || eventEnd < Date.now()) {
-    return fail("That camp is not open for applications.", { eventId: "Choose a camp that is open." });
+  if (!event || event.category !== "camp" || !event.registrationOpen || !Number.isFinite(eventStart) || !Number.isFinite(eventEnd) || eventEnd < Date.now() || eventStart <= Date.now()) {
+    return fail(`That camp is not open for applications. To bring a child to a camp that has started, ${callUs}.`, { eventId: "Choose a camp that is open." });
   }
 
   const rawChildKeys = fd.get("childKeys");
@@ -92,6 +94,11 @@ export async function submitCampApplication(_prev: FormState, fd: FormData): Pro
   const childIds = legacySingle ? [0] : String(rawChildKeys).split(",").map(Number);
   if (!childIds.length || childIds.length > 8 || childIds.some((id) => !Number.isSafeInteger(id) || id < 0 || id > 1000) || new Set(childIds).size !== childIds.length) {
     return fail("Please keep one to eight children in an application.");
+  }
+
+  const left = await placesLeft(event.id, event.capacity);
+  if (left !== null && childIds.length > left) {
+    return fail(left === 0 ? `This camp is full. ${callUs} to be put on the waiting list.` : `Only ${left} ${left === 1 ? "place is" : "places are"} left and you listed ${childIds.length} children. Remove some, or ${callUs}.`);
   }
 
   const childKey = (id: number, field: string) => legacySingle ? (field === "profileId" ? "childId" : field) : `child.${id}.${field}`;

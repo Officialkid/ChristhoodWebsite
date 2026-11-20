@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { ADMIN_PATH, requireUser, users } from "@/lib/auth";
-import { approvedFor, campAssignments } from "@/lib/camp-day";
+import { approvedFor, campAssignments, liveAssignments } from "@/lib/camp-day";
 import { getEvents } from "@/lib/content";
 import { mayCareForCampers, mayKeepRoster } from "@/lib/rbac";
 import { AssignSelect, ShareOutButton } from "@/components/admin/CampDay";
@@ -21,7 +21,8 @@ export default async function AssignPage({ params }: { params: Promise<{ eventId
   const team = everyone.filter((u) => u.active && mayCareForCampers(u)).sort((a, b) => a.name.localeCompare(b.name));
   const given = new Map(assignments.filter((a) => a.eventId === eventId).map((a) => [a.id, a]));
   const load = new Map(team.map((u) => [u.id, approved.filter((a) => given.get(a.id)?.userId === u.id).length]));
-  const unassigned = approved.filter((a) => !given.has(a.id)).length;
+  const live = await liveAssignments(eventId);
+  const unassigned = approved.filter((a) => !live.has(a.id)).length;
   // Someone who was given a camper and then left or was switched off still shows, so the camper is not hidden.
   const options = team.map((u) => ({ value: u.id, label: `${u.name} (${load.get(u.id) ?? 0})` }));
 

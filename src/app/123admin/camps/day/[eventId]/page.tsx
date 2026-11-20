@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Download, Phone } from "lucide-react";
+import { Download } from "lucide-react";
 import { ADMIN_PATH, requireUser } from "@/lib/auth";
-import { approvedFor, campAssignments, campAttendance, campDays, campSessions, dayLabel, dayShort, mayMarkFor, mayOpenCare, photoRule, pickDay, todayInNairobi } from "@/lib/camp-day";
+import { approvedFor, campAttendance, campDays, campNotes, campSessions, dayLabel, dayShort, liveAssignments, mayMarkFor, mayOpenCare, nairobiDay, photoRule, pickDay, todayInNairobi } from "@/lib/camp-day";
 import { campArrivals } from "@/lib/camp-gate";
 import { getEvents } from "@/lib/content";
-import { mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
-import { formatEventDates } from "@/lib/time";
-import { AttendanceToggle } from "@/components/admin/CampDay";
-import { btnClass, Chip, Empty, LinkButton, PageTitle } from "@/components/admin/ui";
+import { campScope, mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
+import { formatEventDates, formatStamp } from "@/lib/time";
+import { AttendanceToggle, ClearPrivateForm, RevealPhone, ReturningButton } from "@/components/admin/CampDay";
+import { btnClass, Chip, Empty, LinkButton, Notice, PageTitle } from "@/components/admin/ui";
 
 export const metadata = { title: "Camp day" };
 
@@ -25,7 +25,7 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
   if (user.mustChange) redirect(`${ADMIN_PATH}/account`);
   if (!mayRunCampDay(user)) redirect(`${ADMIN_PATH}/no-access`);
 
-  const [events, approved, assignments, sessions, marks, arrivals] = await Promise.all([getEvents(), approvedFor(eventId), campAssignments.list(), campSessions.list(), campAttendance.list(), campArrivals.list()]);
+  const [events, approved, given, sessions, marks, arrivals, notes] = await Promise.all([getEvents(), approvedFor(eventId), liveAssignments(eventId), campSessions.list(), campAttendance.list(), campArrivals.list(), campNotes.list()]);
   const event = events.find((e) => e.id === eventId);
   if (!event && approved.length === 0) notFound();
   const title = event?.title ?? approved[0].eventTitle;
@@ -33,7 +33,6 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
   const date = pickDay(days, wanted);
 
   const keeper = mayKeepRoster(user);
-  const given = new Map(assignments.filter((a) => a.eventId === eventId).map((a) => [a.id, a]));
   const marked = new Map(marks.filter((m) => m.eventId === eventId && m.date === date).map((m) => [m.applicationId, m.status]));
   // A child the gate received counts as here, whatever the register says. The register itself is left as it was.
   for (const a of arrivals) if (a.eventId === eventId && a.date === date) marked.set(a.key, "present");
@@ -46,6 +45,17 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
 
   const photos = new Map(await Promise.all(list.map(async (a) => [a.id, await photoRule(a)] as const)));
   const today = sessions.filter((s) => s.eventId === eventId && s.date === date).sort((a, b) => a.start.localeCompare(b.start));
+  const unpaid = keeper ? approved.filter((a) => !a.paymentVerified).length : 0;
+  const withoutApplication = keeper ? arrivals.filter((a) => a.eventId === eventId && a.date === date && a.source && a.source !== "application").length : 0;
+  // Incidents, first aid and medicine given on this day. Head facilitators see who, what kind and by whom; the words stay with the people who care for the child.
+  const names = new Map(approved.map((a) => [a.id, a]));
+  const careLog = keeper
+    ? notes.filter((n) => n.eventId === eventId && n.kind && n.kind !== "note" && nairobiDay(n.createdAt) === date).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    : [];
+  const kindLabel = { incident: "Incident", "first-aid": "First aid", medicine: "Medicine given" } as const;
+  const started = days[0] <= todayInNairobi();
+  const canReturning = campScope(user) === "all" && started;
+  const sixty = event ? Date.parse(event.end ?? event.start) + 60 * 86_400_000 < Date.now() : false;
   const root = `${ADMIN_PATH}/camps/day/${eventId}`;
   const link = (d: string, v: string = view) => `${root}?date=${d}${v !== "all" ? `&show=${v}` : ""}`;
 
@@ -54,7 +64,7 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
       <PageTitle
         title={title}
         icon="clipboard"
-        lead={`${event ? `${formatEventDates(event.start, event.end)} · ` : ""}${keeper ? `${approved.length} expected` : `${mine.length} ${mine.length === 1 ? "camper" : "campers"} with you`}`}
+        lead={`${event ? `${formatEventDates(event.start, event.end)} · ` : ""}${keeper ? `${approved.length} expected${event?.capacity ? ` of ${event.capacity} places` : ""}` : `${mine.length} ${mine.length === 1 ? "camper" : "campers"} with you`}`}
         crumbs={[{ label: "Camp days", href: `${ADMIN_PATH}/camps/day` }, { label: title }]}
         actions={
           keeper ? (
@@ -78,6 +88,13 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
           <nav aria-label="Choose the day" className="a-tabs">
             {days.map((d) => <Link key={d} href={link(d)} aria-current={d === date ? "page" : undefined} className="a-tab">{dayShort(d)}{d === todayInNairobi() && <span className="n">today</span>}</Link>)}
           </nav>
+        )}
+
+        {(withoutApplication > 0 || unpaid > 0) && (
+          <div className="grid gap-3">
+            {withoutApplication > 0 && <Notice tone="warn" title={`${withoutApplication} ${withoutApplication === 1 ? "child" : "children"} came without an application`}>Their parents must send a full application online this week. Until then the camp holds only the emergency contact and health note taken at the gate.</Notice>}
+            {unpaid > 0 && <Notice tone="info" title={`${unpaid} approved ${unpaid === 1 ? "child has" : "children have"} no payment checked`}>Look for the "Payment not checked" tag below, and chase the balance with the family.</Notice>}
+          </div>
         )}
 
         <section aria-labelledby="tt">
@@ -128,10 +145,10 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
                 return (
                   <li key={a.id} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-b border-rule py-4">
                     <div className="min-w-0 flex-1 basis-64">
-                      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-bold leading-snug"><span>{a.childName} <span className="font-normal text-muted">· age {a.ageAtCamp}</span></span>{photos.get(a.id) === "No" && <Chip tone="warn">No photos</Chip>}</p>
+                      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-bold leading-snug"><span>{a.childName} <span className="font-normal text-muted">· age {a.ageAtCamp}</span></span>{photos.get(a.id) === "No" && <Chip tone="warn">No photos</Chip>}{keeper && !a.paymentVerified && <Chip>Payment not checked</Chip>}</p>
                       {keeper && <p className="mt-0.5 text-[0.92rem] text-muted">{owner ? `With ${owner.userName}` : "Nobody looks after them yet"}</p>}
                       <p className="mt-1 flex flex-wrap items-center gap-x-5">
-                        <a href={`tel:${a.phone}`} className="inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline underline-offset-4"><Phone className="size-4" aria-hidden /> <span><span className="sr-only">Call guardian </span>{a.guardian}</span></a>
+                        <RevealPhone id={a.id} guardian={a.guardian} end={a.phone.replace(/\D/g, "").slice(-3)} />
                         {care && <Link href={`${root}/camper/${a.id}`} className="inline-flex min-h-11 items-center font-semibold text-purple underline underline-offset-4">Care details and notes</Link>}
                       </p>
                     </div>
@@ -142,6 +159,42 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
             </ul>
           )}
         </section>
+
+        {keeper && careLog.length > 0 && (
+          <section aria-labelledby="carelog">
+            <h2 id="carelog" className="text-xl">Incidents and first aid, {dayShort(date)}</h2>
+            <p className="mt-1 max-w-[62ch] text-muted">Who was written about and by whom. The words stay with the facilitator looking after the child.</p>
+            <ul className="mt-3 border-t border-rule">
+              {careLog.map((n) => {
+                const app = names.get(n.applicationId);
+                return (
+                  <li key={n.id} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 border-b border-rule py-3">
+                    <p><Chip tone="warn">{kindLabel[n.kind as keyof typeof kindLabel]}</Chip> <span className="font-bold">{app?.childName ?? "A camper"}</span> <span className="text-muted">· {formatStamp(n.createdAt)} · {n.by}</span></p>
+                    {app && mayOpenCare(user, app, given.get(app.id)) && <Link href={`${root}/camper/${app.id}`} className="inline-flex min-h-11 items-center font-semibold text-purple underline underline-offset-4">Open</Link>}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        {(canReturning || (user.role === "admin" && sixty)) && (
+          <section aria-labelledby="after" className="grid gap-6 border-t border-rule pt-8">
+            <h2 id="after" className="text-xl">After the camp</h2>
+            {canReturning && (
+              <div className="grid max-w-[62ch] gap-3">
+                <p className="text-muted">Add every child who was received at the gate or marked here to Returning campers, so next year's gate and your invitations start from a full list. Safe to run again.</p>
+                <div><ReturningButton eventId={eventId} /></div>
+              </div>
+            )}
+            {user.role === "admin" && sixty && (
+              <div className="grid max-w-[62ch] gap-3">
+                <p className="text-muted">The camp ended more than sixty days ago. Remove the children's health answers, the care notes and the photos taken at this camp. Contact, consent and payment answers stay. This cannot be undone.</p>
+                <ClearPrivateForm eventId={eventId} />
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </>
   );

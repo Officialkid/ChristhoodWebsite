@@ -1,10 +1,11 @@
 "use client";
 
-import { useOptimistic, useTransition } from "react";
+import { useOptimistic, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Shuffle } from "lucide-react";
+import { Loader2, Phone, RotateCcw, Shuffle, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { addNote, assignCamper, deleteNote, deleteSession, markAttendance, saveSession, shareOutCampers } from "@/app/123admin/actions-day";
+import { addAttendeesToReturning, clearCampPrivateData } from "@/app/123admin/actions-camps";
+import { addNote, assignCamper, deleteNote, deleteSession, markAttendance, revealGuardianPhone, saveSession, shareOutCampers } from "@/app/123admin/actions-day";
 import { DeleteButton, SaveButton, SelectField, TextArea, TextField, Toggle, useSave } from "./forms";
 import type { Result } from "./forms";
 import { btnClass } from "./ui";
@@ -151,9 +152,95 @@ export function NoteForm({ applicationId, onFamilyPage }: { applicationId: strin
   return (
     <form ref={formRef} action={run} className="grid max-w-2xl gap-5" noValidate>
       <input type="hidden" name="id" value={applicationId} />
+      <SelectField name="kind" label="What is this?" defaultValue="note" options={[{ value: "note", label: "A note about how they are getting on" }, { value: "incident", label: "An incident (a fall, a fight, a child upset or missing)" }, { value: "first-aid", label: "First aid given" }, { value: "medicine", label: "Medicine given" }]} hint="Incidents, first aid and medicine are kept on the camp record and listed for the head facilitators. Tell the parent yourself, by phone, when it matters." />
       <TextArea name="text" label="Your note" rows={4} maxLength={2000} required error={errors.text} hint="What they enjoyed, what they learned, how they are getting on." />
       <Toggle name="shared" label="Share this note with the family" hint={onFamilyPage ? "The parent reads it on their family page. If they opted in and text messages are connected, they also receive a brief alert without the note text. Keep health details out of it." : "This family has no family page yet, so they cannot read it until the camp office puts the application on one."} />
       <div><SaveButton>Save the note</SaveButton></div>
+    </form>
+  );
+}
+
+/** The parent's number stays hidden until someone asks for it. The opening is logged, and the number hides again after thirty seconds. */
+export function RevealPhone({ id, guardian, end }: { id: string; guardian: string; end: string }) {
+  const [phone, setPhone] = useState<string>();
+  const [pending, start] = useTransition();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  if (phone) {
+    return (
+      <a href={`tel:${phone}`} className="inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline underline-offset-4"><Phone className="size-4" aria-hidden /> <span><span className="sr-only">Call guardian </span>{guardian} · {phone}</span></a>
+    );
+  }
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      className="inline-flex min-h-11 items-center gap-2 font-semibold text-purple underline underline-offset-4"
+      onClick={() =>
+        start(async () => {
+          const fd = new FormData();
+          fd.set("id", id);
+          const r = await revealGuardianPhone(fd);
+          if (!r.ok || !r.secret) return void toast.error(r.message ?? "Could not open the number.");
+          setPhone(r.secret);
+          clearTimeout(timer.current);
+          timer.current = setTimeout(() => setPhone(undefined), 30_000);
+        })
+      }
+    >
+      <Phone className="size-4" aria-hidden /> {guardian}: phone ending {end}, show
+    </button>
+  );
+}
+
+export function ReturningButton({ eventId }: { eventId: string }) {
+  const router = useRouter();
+  const [pending, start] = useTransition();
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      className={btnClass.secondary}
+      onClick={() =>
+        start(async () => {
+          const fd = new FormData();
+          fd.set("eventId", eventId);
+          const r = await addAttendeesToReturning(fd);
+          (r.ok ? toast.success : toast.error)(r.message ?? "");
+          router.refresh();
+        })
+      }
+    >
+      {pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <RotateCcw className="size-4" aria-hidden />} Add this camp's children to Returning campers
+    </button>
+  );
+}
+
+/** Removes a finished camp's health answers, care notes and photos. Asks for the word REMOVE first. */
+export function ClearPrivateForm({ eventId }: { eventId: string }) {
+  const router = useRouter();
+  const [word, setWord] = useState("");
+  const [pending, start] = useTransition();
+  return (
+    <form
+      className="flex flex-wrap items-end gap-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        start(async () => {
+          const fd = new FormData();
+          fd.set("eventId", eventId);
+          fd.set("confirm", word);
+          const r = await clearCampPrivateData(fd);
+          (r.ok ? toast.success : toast.error)(r.message ?? "");
+          if (r.ok) setWord("");
+          router.refresh();
+        });
+      }}
+    >
+      <label className="block">
+        <span className="f-label">Type REMOVE to confirm</span>
+        <input value={word} onChange={(e) => setWord(e.target.value)} autoComplete="off" className="f-input w-48" />
+      </label>
+      <button type="submit" disabled={pending || word !== "REMOVE"} className={btnClass.danger}>{pending ? <Loader2 className="size-4 animate-spin" aria-hidden /> : <Trash2 className="size-4" aria-hidden />} Remove private details</button>
     </form>
   );
 }

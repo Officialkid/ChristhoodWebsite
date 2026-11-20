@@ -53,6 +53,20 @@ export async function approvedFor(eventId: string): Promise<CampApplication[]> {
   return (await campApplications.list()).filter((a) => a.eventId === eventId && a.status === "Approved").sort((a, b) => a.childName.localeCompare(b.childName));
 }
 
+/** Every live assignment: a camper given to someone who has since left, been switched off or lost the facilitator role counts as not given. */
+export async function liveAssignments(eventId: string): Promise<Map<string, CampAssignment>> {
+  const [list, everyone] = await Promise.all([campAssignments.list(), collection<StoredUser>("users").list()]);
+  const able = new Set(everyone.filter((u) => u.active && mayCareForCampers(u)).map((u) => u.id));
+  return new Map(list.filter((a) => a.eventId === eventId && able.has(a.userId)).map((a) => [a.id, a]));
+}
+
+/** Places a camp still has, or null when it has no limit. Declined applications do not use a place. */
+export async function placesLeft(eventId: string, capacity?: number): Promise<number | null> {
+  if (!capacity || capacity < 1) return null;
+  const taken = (await campApplications.list()).filter((a) => a.eventId === eventId && a.status !== "Declined").length;
+  return Math.max(0, capacity - taken);
+}
+
 /** Only the photo rule is read from the sealed details, so a list can warn "no photos" without showing anything else. */
 export async function photoRule(app: CampApplication): Promise<"Yes" | "No" | undefined> {
   try {

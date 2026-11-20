@@ -1,8 +1,10 @@
 "use server";
 
 import { randomInt } from "node:crypto";
+import { after } from "next/server";
 import { hashPassword, log, newId, requireUser } from "@/lib/auth";
 import { unseal } from "@/lib/crypto";
+import { sendUpdateAlerts } from "@/lib/httpsms";
 import { CODE_DAYS, campers, campUpdates, claimPhoneIfFree, codeHash, familyByPhone, families, familyChildren, newCode, profileOf, saveChild } from "@/lib/family";
 import { normalisePhone, phoneOk } from "@/lib/phone";
 import { campScope } from "@/lib/rbac";
@@ -62,6 +64,11 @@ export async function postUpdate(_prev: Result, fd: FormData): Promise<Result> {
     if (Object.keys(errors).length) return bad("Please check the highlighted answers.", errors);
     await campUpdates.put({ id: newId(), createdAt: new Date().toISOString(), by: user.name, camp, title, body });
     await log(user, "Posted an update to families", title);
+    // Families who asked for texts hear that something new is waiting. The text never repeats the update.
+    const [fams, kids, apps] = await Promise.all([families.list().catch(() => []), familyChildren.list().catch(() => []), collection<CampApplication>("camp-applications").list().catch(() => [])]);
+    const inAudience = new Set(camp === "all" ? fams.map((f) => f.id) : [...kids.filter((k) => k.camp === camp).map((k) => k.familyId), ...apps.filter((a) => a.camp === camp && a.familyId).map((a) => a.familyId as string)]);
+    const phones = fams.filter((f) => f.active && f.smsUpdates && inAudience.has(f.id)).map((f) => f.phone);
+    if (phones.length) after(() => sendUpdateAlerts(phones));
     return ok("Posted. Families can read it on their family page.");
   });
 }

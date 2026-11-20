@@ -1,9 +1,12 @@
 "use server";
 
+import { after } from "next/server";
 import { log, newId, requireUser } from "@/lib/auth";
-import { attendanceId, campAttendance, campDays, dateOk, todayInNairobi } from "@/lib/camp-day";
+import { attendanceId, campApplications, campAttendance, campDays, dateOk, todayInNairobi } from "@/lib/camp-day";
 import { arrivalId, authorizedNames, campArrivals, campOfEvent, campWalkIns, gateFind, gateRoster, isCampEvent, mayCollectNormally, sameName } from "@/lib/camp-gate";
 import { getEvents } from "@/lib/content";
+import { seal, sealingReady } from "@/lib/crypto";
+import { sendCampStatusText } from "@/lib/httpsms";
 import { mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { StorageUnavailable } from "@/lib/store";
 import { fmt } from "@/lib/time";
@@ -59,7 +62,18 @@ export async function checkIn(fd: FormData): Promise<Result> {
     const authorized = authorizedNames(String(fd.get("mayCollect") ?? "").slice(0, 200));
     const mayCollect = authorized.join(", ");
     const id = arrivalId(key, when.date);
-    const arrival: CampArrival = { id, key, eventId: when.event.id, date: when.date, status: "in", source: person.source, droppedBy, ...(mayCollect ? { mayCollect, authorized } : {}), ...(fd.get("medication") === "yes" ? { medication: true } : {}), arrivedAt: stamp(), arrivedBy: user.name, ...(when.late ? { backfilled: true as const } : {}) };
+    // A returning child has no application on this camp, so the gate takes the two things a camp must never be without.
+    let sealed: string | undefined;
+    if (person.source === "returning") {
+      const emName = text(fd, "emName", 80);
+      const emPhone = text(fd, "emPhone", 20);
+      const health = text(fd, "health", 400);
+      if (emName.length < 2 || emPhone.replace(/\D/g, "").length < 9) return bad("Write an emergency contact: a name and a phone number we can call.");
+      if (health.length < 2) return bad("Write any allergy, condition or medicine, or write None.");
+      if (!(await sealingReady())) return bad("The registration key is not set, so private details cannot be kept yet.");
+      sealed = await seal({ emergency: { name: emName, phone: emPhone }, health });
+    }
+    const arrival: CampArrival = { id, key, eventId: when.event.id, date: when.date, status: "in", source: person.source, droppedBy, ...(sealed ? { sealed } : {}), ...(mayCollect ? { mayCollect, authorized } : {}), ...(fd.get("medication") === "yes" ? { medication: true } : {}), arrivedAt: stamp(), arrivedBy: user.name, ...(when.late ? { backfilled: true as const } : {}) };
     // Atomic: when two people receive the same child at once, exactly one record is kept.
     if (!(await campArrivals.create(arrival))) {
       const there = await campArrivals.get(id);
@@ -70,6 +84,11 @@ export async function checkIn(fd: FormData): Promise<Result> {
       await campAttendance.create({ id: attendanceId(person.applicationId, when.date), applicationId: person.applicationId, eventId: when.event.id, date: when.date, status: "present", by: user.name, at: stamp() });
     }
     await log(user, "Checked a camper in at the gate", id);
+    // The parent hears their child was received (when they asked for texts). Not for a paper list entered later.
+    if (person.applicationId && !when.late) {
+      const app = await campApplications.get(person.applicationId);
+      if (app?.smsUpdates) after(() => sendCampStatusText(app.phone, { kind: "arrived", child: app.childName, at: clock(arrival.arrivedAt) }));
+    }
     return ok(`${person.name} is checked in.`);
   });
 }
@@ -109,6 +128,11 @@ export async function signOut(fd: FormData): Promise<Result> {
     // Only while the child is still checked in, so two people cannot both hand the same child over.
     if (!(await campArrivals.replaceIf(next, "status", "in"))) return bad("Someone else just changed this child. Check the list.");
     await log(user, exception ? "Approved an exception collection" : "Signed a camper out at the gate", id);
+    // The parent is told who collected their child, so a wrong collection is noticed at once.
+    if (!arrival.key.includes(":") && !when.late) {
+      const app = await campApplications.get(arrival.key);
+      if (app?.smsUpdates) after(() => sendCampStatusText(app.phone, { kind: "left", child: app.childName, at: clock(next.leftAt), by: collectedBy }));
+    }
     return ok("Signed out.");
   });
 }
@@ -174,11 +198,18 @@ export async function addWalkIn(_prev: Result, fd: FormData): Promise<Result> {
     if (!Number.isInteger(age) || age < 3 || age > 30) errors.age = "Write the age in years.";
     if (guardian.length < 2) errors.guardian = "Write the parent or guardian's name.";
     if (phone.replace(/\D/g, "").length < 9) errors.phone = "Write a phone number we can call.";
+    const emName = text(fd, "emName", 80);
+    const emPhone = text(fd, "emPhone", 20);
+    const health = text(fd, "health", 400);
+    if (emName.length < 2) errors.emName = "Write the name of someone we can call in an emergency.";
+    if (emPhone.replace(/\D/g, "").length < 9) errors.emPhone = "Write their phone number.";
+    if (health.length < 2) errors.health = "Write any allergy, condition or medicine, or write None.";
     if (Object.keys(errors).length) return bad("Please check the highlighted answers.", errors);
     const there = (await campWalkIns.list()).find((w) => w.eventId === event.id && sameName(w.name) === sameName(name) && sameName(w.guardian) === sameName(guardian));
     if (there) return ok(`${name} is already on the list. Check them in from there.`, { id: `walkin:${there.id}` });
+    if (!(await sealingReady())) return bad("The registration key is not set, so a child's emergency and health details cannot be kept yet. See System status.");
     const id = newId();
-    await campWalkIns.put({ id, eventId: event.id, camp: campOfEvent(event) ?? "other", name, age, guardian, phone, addedBy: user.name, createdAt: stamp() });
+    await campWalkIns.put({ id, eventId: event.id, camp: campOfEvent(event) ?? "other", name, age, guardian, phone, addedBy: user.name, createdAt: stamp(), sealed: await seal({ emergency: { name: emName, phone: emPhone }, health }) });
     await log(user, "Added a camper at the gate", id);
     return ok(`${name} is on the list. Check them in below.`, { id: `walkin:${id}` });
   });

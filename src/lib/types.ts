@@ -50,6 +50,8 @@ export type EventDoc = {
   details?: string;
   registrationOpen: boolean;
   registerHref?: string;
+  /** The most children a camp takes. Applications stop when this many are waiting or approved. Empty means no limit. */
+  capacity?: number;
   /** The department that looks after this event (department id). Only that team and the web team may edit it. */
   department?: string;
 };
@@ -249,6 +251,8 @@ export type CampApplication = {
   status: CampAppStatus;
   paymentVerified: boolean;
   reviewNote?: string;
+  /** When the health and care answers were cleared after the camp. The contact and consent answers stay. */
+  healthClearedAt?: string;
   reviewedBy?: string;
   reviewedAt?: string;
   sealed: string;
@@ -303,12 +307,12 @@ export type CampAssignment = { id: string; eventId: string; userId: string; user
 export type CampAttendance = { id: string; applicationId: string; eventId: string; date: string; status: "present" | "absent"; by: string; at: string };
 
 /** A note about a camper. The words are sealed; `shared` notes also show on the family's page. */
-export type CampNote = { id: string; applicationId: string; eventId: string; byId: string; by: string; createdAt: string; shared: boolean; sealed: string };
+export type CampNote = { id: string; applicationId: string; eventId: string; byId: string; by: string; createdAt: string; shared: boolean; sealed: string; /** What kind of entry it is. Incidents, first aid and medicine given are listed for the head facilitators. */ kind?: "note" | "incident" | "first-aid" | "medicine" };
 
 /* ---------- the gate desk ---------- */
 
 /** A child who turns up without being on the expected list. Added at the gate; stays on the list for the rest of the camp. */
-export type CampWalkIn = { id: string; eventId: string; camp: "jewels" | "teen-life" | "other"; name: string; age?: number; guardian: string; phone: string; addedBy: string; createdAt: string };
+export type CampWalkIn = { id: string; eventId: string; camp: "jewels" | "teen-life" | "other"; name: string; age?: number; guardian: string; phone: string; addedBy: string; createdAt: string; /** Emergency contact and health note, sealed. A walk-in has no application, so this is all the camp has. */ sealed?: string };
 
 /**
  * One child's arrival on one day. `key` is the approved application's id, "camper:<id>" for a returning camper or "walkin:<id>".
@@ -339,6 +343,8 @@ export type CampArrival = {
   leftBy?: string;
   /** Entered after the day, from the paper list. The times are when it was typed in, not when the child came. */
   backfilled?: true;
+  /** Emergency contact and health note taken at the gate for a child with no application, sealed. */
+  sealed?: string;
   /** Sign-outs that were taken back, kept so the record of who collected is never lost. */
   corrections?: { collectedBy: string; leftAt?: string; leftBy?: string; undoneBy: string; undoneAt: string }[];
 };

@@ -108,7 +108,7 @@ export default async function CamperCarePage({ params }: { params: Promise<{ eve
             ) : (
               notes.map((n) => (
                 <article key={n.id} className="border-b border-rule py-5">
-                  <p className="flex flex-wrap items-center gap-2 text-[0.92rem] text-muted"><span className="font-semibold text-ink">{n.by}</span> · {formatStamp(n.createdAt)} {n.shared ? <Chip tone="ok">Shared with the family</Chip> : <Chip>Camp team only</Chip>}</p>
+                  <p className="flex flex-wrap items-center gap-2 text-[0.92rem] text-muted"><span className="font-semibold text-ink">{n.by}</span> · {formatStamp(n.createdAt)} {n.kind && n.kind !== "note" && <Chip tone="warn">{n.kind === "first-aid" ? "First aid" : n.kind === "medicine" ? "Medicine given" : "Incident"}</Chip>} {n.shared ? <Chip tone="ok">Shared with the family</Chip> : <Chip>Camp team only</Chip>}</p>
                   <p className="mt-2 whitespace-pre-line break-words">{n.words || "This note could not be opened."}</p>
                   {(n.byId === user.id || keeper) && <div className="mt-3"><RemoveNote id={n.id} /></div>}
                 </article>

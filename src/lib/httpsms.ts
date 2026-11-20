@@ -58,3 +58,32 @@ export async function sendFamilyCampAlert(phone: string, kind: "shared-note" | "
 export async function sendPhoneVerificationCode(phone: string, code: string) {
   return sendHttpSms(phone, `Christhood family page: your phone-change code is ${code}. It expires in 10 minutes. If you did not request it, ignore this message.`);
 }
+
+const clean = (v: string, max: number) => v.replace(/[\r\n\u0000-\u001f]/g, " ").trim().slice(0, max);
+
+/**
+ * A short text to a parent who opted in: the decision on an application, a child received at camp, or a child collected.
+ * It carries a first name and a time, never a health or care detail.
+ */
+export async function sendCampStatusText(phone: string, input: { kind: "approved" | "declined" | "fix" | "arrived" | "left"; child: string; camp?: string; at?: string; by?: string }) {
+  const child = clean(input.child.split(/\s+/)[0] ?? "", 30) || "your child";
+  const camp = clean(input.camp ?? "", 48);
+  const at = clean(input.at ?? "", 8);
+  const by = clean(input.by ?? "", 40);
+  const content = {
+    approved: `Christhood Camps: ${child}'s place${camp ? ` at ${camp}` : ""} is approved. Sign in to your family page for the timetable.`,
+    declined: `Christhood Camps: ${child}'s application${camp ? ` for ${camp}` : ""} was not accepted this time. The camp office will explain.`,
+    fix: `Christhood Camps: ${child}'s application${camp ? ` for ${camp}` : ""} needs a small correction. The camp office will be in touch, or sign in to your family page.`,
+    arrived: `Christhood Camps: ${child} was received at camp${at ? ` at ${at}` : ""}.`,
+    left: `Christhood Camps: ${child} was collected from camp${at ? ` at ${at}` : ""}${by ? ` by ${by}` : ""}. If this is not right, call the camp office now.`,
+  }[input.kind];
+  await sendHttpSms(phone, content);
+}
+
+/** Tells opted-in families a new update is waiting, without repeating it. A few at a time, so a long list does not hold the page. */
+export async function sendUpdateAlerts(phones: string[]) {
+  const unique = [...new Set(phones.map((p) => p.trim()).filter(e164))].slice(0, 200);
+  for (let i = 0; i < unique.length; i += 10) {
+    await Promise.allSettled(unique.slice(i, i + 10).map((to) => sendHttpSms(to, "Christhood Camps: the camp team posted a new update. Sign in to your family page to read it.")));
+  }
+}
