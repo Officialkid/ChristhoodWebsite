@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { ADMIN_PATH, requireUser } from "@/lib/auth";
 import { mayCareForCampers, mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { site } from "@/content/site";
+import { guideCamps, guides, type GuideCamp } from "@/content/facilitator-guide";
 import { PrintButton } from "@/components/admin/PrintButton";
-import { DataTable, PageTitle } from "@/components/admin/ui";
+import { Chip, DataTable, PageTitle } from "@/components/admin/ui";
 
 export const metadata = { title: "Facilitator guide" };
 
@@ -134,46 +135,111 @@ const rows: [string, string, string, string][] = [
   ["Review applications and payments", no, no, yes],
 ];
 
-export default async function FacilitatorGuidePage() {
+export default async function FacilitatorGuidePage({ searchParams }: { searchParams: Promise<{ camp?: string }> }) {
+  const { camp: wanted } = await searchParams;
   const user = await requireUser();
   if (user.mustChange) redirect(`${ADMIN_PATH}/account`);
   if (!mayRunCampDay(user)) redirect(`${ADMIN_PATH}/no-access`);
 
   const keeper = mayKeepRoster(user);
   const carer = mayCareForCampers(user);
+  const camp: GuideCamp = guideCamps.find((c) => c === wanted) ?? "jewels";
+  const guide = guides[camp];
+  const lead = [{ id: "culture", title: guide.culture.title }, { id: "watch", title: guide.watch.title }, { id: "session", title: guide.session.title }];
   const who = user.role === "admin" ? "an administrator" : keeper && carer ? "a head facilitator with campers" : keeper ? "a head facilitator" : carer ? "a facilitator" : "on the camp team";
 
   return (
     <>
       <PageTitle
         title="Facilitator guide"
-        lead={<>How camp days work in the team area, in the order you will meet them. You are signed in as {who}.</>}
+        lead={<>How to lead the boot camp, then how camp days work in the team area. You are signed in as {who}.</>}
         crumbs={[{ label: "Camp days", href: `${ADMIN_PATH}/camps/day` }, { label: "Facilitator guide" }]}
         actions={<PrintButton />}
       />
 
+      <nav aria-label="Choose the camp" className="a-tabs mt-8 print:hidden">
+        {guideCamps.map((c) => <Link key={c} href={`${ADMIN_PATH}/camps/guide?camp=${c}`} aria-current={c === camp ? "page" : undefined} className="a-tab">{guides[c].name}</Link>)}
+      </nav>
+
       <div className="mt-8 grid gap-x-16 gap-y-10 xl:grid-cols-[13rem_minmax(0,1fr)]">
         <nav aria-label="On this page" className="print:hidden xl:sticky xl:top-24 xl:self-start">
           <p className="text-[0.9rem] font-semibold text-muted">On this page</p>
-          <ol className="mt-2 grid gap-x-6 sm:grid-cols-2 xl:grid-cols-1">
-            {[...parts, { id: "access", title: "Who can do what", body: null }].map((p) => (
-              <li key={p.id}>
-                <a href={`#${p.id}`} className="inline-flex min-h-9 items-center text-[0.95rem] text-ink underline-offset-4 hover:text-purple hover:underline pointer-coarse:min-h-11">{p.title}</a>
-              </li>
-            ))}
-          </ol>
+          {[{ label: "Leading the camp", items: lead }, { label: "Using the team area", items: [...parts, { id: "access", title: "Who can do what" }] }].map((g) => (
+            <div key={g.label} className="mt-3">
+              <p className="text-[0.82rem] font-semibold text-muted">{g.label}</p>
+              <ol className="mt-1 grid gap-x-6 sm:grid-cols-2 xl:grid-cols-1">
+                {g.items.map((p) => (
+                  <li key={p.id}>
+                    <a href={`#${p.id}`} className="inline-flex min-h-9 items-center text-[0.95rem] text-ink underline-offset-4 hover:text-purple hover:underline pointer-coarse:min-h-11">{p.title}</a>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
         </nav>
 
         <div className="grid min-w-0 gap-12">
+          <section aria-labelledby="camp-h" className="grid gap-12">
+            <div>
+              <h2 id="camp-h" className="text-xl">{guide.name}</h2>
+              <p className="mt-2 max-w-[62ch] text-[1.02rem] leading-relaxed">{guide.intro}</p>
+              <p className="mt-1 text-[0.92rem] text-muted">From the {guide.book}.</p>
+            </div>
+
+            <section id="culture" aria-labelledby="culture-h" className="scroll-mt-24 print:break-inside-avoid">
+              <h3 id="culture-h" className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">{guide.culture.title}</h3>
+              {guide.culture.lead && <p className="mt-3 max-w-[62ch] text-muted">{guide.culture.lead}</p>}
+              <ol className="mt-3 border-t border-rule">
+                {guide.culture.points.map((pt, i) => (
+                  <li key={pt.title} className="grid gap-x-6 gap-y-1 border-b border-rule py-4 sm:grid-cols-[3rem_minmax(0,1fr)]">
+                    <p className="font-display font-extrabold tabular-nums text-purple" aria-hidden>{String(i + 1).padStart(2, "0")}</p>
+                    <div className="max-w-[62ch]"><p className="font-bold">{pt.title}</p><p className="mt-1 leading-relaxed">{pt.body}</p></div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            <section id="watch" aria-labelledby="watch-h" className="scroll-mt-24 print:break-inside-avoid">
+              <h3 id="watch-h" className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">{guide.watch.title}</h3>
+              <p className="mt-3 max-w-[62ch] text-muted">{guide.watch.lead}</p>
+              <ol className="mt-3 border-t border-rule">
+                {guide.watch.days.map((d) => (
+                  <li key={d.day} className="grid gap-x-6 gap-y-1 border-b border-rule py-4 sm:grid-cols-[8rem_minmax(0,1fr)]">
+                    <p className="font-bold">{d.day}</p>
+                    <div className="max-w-[62ch]">
+                      <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-bold">{d.theme}{d.risk && <Chip tone="warn">Highest risk</Chip>}</p>
+                      <p className="mt-1 leading-relaxed">{d.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            <section id="session" aria-labelledby="session-h" className="scroll-mt-24 print:break-inside-avoid">
+              <h3 id="session-h" className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">{guide.session.title}</h3>
+              <p className="mt-3 max-w-[62ch] text-muted">{guide.session.lead}</p>
+              <ol className="mt-3 border-t border-rule">
+                {guide.session.steps.map((st) => (
+                  <li key={st.time} className="grid gap-x-6 gap-y-1 border-b border-rule py-3 sm:grid-cols-[5rem_minmax(0,1fr)]">
+                    <p className="font-semibold tabular-nums">{st.time}</p>
+                    <div className="max-w-[62ch]"><p className="font-bold">{st.name} <span className="font-normal text-muted">· {st.length}</span></p><p className="mt-1 leading-relaxed">{st.body}</p></div>
+                  </li>
+                ))}
+              </ol>
+              {guide.session.note && <p className="mt-4 max-w-[62ch] border-l-4 border-gold pl-4 font-semibold leading-relaxed">{guide.session.note}</p>}
+            </section>
+          </section>
+
+          <h2 className="-mb-6 text-xl">Using the team area</h2>
           {parts.map((p) => (
             <section key={p.id} id={p.id} aria-labelledby={`${p.id}-h`} className="scroll-mt-24 print:break-inside-avoid">
-              <h2 id={`${p.id}-h`} className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">{p.title}</h2>
+              <h3 id={`${p.id}-h`} className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">{p.title}</h3>
               <div className="mt-4 grid max-w-[62ch] gap-3 text-[1.02rem] leading-relaxed">{p.body}</div>
             </section>
           ))}
 
           <section id="access" aria-labelledby="access-h" className="scroll-mt-24 print:break-inside-avoid">
-            <h2 id="access-h" className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">Who can do what</h2>
+            <h3 id="access-h" className="border-b border-ink/30 pb-2 text-[1.15rem] leading-snug">Who can do what</h3>
             <p className="mt-4 max-w-[62ch] text-[1.02rem] leading-relaxed">Three groups run camp days. Administrators can do everything the camp office can. Head facilitators never see health details, so a head facilitator who also looks after children is given the facilitator role as well.</p>
             <div className="mt-5">
               <DataTable labelled caption="What each group can do on camp days" head={[{ label: "Task" }, { label: "Facilitator" }, { label: "Head facilitator" }, { label: "Camp office" }]}>
