@@ -304,3 +304,29 @@ export type CampAttendance = { id: string; applicationId: string; eventId: strin
 
 /** A note about a camper. The words are sealed; `shared` notes also show on the family's page. */
 export type CampNote = { id: string; applicationId: string; eventId: string; byId: string; by: string; createdAt: string; shared: boolean; sealed: string };
+
+/* ---------- the gate desk ---------- */
+
+/** A child who turns up without being on the expected list. Added at the gate; stays on the list for the rest of the camp. */
+export type CampWalkIn = { id: string; eventId: string; camp: "jewels" | "teen-life" | "other"; name: string; age?: number; guardian: string; phone: string; addedBy: string; createdAt: string };
+
+/**
+ * One child's arrival on one day. `key` is the approved application's id, "camper:<id>" for a returning camper or "walkin:<id>".
+ * The id is "<key>~<date>". Status "in" means at camp, "out" means collected.
+ */
+export type CampArrival = {
+  id: string;
+  key: string;
+  eventId: string;
+  date: string;
+  status: "in" | "out";
+  droppedBy: string;
+  /** Who else the parent allows to collect the child, in the parent's words. */
+  mayCollect?: string;
+  medication?: boolean;
+  arrivedAt: string;
+  arrivedBy: string;
+  collectedBy?: string;
+  leftAt?: string;
+  leftBy?: string;
+};

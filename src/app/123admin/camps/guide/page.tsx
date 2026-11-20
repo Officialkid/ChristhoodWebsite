@@ -34,6 +34,19 @@ const parts: { id: string; title: string; body: React.ReactNode }[] = [
     ),
   },
   {
+    id: "gate",
+    title: "At the gate: receiving and handing back",
+    body: (
+      <>
+        <p>Open a camp and press <strong>Gate desk</strong>. It lists everyone expected that day: children with an approved application, children who came to this camp before, and any child added on the day. Type a name in the search box and the list narrows as you type.</p>
+        <p>When a parent arrives: find the child, press <strong>Check in</strong>, and write who is bringing them. The box starts with the parent&rsquo;s name, so change it if someone else is dropping the child off. Write anyone else the parent allows to collect, and tick <strong>Medicine was handed in</strong> if it was. Check the <strong>No photos</strong> mark before anyone takes a picture.</p>
+        <p>A child who is not on the list: open <strong>A child who is not on the list</strong> at the bottom, write their name, age, parent and a phone number, then check them in like the others. They stay on the list for the rest of the camp.</p>
+        <p>At the end of the day, find the child, press <strong>Sign out</strong> and write who is collecting. If it is not the person who brought them or someone the parent named, ask to see who they are before the child goes. A tap in the wrong place is fixed with <strong>Undo</strong>.</p>
+        <p>Children not yet received show under <strong>Not here yet</strong>. A head facilitator can call those parents. If the phones or the signal fail, the head facilitators download the <strong>Paper list</strong> and tick it by hand, then enter it later.</p>
+      </>
+    ),
+  },
+  {
     id: "campers",
     title: "Your campers",
     body: (
@@ -110,6 +123,8 @@ const rows: [string, string, string, string][] = [
   ["Change the timetable", no, yes, yes],
   ["See everyone expected at camp", no, yes, yes],
   ["Give children to facilitators", no, yes, yes],
+  ["Check children in and out at the gate", yes, yes, yes],
+  ["See the parent’s phone number at the gate", no, yes, yes],
   ["Mark attendance", "Own campers", "Anyone", "Anyone"],
   ["Open care details and write notes", "Own campers", no, "Every camper"],
   ["Download the register", no, yes, yes],

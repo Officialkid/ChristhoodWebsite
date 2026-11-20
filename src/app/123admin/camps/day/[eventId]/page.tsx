@@ -56,12 +56,16 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
         actions={
           keeper ? (
             <>
+              <LinkButton href={`${root}/gate`} variant="purple" icon="clipboard">Gate desk</LinkButton>
               <LinkButton href={`${root}/timetable`} icon="calendar">Timetable</LinkButton>
               <LinkButton href={`${root}/assign`} icon="users">Who looks after whom</LinkButton>
               <a href={`/api/admin/export?kind=register&event=${encodeURIComponent(eventId)}&date=${date}`} className={btnClass.secondary}><Download className="size-4" aria-hidden /> Register for {dayShort(date)}</a>
             </>
           ) : (
-            <LinkButton href={`${ADMIN_PATH}/camps/guide`} icon="book">Facilitator guide</LinkButton>
+            <>
+              <LinkButton href={`${root}/gate`} variant="purple" icon="clipboard">Gate desk</LinkButton>
+              <LinkButton href={`${ADMIN_PATH}/camps/guide`} icon="book">Facilitator guide</LinkButton>
+            </>
           )
         }
       />

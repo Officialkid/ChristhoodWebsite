@@ -2,7 +2,9 @@ import { getUser, log } from "@/lib/auth";
 import { campScope, can, canReadPrayer, mayOpenCamp } from "@/lib/rbac";
 import { unseal } from "@/lib/crypto";
 import { collection } from "@/lib/store";
-import { approvedFor, campAssignments, campAttendance, dateOk, photoRule } from "@/lib/camp-day";
+import { campAssignments, campAttendance, dateOk } from "@/lib/camp-day";
+import { campArrivals, campOfEvent, gateRoster } from "@/lib/camp-gate";
+import { getEvents } from "@/lib/content";
 import type { CampApplication, CampSealed, Camper, CamperSealed, Prayer, Visitor } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -72,13 +74,17 @@ export async function GET(req: Request) {
     const eventId = q.get("event") ?? "";
     const date = q.get("date") ?? "";
     if (!eventId || !dateOk(date)) return new Response("Choose a camp and a day.", { status: 400 });
-    const [apps, given, marks] = await Promise.all([approvedFor(eventId), campAssignments.list(), campAttendance.list()]);
-    const body: string[][] = [];
-    for (const a of apps) {
-      const m = marks.find((x) => x.applicationId === a.id && x.date === date)?.status;
-      body.push([a.childName, String(a.ageAtCamp), a.camp === "jewels" ? "Jewels" : a.camp === "teen-life" ? "Teen Life" : "Camp", a.guardian, a.phone, (await photoRule(a)) === "No" ? "No photos" : "", given.find((g) => g.id === a.id)?.userName ?? "", m === "present" ? "Here" : m === "absent" ? "Away" : ""]);
-    }
-    rows = [["Child", "Age", "Camp", "Parent or guardian", "Phone", "Photos", "Looked after by", `Here on ${date}`], ...body];
+    const event = (await getEvents()).find((e) => e.id === eventId);
+    if (!event) return new Response("That camp is not on the events list.", { status: 404 });
+    const [people, given, marks, arrivals] = await Promise.all([gateRoster(event), campAssignments.list(), campAttendance.list(), campArrivals.list()]);
+    const camp = campOfEvent(event) === "jewels" ? "Jewels" : campOfEvent(event) === "teen-life" ? "Teen Life" : "Camp";
+    const body: string[][] = people.map((p) => {
+      const m = marks.find((x) => x.applicationId === p.key && x.date === date)?.status;
+      const a = arrivals.find((x) => x.key === p.key && x.date === date);
+      const here = a ? (a.status === "out" ? "Went home" : "Here") : m === "present" ? "Here" : m === "absent" ? "Away" : "";
+      return [p.name, String(p.age ?? ""), camp, p.guardian ?? "", p.phone ?? "", p.photos === "No" ? "No photos" : p.photos ? "" : "Ask", given.find((g) => g.id === p.key)?.userName ?? "", here, a?.droppedBy ?? "", a?.mayCollect ?? "", a?.medication ? "Yes" : "", a?.collectedBy ?? ""];
+    });
+    rows = [["Child", "Age", "Camp", "Parent or guardian", "Phone", "Photos", "Looked after by", `Here on ${date}`, "Brought by", "May also collect", "Medicine handed in", "Collected by"], ...body];
   } else return new Response("Unknown list.", { status: 400 });
 
   await log(user, "Downloaded a list", `${kind}, ${rows.length - 1} rows`);
