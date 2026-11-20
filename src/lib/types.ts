@@ -320,13 +320,25 @@ export type CampArrival = {
   eventId: string;
   date: string;
   status: "in" | "out";
+  /** How the child came to be on the list: an approved application, a returning camper a parent confirmed at the gate, or a walk-in. */
+  source?: "application" | "returning" | "walk-in";
   droppedBy: string;
-  /** Who else the parent allows to collect the child, in the parent's words. */
+  /** Who else the parent allows to collect the child, in the parent’s words. */
   mayCollect?: string;
+  /** The same list as separate names. Only these people (and whoever brought the child) may collect without an exception. */
+  authorized?: string[];
   medication?: boolean;
   arrivedAt: string;
   arrivedBy: string;
   collectedBy?: string;
+  /** Who collected: the person who brought the child, someone the parent named, or an exception a head facilitator approved. */
+  collectedVia?: "dropper" | "named" | "exception";
+  /** Set only for an exception: why, who approved it, and that the collector’s identity was seen. */
+  exception?: { reason: string; approvedBy: string; idSeen: true };
   leftAt?: string;
   leftBy?: string;
+  /** Entered after the day, from the paper list. The times are when it was typed in, not when the child came. */
+  backfilled?: true;
+  /** Sign-outs that were taken back, kept so the record of who collected is never lost. */
+  corrections?: { collectedBy: string; leftAt?: string; leftBy?: string; undoneBy: string; undoneAt: string }[];
 };

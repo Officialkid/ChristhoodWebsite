@@ -178,6 +178,62 @@ export const store = {
     if (storageMode === "none") throw new StorageUnavailable();
     await locked(async () => writeJson(`col-${col}`, { ...(await readJson<Record<string, unknown>>(`col-${col}`, {})), [id]: value }));
   },
+  /** Saves a record only if nobody has saved it yet. False means someone else got there first. */
+  async createRecord<T>(col: string, id: string, value: T): Promise<boolean> {
+    if (mongoUrl) {
+      try {
+        await (await mongo()).records.insertOne({ _id: recordKey(col, id) as never, col, id, value });
+        return true;
+      } catch (error) {
+        if (typeof error === "object" && error !== null && "code" in error && error.code === 11000) return false;
+        throw error;
+      }
+    }
+    if (redis) return Boolean(await redis.hsetnx(`col:${col}`, id, value as unknown as string));
+    if (pool) return (await sql<{ id: string }>("insert into ch_records (col, id, value) values ($1, $2, $3) on conflict (col, id) do nothing returning id", [col, id, JSON.stringify(value)])).length > 0;
+    if (storageMode === "none") throw new StorageUnavailable();
+    return locked(async () => {
+      const all = await readJson<Record<string, unknown>>(`col-${col}`, {});
+      if (Object.hasOwn(all, id)) return false;
+      await writeJson(`col-${col}`, { ...all, [id]: value });
+      return true;
+    });
+  },
+  /** Replaces a record only while one of its fields still holds the value the caller saw. False means it changed meanwhile. */
+  async replaceRecordIf<T>(col: string, id: string, field: string, equals: string, value: T): Promise<boolean> {
+    if (!/^\w+$/.test(field)) throw new Error("Bad field name.");
+    if (mongoUrl) return ((await (await mongo()).records.replaceOne({ _id: recordKey(col, id) as never, [`value.${field}`]: equals }, { col, id, value })).modifiedCount) > 0;
+    if (redis) {
+      const script = "local v=redis.call('HGET',KEYS[1],ARGV[1]) if not v then return 0 end local o=cjson.decode(v) if o[ARGV[2]]~=ARGV[3] then return 0 end redis.call('HSET',KEYS[1],ARGV[1],ARGV[4]) return 1";
+      return Number(await redis.eval(script, [`col:${col}`], [id, field, equals, JSON.stringify(value)])) === 1;
+    }
+    if (pool) return (await sql<{ id: string }>(`update ch_records set value = $4 where col = $1 and id = $2 and value ->> '${field}' = $3 returning id`, [col, id, equals, JSON.stringify(value)])).length > 0;
+    if (storageMode === "none") throw new StorageUnavailable();
+    return locked(async () => {
+      const all = await readJson<Record<string, Record<string, unknown>>>(`col-${col}`, {});
+      if (all[id]?.[field] !== equals) return false;
+      await writeJson(`col-${col}`, { ...all, [id]: value });
+      return true;
+    });
+  },
+  /** Removes a record only while one of its fields still holds the value the caller saw. */
+  async removeRecordIf(col: string, id: string, field: string, equals: string): Promise<boolean> {
+    if (!/^\w+$/.test(field)) throw new Error("Bad field name.");
+    if (mongoUrl) return ((await (await mongo()).records.deleteOne({ _id: recordKey(col, id) as never, [`value.${field}`]: equals })).deletedCount) > 0;
+    if (redis) {
+      const script = "local v=redis.call('HGET',KEYS[1],ARGV[1]) if not v then return 0 end local o=cjson.decode(v) if o[ARGV[2]]~=ARGV[3] then return 0 end redis.call('HDEL',KEYS[1],ARGV[1]) return 1";
+      return Number(await redis.eval(script, [`col:${col}`], [id, field, equals])) === 1;
+    }
+    if (pool) return (await sql<{ id: string }>(`delete from ch_records where col = $1 and id = $2 and value ->> '${field}' = $3 returning id`, [col, id, equals])).length > 0;
+    if (storageMode === "none") throw new StorageUnavailable();
+    return locked(async () => {
+      const all = await readJson<Record<string, Record<string, unknown>>>(`col-${col}`, {});
+      if (all[id]?.[field] !== equals) return false;
+      delete all[id];
+      await writeJson(`col-${col}`, all);
+      return true;
+    });
+  },
   async removeRecord(col: string, id: string): Promise<void> {
     if (mongoUrl) {
       await (await mongo()).records.deleteOne({ _id: recordKey(col, id) as never });
@@ -311,6 +367,17 @@ export function collection<T extends { id: string }>(name: string) {
     },
     async remove(id: string): Promise<void> {
       await store.removeRecord(name, id);
+    },
+    /** Saves only if the id is still free. */
+    create(item: T): Promise<boolean> {
+      return store.createRecord(name, item.id, item);
+    },
+    /** Saves only while `field` still equals `equals` in the stored copy. */
+    replaceIf(item: T, field: keyof T & string, equals: string): Promise<boolean> {
+      return store.replaceRecordIf(name, item.id, field, equals, item);
+    },
+    removeIf(id: string, field: keyof T & string, equals: string): Promise<boolean> {
+      return store.removeRecordIf(name, id, field, equals);
     },
   };
 }

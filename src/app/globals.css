@@ -82,6 +82,10 @@
 
   /* ---- Team area: one working vocabulary for lists, filters and status ---- */
   .admin { font-variant-numeric: tabular-nums; scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--color-ink) 28%, transparent) transparent; }
+  /* Gate desk full screen: the menu and top bar step aside. */
+  html[data-gate-focus] .admin { grid-template-columns: minmax(0, 1fr) !important; }
+  html[data-gate-focus] .admin > aside, html[data-gate-focus] .admin header.sticky { display: none !important; }
+  html[data-gate-focus] #admin-main { max-width: none; }
   .a-side { scrollbar-width: thin; scrollbar-color: color-mix(in oklab, var(--color-on-purple) 30%, transparent) transparent; }
 
   /* Filters: an underline marks the one in use, so a row of them reads as a row of choices and not a row of buttons. */

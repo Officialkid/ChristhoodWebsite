@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { Download, Phone } from "lucide-react";
 import { ADMIN_PATH, requireUser } from "@/lib/auth";
 import { approvedFor, campAssignments, campAttendance, campDays, campSessions, dayLabel, dayShort, mayMarkFor, mayOpenCare, photoRule, pickDay, todayInNairobi } from "@/lib/camp-day";
+import { campArrivals } from "@/lib/camp-gate";
 import { getEvents } from "@/lib/content";
 import { mayKeepRoster, mayRunCampDay } from "@/lib/rbac";
 import { formatEventDates } from "@/lib/time";
@@ -24,7 +25,7 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
   if (user.mustChange) redirect(`${ADMIN_PATH}/account`);
   if (!mayRunCampDay(user)) redirect(`${ADMIN_PATH}/no-access`);
 
-  const [events, approved, assignments, sessions, marks] = await Promise.all([getEvents(), approvedFor(eventId), campAssignments.list(), campSessions.list(), campAttendance.list()]);
+  const [events, approved, assignments, sessions, marks, arrivals] = await Promise.all([getEvents(), approvedFor(eventId), campAssignments.list(), campSessions.list(), campAttendance.list(), campArrivals.list()]);
   const event = events.find((e) => e.id === eventId);
   if (!event && approved.length === 0) notFound();
   const title = event?.title ?? approved[0].eventTitle;
@@ -34,6 +35,8 @@ export default async function CampDayPage({ params, searchParams }: { params: Pr
   const keeper = mayKeepRoster(user);
   const given = new Map(assignments.filter((a) => a.eventId === eventId).map((a) => [a.id, a]));
   const marked = new Map(marks.filter((m) => m.eventId === eventId && m.date === date).map((m) => [m.applicationId, m.status]));
+  // A child the gate received counts as here, whatever the register says. The register itself is left as it was.
+  for (const a of arrivals) if (a.eventId === eventId && a.date === date) marked.set(a.key, "present");
   const mine = approved.filter((a) => given.get(a.id)?.userId === user.id);
   const base = keeper ? approved : mine;
   const view = keeper ? (views.find(([v]) => v === show)?.[0] ?? "all") : "all";

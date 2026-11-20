@@ -2,8 +2,8 @@ import { getUser, log } from "@/lib/auth";
 import { campScope, can, canReadPrayer, mayOpenCamp } from "@/lib/rbac";
 import { unseal } from "@/lib/crypto";
 import { collection } from "@/lib/store";
-import { campAssignments, campAttendance, dateOk } from "@/lib/camp-day";
-import { campArrivals, campOfEvent, gateRoster } from "@/lib/camp-gate";
+import { campAssignments, campAttendance, campDays } from "@/lib/camp-day";
+import { campArrivals, campOfEvent, gateRoster, isCampEvent } from "@/lib/camp-gate";
 import { getEvents } from "@/lib/content";
 import type { CampApplication, CampSealed, Camper, CamperSealed, Prayer, Visitor } from "@/lib/types";
 
@@ -11,8 +11,9 @@ export const runtime = "nodejs";
 
 /** Stops a spreadsheet from running typed text as a formula. */
 const cell = (v: unknown) => {
-  const s = String(v ?? "").replace(/\r?\n/g, " ").trim();
-  const safe = /^[=+\-@\t]/.test(s) ? `'${s}` : s;
+  const s = String(v ?? "").replace(/[\r\n]+/g, " ").trim();
+  // A phone number may start with + and holds only digits, spaces and hyphens, so it is left alone. Anything else that starts like a formula gets a quote in front.
+  const safe = /^[=+\-@\t|%]/.test(s) && !/^\+?\d[\d\s-]{6,}$/.test(s) ? `'${s}` : s;
   return `"${safe.replace(/"/g, '""')}"`;
 };
 
@@ -68,26 +69,32 @@ export async function GET(req: Request) {
     }
     rows = [["id", "name", "camp", "year", "age", "guardian", "location", "contact"], ...body];
   } else if (kind === "register") {
-    // The day's expected list for head facilitators: names, ages, phone numbers and the photo rule. No health details.
+    // The day's paper list for head facilitators and the camp office: who was expected, who came, who collected. Phone numbers are here
+    // because the list is the fallback when the screens fail. No health details: medicine is only a yes. Every download is logged.
     if (!can(user, "camps:roster")) return new Response("No access.", { status: 403 });
     const q = new URL(req.url).searchParams;
     const eventId = q.get("event") ?? "";
     const date = q.get("date") ?? "";
-    if (!eventId || !dateOk(date)) return new Response("Choose a camp and a day.", { status: 400 });
     const event = (await getEvents()).find((e) => e.id === eventId);
-    if (!event) return new Response("That camp is not on the events list.", { status: 404 });
+    if (!event || !isCampEvent(event)) return new Response("That camp is not on the events list.", { status: 404 });
+    if (!campDays(event).includes(date)) return new Response("That is not a day of this camp.", { status: 400 });
     const [people, given, marks, arrivals] = await Promise.all([gateRoster(event), campAssignments.list(), campAttendance.list(), campArrivals.list()]);
     const camp = campOfEvent(event) === "jewels" ? "Jewels" : campOfEvent(event) === "teen-life" ? "Teen Life" : "Camp";
-    const body: string[][] = people.map((p) => {
-      const m = marks.find((x) => x.applicationId === p.key && x.date === date)?.status;
-      const a = arrivals.find((x) => x.key === p.key && x.date === date);
-      const here = a ? (a.status === "out" ? "Went home" : "Here") : m === "present" ? "Here" : m === "absent" ? "Away" : "";
-      return [p.name, String(p.age ?? ""), camp, p.guardian ?? "", p.phone ?? "", p.photos === "No" ? "No photos" : p.photos ? "" : "Ask", given.find((g) => g.id === p.key)?.userName ?? "", here, a?.droppedBy ?? "", a?.mayCollect ?? "", a?.medication ? "Yes" : "", a?.collectedBy ?? ""];
-    });
-    rows = [["Child", "Age", "Camp", "Parent or guardian", "Phone", "Photos", "Looked after by", `Here on ${date}`, "Brought by", "May also collect", "Medicine handed in", "Collected by"], ...body];
+    const registration = { application: "Approved application", "walk-in": "Walk-in", returning: "Previous camper, not registered" } as const;
+    // A previous camper who did not come is left off: the list is for this camp's children.
+    const body: string[][] = people
+      .filter((p) => p.expected || arrivals.some((x) => x.key === p.key && x.date === date && x.eventId === event.id))
+      .map((p) => {
+        const m = marks.find((x) => x.applicationId === p.key && x.eventId === event.id && x.date === date)?.status;
+        const a = arrivals.find((x) => x.key === p.key && x.date === date && x.eventId === event.id);
+        const here = a ? (a.status === "out" ? "Collected" : "At camp") : m === "present" ? "Here" : m === "absent" ? "Away" : "";
+        return [p.name, String(p.age ?? ""), camp, registration[p.source], p.guardian ?? "", p.phone ?? "", p.photos === "No" ? "No photos" : p.photos ? "" : "Ask", given.find((g) => g.id === p.key && g.eventId === event.id)?.userName ?? "", here, a?.droppedBy ?? "", a?.mayCollect ?? "", a?.medication ? "Yes" : "", a?.collectedBy ?? "", a?.collectedVia === "exception" ? "Exception" : ""];
+      });
+    rows = [["Child", "Age", "Camp", "Registration", "Parent or guardian", "Phone", "Photos", "Looked after by", `Status on ${date}`, "Brought by", "May also collect", "Medicine handed in", "Collected by", "Exception"], ...body];
+    await log(user, "Downloaded a list", `register ${eventId} ${date}, ${body.length} rows`);
   } else return new Response("Unknown list.", { status: 400 });
 
-  await log(user, "Downloaded a list", `${kind}, ${rows.length - 1} rows`);
+  if (kind !== "register") await log(user, "Downloaded a list", `${kind}, ${rows.length - 1} rows`);
   const csv = "﻿" + rows.map((r) => r.map(cell).join(",")).join("\r\n");
   return new Response(csv, {
     headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": `attachment; filename="christhood-${kind}-${new Date().toISOString().slice(0, 10)}.csv"`, "Cache-Control": "no-store" },
